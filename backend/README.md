@@ -3,8 +3,8 @@
 ```sh
 $ npm i 
 ```
-### install nodemodule
-config database in file .env
+### config LDAP Service jwt_secrete and Knex
+file .env
 ### start service
 ```sh
 nodemon ./index.js
