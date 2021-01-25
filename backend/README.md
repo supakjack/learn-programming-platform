@@ -1,5 +1,9 @@
 # Back-end service
 install nodemodule
-npm i
+```sh
+$ npm i 
+```
 start service
+```sh
 nodemon ./index.js
+```
