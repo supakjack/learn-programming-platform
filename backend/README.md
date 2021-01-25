@@ -1,2 +1,5 @@
-# auth-service
- Auth service by passport.js and LDAP
+# Back-end service
+install nodemodule
+npm i
+start service
+nodemon ./index.js
