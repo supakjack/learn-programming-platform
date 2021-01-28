@@ -1,5 +1,4 @@
 const createError = require("http-errors");
-const tagsModel = require("../models/tag");
 const globalModel = require("../models/global.model");
 
 const {
