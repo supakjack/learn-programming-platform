@@ -1,5 +1,14 @@
 
 ### ### ### auth route
+POST http://localhost:3002/ide/run?language=cpp&compile=source
+Content-Type: application/json
+
+{
+    "source": "60160027",
+    "stdin" : "xxxxxx"
+}
+
+### ### ### auth route
 POST http://localhost:3001/auth/login
 Content-Type: application/json
 

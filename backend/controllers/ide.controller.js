@@ -9,20 +9,22 @@ module.exports = {
   // CreateBy: Supak Pukdam / CreateDate: 26/1/2021
   // UpdateBy: Supak Pukdam / UpdateDate: 26/1/2021
   run: async (req, res, next) => {
-    if (req.query.language == 'c') {
+    const compile = req.query.compile
+    if (req.query.language == 'cpp') {
       try {
-        const compile =
-          req.query.compile == 'source'
+        const doesCompile =
+          compile == 'source'
             ? cpp.runSource(req.body.source, { stdin: req.body.stdin })
-            : cpp.runFile(req.body.path, { stdin: req.body.stdin })
-        compile
+            : compile == 'path'
+            ? cpp.runFile(req.body.path, { stdin: req.body.stdin })
+            : null
+        doesCompile
           .then((result) => {
-            res.send(result)
+            res.status(200).send(result)
           })
           .catch((err) => {
-            console.log(err)
+            throw err
           })
-        res.status(200).send({ doseCompile })
       } catch (error) {
         if (error.isJoi === true) return next(createError.InternalServerError())
         next(error)
