@@ -1,0 +1,71 @@
+{
+	"info": {
+		"_postman_id": "8a8ff78d-fe0a-4043-a65f-22f5e31d633a",
+		"name": "ide-learn-programming-platform",
+		"description": "ide-learn-programming-platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Run with source (string)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "source",
+							"value": "// Your First C++ Program\n#include <iostream>\nint main() {\n\n    std::cout << \"Hello World!\";\n\n}",
+							"type": "text"
+						},
+						{
+							"key": "stdin",
+							"value": "1",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/ide/run?compile=source&language=cpp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"ide",
+						"run"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": "1\\n2",
+							"disabled": true
+						},
+						{
+							"key": "compile",
+							"value": "source"
+						},
+						{
+							"key": "language",
+							"value": "cpp"
+						}
+					]
+				},
+				"description": "Run with source (string)"
+			},
+			"response": []
+		}
+	]
+}
