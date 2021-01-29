@@ -66,6 +66,67 @@
 				"description": "Run with source (string)"
 			},
 			"response": []
+		},
+		{
+			"name": "Run with path",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "source",
+							"value": "// Your First C++ Program\n#include <iostream>\nint main() {\n\n    std::cout << \"Hello World!\";\n\n}",
+							"type": "text"
+						},
+						{
+							"key": "stdin",
+							"value": "1",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/ide/run?compile=source&language=cpp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"ide",
+						"run"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": "1\\n2",
+							"disabled": true
+						},
+						{
+							"key": "compile",
+							"value": "source"
+						},
+						{
+							"key": "language",
+							"value": "cpp"
+						}
+					]
+				},
+				"description": "Run with path"
+			},
+			"response": []
 		}
 	]
 }
