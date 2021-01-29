@@ -76,8 +76,8 @@
 					"mode": "urlencoded",
 					"urlencoded": [
 						{
-							"key": "source",
-							"value": "// Your First C++ Program\n#include <iostream>\nint main() {\n\n    std::cout << \"Hello World!\";\n\n}",
+							"key": "path",
+							"value": "C:\\Users\\jack\\Documents\\learn-programming-platform\\learn-programming-platform\\storages\\hello.cpp",
 							"type": "text"
 						},
 						{
@@ -93,7 +93,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3002/ide/run?compile=source&language=cpp",
+					"raw": "http://localhost:3002/ide/run?language=cpp&compile=path",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -115,12 +115,12 @@
 							"disabled": true
 						},
 						{
-							"key": "compile",
-							"value": "source"
-						},
-						{
 							"key": "language",
 							"value": "cpp"
+						},
+						{
+							"key": "compile",
+							"value": "path"
 						}
 					]
 				},
