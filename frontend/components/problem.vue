@@ -76,8 +76,8 @@
 </template>
 
 <script>
-import tags from "./../mixins/api/tags";
+// import tags from "./../mixins/api/tags";
 export default {
-  mixins: [tags]
+  // mixins: [tags]
 };
 </script>
