@@ -1,19 +1,29 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="desserts"
-    sort-by="calories"
-    class="elevation-1"
+    :items="allTags"
+    :items-per-page="5"
+    sort-by="tagStatus"
+    :search="search"
+    class="elevation-1 kanit-font"
   >
     <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title>My CRUD</v-toolbar-title>
+      <v-toolbar flat class="kanit-font">
+        <v-toolbar-title>ตารางแท็ก</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
+        <v-spacer></v-spacer>
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="ค้นหา"
+          single-line
+          hide-details
+        ></v-text-field>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-              New Item
+            <v-btn color="success" dark class="mb-2" v-bind="attrs" v-on="on">
+              สร้างแท็ก
             </v-btn>
           </template>
           <v-card>
@@ -109,19 +119,22 @@ import tagsmixin from "../../../components/tags";
 export default {
   mixins: [tagsmixin],
   data: () => ({
+    allTags: [],
     dialog: false,
     dialogDelete: false,
+    search: "",
     headers: [
       {
-        text: "Dessert (100g serving)",
         align: "start",
-        sortable: false,
-        value: "name"
+        sortable: false
+        // value: "tagId"
       },
-      { text: "Calories", value: "calories" },
-      { text: "Fat (g)", value: "fat" },
-      { text: "Carbs (g)", value: "carbs" },
-      { text: "Protein (g)", value: "protein" },
+      { text: "ชื่อแท็ก", value: "tagName" },
+      { text: "tagCreateDate", value: "tagCreateDate" },
+      { text: "tagUpdateDate", value: "tagUpdateDate" },
+      { text: "tagCreateBy", value: "tagCreateBy" },
+      { text: "tagUpdateBy", value: "tagUpdateBy" },
+      { text: "สถานะ", value: "tagStatus" },
       { text: "Actions", value: "actions", sortable: false }
     ],
     desserts: [],
@@ -142,9 +155,10 @@ export default {
       protein: 0
     }
   }),
-  mounted() {
-    this.getTag();
-    console.log(this.result);
+  async mounted() {
+    const { doseGetAll } = await this.getTag();
+    this.allTags = doseGetAll;
+    console.log(this.allTags);
   },
 
   computed: {
@@ -290,3 +304,11 @@ export default {
   }
 };
 </script>
+<style>
+.roboto-font {
+  font-family: "Roboto", sans-serif;
+}
+.kanit-font {
+  font-family: "Kanit", sans-serif;
+}
+</style>
