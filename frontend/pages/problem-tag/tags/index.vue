@@ -26,12 +26,12 @@
               สร้างแท็ก
             </v-btn>
           </template>
-          <v-card>
+          <v-card class="kanit-font">
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
             </v-card-title>
 
-            <v-card-text>
+            <v-card-text class="kanit-font">
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
@@ -71,10 +71,10 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="close">
-                Cancel
+                ยกเลิก
               </v-btn>
               <v-btn color="blue darken-1" text @click="save">
-                Save
+                บันทึก
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -108,7 +108,7 @@
     </template>
     <template v-slot:no-data>
       <v-btn color="primary" @click="initialize">
-        Reset
+        โหลดข้อมูลใหม่
       </v-btn>
     </template>
   </v-data-table>
@@ -156,14 +156,14 @@ export default {
     }
   }),
   async mounted() {
-    const { doseGetAll } = await this.getTag();
-    this.allTags = doseGetAll;
+    // const { doseGetAll } = await this.getTag();
+    // this.allTags = doseGetAll;
     console.log(this.allTags);
   },
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+      return this.editedIndex === -1 ? "สร้างแท็ก" : "แก้ไขแท็ก";
     }
   },
 
@@ -185,79 +185,9 @@ export default {
   },
 
   methods: {
-    initialize() {
-      this.desserts = [
-        {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0
-        },
-        {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0
-        },
-        {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9
-        },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7
-        }
-      ];
+    async initialize() {
+      const { doseGetAll } = await this.getTag();
+      this.allTags = doseGetAll;
     },
 
     editItem(item) {
