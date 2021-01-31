@@ -1,5 +1,5 @@
 const createError = require('http-errors')
-const { c, cpp } = require('compile-run')
+const { comileLogic } = require('./../helpers/compile.helper')
 
 module.exports = {
   // function name: run
@@ -9,38 +9,21 @@ module.exports = {
   // CreateBy: Supak Pukdam / CreateDate: 26/1/2021
   // UpdateBy: Supak Pukdam / UpdateDate: 26/1/2021
   run: async (req, res, next) => {
-    const compile = req.query.compile
-    const language = req.query.language
+    const compile = req.query.compile,
+      language = req.query.language,
+      source = req.body.source,
+      path = req.body.path,
+      stdin = req.body.stdin
     try {
-      if (language == 'cpp') {
-        const doesCompile =
-          compile == 'source'
-            ? cpp.runSource(req.body.source, { stdin: req.body.stdin })
-            : compile == 'path'
-            ? cpp.runFile(req.body.path, { stdin: req.body.stdin })
-            : null
-        doesCompile
-          .then((result) => {
-            res.status(200).send(result)
-          })
-          .catch((err) => {
-            throw err
-          })
-      } else if (language == 'c') {
-        const doesCompile =
-          compile == 'source'
-            ? c.runSource(req.body.source, { stdin: req.body.stdin })
-            : compile == 'path'
-            ? c.runFile(req.body.path, { stdin: req.body.stdin })
-            : null
-        doesCompile
-          .then((result) => {
-            res.status(200).send(result)
-          })
-          .catch((err) => {
-            throw err
-          })
-      }
+      const doesCompile = await comileLogic(
+        language,
+        compile,
+        stdin,
+        source,
+        path
+      )
+
+      res.status(200).send(doesCompile)
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError())
       next(error)

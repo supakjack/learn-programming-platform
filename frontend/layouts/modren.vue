@@ -12,16 +12,19 @@
         </v-main>
       </div>
     </div>
+    <Footer />
   </v-app>
 </template>
 
 <script>
 import Sidebar from "@/layouts/Modrens/Sidebar";
 import Breadcrumb from "@/layouts/Modrens/Breadcrumb";
+import Footer from "@/layouts/Modrens/Footer";
 export default {
   components: {
     Sidebar,
-    Breadcrumb
+    Breadcrumb,
+    Footer
   }
 };
 </script>
