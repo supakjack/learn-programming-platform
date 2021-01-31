@@ -1,8 +1,8 @@
 <template>
-  <v-card>
+  <v-card class="kanit-font">
     <v-tabs centered v-model="tab">
-      <v-tab href="#problem">Problem</v-tab>
-      <v-tab href="#tag">tag</v-tab>
+      <v-tab href="#problem">โจทย์ปัญหา</v-tab>
+      <v-tab href="#tag">แท็ก</v-tab>
     </v-tabs>
 
     <v-tabs-items :value="tab">
@@ -21,9 +21,12 @@
 </template>
 
 <script>
-import tags from "./../components/tags";
-import problem from "./../components/problem";
+import tags from "./../problem-tag/tags/index";
+import problems from "./../problem-tag/problems/index";
+// import problem from "./../../components/problem";
+import tagsmixin from "../../components/tags";
 export default {
+  mixins: [tagsmixin],
   computed: {
     tab: {
       set(tab) {
@@ -36,8 +39,18 @@ export default {
   },
   components: {
     tags,
-    problem
+    problems
   },
-  layout: "modren"
+
+//   layout: "modren"
 };
 </script>
+
+<style>
+.roboto-font {
+  font-family: "Roboto", sans-serif;
+}
+.kanit-font {
+  font-family: "Kanit", sans-serif;
+}
+</style>
