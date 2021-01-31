@@ -191,19 +191,19 @@ export default {
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.allTags.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.allTags.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
     deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
+      this.allTags.splice(this.editedIndex, 1);
       this.closeDelete();
     },
 
@@ -225,9 +225,9 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+        Object.assign(this.allTags[this.editedIndex], this.editedItem);
       } else {
-        this.desserts.push(this.editedItem);
+        this.allTags.push(this.editedItem);
       }
       this.close();
     }
