@@ -2,6 +2,7 @@ const createError = require("http-errors");
 const { comileLogic } = require("./../helpers/compile.helper");
 const nanoid = require("nanoid");
 const mkdirp = require("mkdirp");
+const path = require("path");
 
 module.exports = {
   // function name: run
@@ -66,7 +67,11 @@ module.exports = {
         userUsername +
         "\\no-" +
         no;
-      console.log(filePath);
+      await mkdirp(filePath);
+      await singleFile.mv(path.resolve(__dirname), function (error) {
+        console.log(error);
+      });
+
       res.status(200).send(req.files);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
