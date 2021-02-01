@@ -32,12 +32,12 @@ module.exports = {
       next(error);
     }
   },
-  // function name: run
-  // description: run compile by API
-  // input: language, source, path, stdin
+  // function name: submit
+  // description: submit files by API
+  // input: yearName,courseCode,sectionNumber,assignmentTitle,problemTitle,userUsername,taskId,memeFile,singleFile
   // output: text response
-  // CreateBy: Supak Pukdam / CreateDate: 26/1/2021
-  // UpdateBy: Supak Pukdam / UpdateDate: 26/1/2021
+  // CreateBy: Theo Seathan / CreateDate: 1/2/2021
+  // UpdateBy: Theo Seathan / UpdateDate: 1/2/2021
   submit: async (req, res, next) => {
     const yearName = req.body.yearName,
       courseCode = req.body.courseCode,
