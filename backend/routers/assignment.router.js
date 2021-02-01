@@ -5,4 +5,7 @@ const timeout = require('connect-timeout')
 
 router.get('/foo', timeout('5s'), assignmentController.foo)
 
+// Get tag by condition
+router.get("/", assignmentController.get);
+
 module.exports = router

@@ -1,15 +1,15 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="allTags"
+    :items="allAssignment"
     :items-per-page="5"
-    sort-by="tagStatus"
+    sort-by="assignmentStatus"
     :search="search"
     class="elevation-1 kanit-font"
   >
     <template v-slot:top>
       <v-toolbar flat class="kanit-font">
-        <v-toolbar-title>ตารางแท็ก</v-toolbar-title>
+        <v-toolbar-title>ตารางมอบหมายงาน</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-text-field
@@ -23,7 +23,7 @@
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="success" dark class="mb-2" v-bind="attrs" v-on="on">
-              สร้างแท็ก
+              เพิ่มมอบหมายงาน
             </v-btn>
           </template>
           <v-card class="kanit-font">
@@ -115,11 +115,11 @@
 </template>
 
 <script>
-import tagsmixin from "../../../components/tags";
+import assignmentmixin from "../../components/assignment";
 export default {
-  mixins: [tagsmixin],
+  mixins: [assignmentmixin],
   data: () => ({
-    allTags: [],
+    allAssignment: [],
     dialog: false,
     dialogDelete: false,
     search: "",
@@ -127,18 +127,17 @@ export default {
       {
         align: "start",
         sortable: false
-        // value: "tagId"
+        // value: "assignmentId"
       },
-      { text: "ชื่อแท็ก", value: "tagName" },
-      { text: "tagCreateDate", value: "tagCreateDate" },
-      { text: "tagUpdateDate", value: "tagUpdateDate" },
-      { text: "tagCreateBy", value: "tagCreateBy" },
-      { text: "tagUpdateBy", value: "tagUpdateBy" },
-      { text: "สถานะ", value: "tagStatus" },
-      { text: "Actions", value: "actions", sortable: false }
+      { text: "รายวิชา", value: "assignmentId" },
+      { text: "ภาระงาน", value: "assignmentTitle" },
+      { text: "วันที่เริ่มส่งงาน", value: "assignmentStartDate" },
+      { text: "วันที่สิ้นสุดส่งงาน", value: "assignmentEndDate" },
+      { text: "สถานะ", value: "assignmentStatus" },
+      { text: "การจัดการ", value: "actions", sortable: false }
     ],
     desserts: [],
-    tag: [],
+    problem: [],
     editedIndex: -1,
     editedItem: {
       name: "",
@@ -156,14 +155,14 @@ export default {
     }
   }),
   async mounted() {
-    // const { doseGetAll } = await this.getTag();
-    // this.allTags = doseGetAll;
-    console.log(this.allTags);
+    // const { doseGetAll } = await this.getProblem();
+    // this.allProblems = doseGetAll;
+    console.log(this.allProblems);
   },
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "สร้างแท็ก" : "แก้ไขแท็ก";
+      return this.editedIndex === -1 ? "เพิ่มมอบหมายงาน" : "แก้ไขมอบหมายงาน";
     }
   },
 
@@ -178,16 +177,16 @@ export default {
 
   async created() {
     this.initialize();
-    // console.log("call getTag from mixin");
-    // this.getTag()
+    // console.log("call getProblem from mixin");
+    // this.getProblem()
 
     // console.log(this.response);
   },
 
   methods: {
     async initialize() {
-      const { doseGetAll } = await this.getTag();
-      this.allTags = doseGetAll;
+      const { doseGetAll } = await this.getAssignment();
+      this.allAssignment = doseGetAll;
     },
 
     editItem(item) {
@@ -234,6 +233,7 @@ export default {
   }
 };
 </script>
+
 <style>
 .roboto-font {
   font-family: "Roboto", sans-serif;
