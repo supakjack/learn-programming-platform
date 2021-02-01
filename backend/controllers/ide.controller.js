@@ -1,6 +1,6 @@
-const createError = require("http-errors");
-const { comileLogic } = require("./../helpers/compile.helper");
-const nanoid = require("nanoid");
+const createError = require('http-errors')
+const { comileLogic } = require('./../helpers/compile.helper')
+const nanoid = require('nanoid')
 
 module.exports = {
   // function name: run
@@ -14,7 +14,7 @@ module.exports = {
       language = req.query.language,
       source = req.body.source,
       path = req.body.path,
-      stdin = req.body.stdin;
+      stdin = req.body.stdin
     try {
       const doesCompile = await comileLogic(
         language,
@@ -22,12 +22,12 @@ module.exports = {
         stdin,
         source,
         path
-      );
+      )
 
-      res.status(200).send(doesCompile);
+      res.status(200).send(doesCompile)
     } catch (error) {
-      if (error.isJoi === true) return next(createError.InternalServerError());
-      next(error);
+      if (error.isJoi === true) return next(createError.InternalServerError())
+      next(error)
     }
   },
   // function name: run
@@ -45,31 +45,31 @@ module.exports = {
       userUsername = req.body.userUsername,
       taskId = req.body.taskId,
       memeFile = req.body.memeFile,
-      singleFile = req.files.singleFile;
-    const no = 1;
+      singleFile = req.files.singleFile
+    const no = 1
     try {
-      singleFile.name = nanoid(6) + "." + memeFile;
+      singleFile.name = nanoid(6) + '.' + memeFile
       // console.log(singleFile.name);
       const filePath =
         process.env.BASE_STORAGE_PATH +
         yearName +
-        "/" +
+        '\\' +
         courseCode +
-        "/sec-" +
+        '\\sec-' +
         sectionNumber +
-        "/" +
+        '\\' +
         assignmentTitle +
-        "/" +
+        '\\' +
         problemTitle +
-        "/" +
+        '\\' +
         userUsername +
-        "/no-" +
-        no;
-      console.log(filePath);
-      res.status(200).send(req.files);
+        '\\no-' +
+        no
+      console.log(filePath)
+      res.status(200).send(req.files)
     } catch (error) {
-      if (error.isJoi === true) return next(createError.InternalServerError());
-      next(error);
+      if (error.isJoi === true) return next(createError.InternalServerError())
+      next(error)
     }
-  },
-};
+  }
+}
