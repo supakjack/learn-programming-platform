@@ -1,42 +1,44 @@
-const express = require('express')
-const createError = require('http-errors')
-const cors = require('cors')
-const morgan = require('morgan')
-require('dotenv').config()
+const express = require("express");
+const createError = require("http-errors");
+const cors = require("cors");
+const morgan = require("morgan");
+const fileupload = require("express-fileupload");
+require("dotenv").config();
 
-const assignmentRoute = require('./routers/assignment.router')
-const tagRoute = require('./routers/tag.router')
-const ideRoute = require('./routers/ide.router')
-const problemRoute = require('./routers/problem.router')
+const assignmentRoute = require("./routers/assignment.router");
+const tagRoute = require("./routers/tag.router");
+const ideRoute = require("./routers/ide.router");
+const problemRoute = require("./routers/problem.router");
 
-const app = express()
+const app = express();
 
-app.use(cors())
-app.use(morgan('combined'))
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(cors());
+app.use(morgan("combined"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(fileupload());
 
-app.use('/assignment', assignmentRoute)
-app.use('/tag', tagRoute)
-app.use('/ide', ideRoute)
-app.use('/problem', problemRoute)
+app.use("/assignment", assignmentRoute);
+app.use("/tag", tagRoute);
+app.use("/ide", ideRoute);
+app.use("/problem", problemRoute);
 
 app.use(async (req, res, next) => {
-  next(createError.NotFound())
-})
+  next(createError.NotFound());
+});
 
 app.use((err, req, res, next) => {
-  res.status(err.status || 500)
+  res.status(err.status || 500);
   res.send({
     error: {
       status: err.status || 500,
-      message: err.message
-    }
-  }) 
-})
+      message: err.message,
+    },
+  });
+});
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+  console.log(`Server running on port ${PORT}`);
+});

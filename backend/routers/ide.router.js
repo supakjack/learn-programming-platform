@@ -6,6 +6,6 @@ const ideController = require('../controllers/ide.controller')
 router.post('/run', ideController.run)
 
 // compile by source and path
-router.post('/assess', ideController.run)
+router.post('/submit', ideController.submit)
 
 module.exports = router
