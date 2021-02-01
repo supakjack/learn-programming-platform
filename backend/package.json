@@ -21,6 +21,7 @@
     "express-http-proxy": "^1.6.2",
     "http-errors": "^1.8.0",
     "knex": "^0.21.16",
+    "mkdirp": "^1.0.4",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "nanoid": "^2.1.8",

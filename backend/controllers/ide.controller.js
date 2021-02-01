@@ -1,6 +1,7 @@
 const createError = require("http-errors");
 const { comileLogic } = require("./../helpers/compile.helper");
 const nanoid = require("nanoid");
+const mkdirp = require("mkdirp");
 
 module.exports = {
   // function name: run
@@ -66,6 +67,7 @@ module.exports = {
         "/no-" +
         no;
       console.log(filePath);
+      await mkdirp(filePath);
       res.status(200).send(req.files);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
