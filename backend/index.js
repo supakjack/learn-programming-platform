@@ -7,6 +7,7 @@ require('dotenv').config()
 const assignmentRoute = require('./routers/assignment.router')
 const tagRoute = require('./routers/tag.router')
 const ideRoute = require('./routers/ide.router')
+const problemRoute = require('./routers/problem.router')
 
 const app = express()
 
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use('/assignment', assignmentRoute)
 app.use('/tag', tagRoute)
 app.use('/ide', ideRoute)
+app.use('/problem', problemRoute)
 
 app.use(async (req, res, next) => {
   next(createError.NotFound())
