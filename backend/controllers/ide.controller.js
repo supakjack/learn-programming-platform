@@ -54,20 +54,19 @@ module.exports = {
       const filePath =
         process.env.BASE_STORAGE_PATH +
         yearName +
-        "/" +
+        "\\" +
         courseCode +
-        "/sec-" +
+        "\\sec-" +
         sectionNumber +
-        "/" +
+        "\\" +
         assignmentTitle +
-        "/" +
+        "\\" +
         problemTitle +
-        "/" +
+        "\\" +
         userUsername +
-        "/no-" +
+        "\\no-" +
         no;
       console.log(filePath);
-      await mkdirp(filePath);
       res.status(200).send(req.files);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
