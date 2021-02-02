@@ -73,6 +73,10 @@ module.exports = {
       const doseGetAll = await globalModel.select({
         name: "tags",
         condition: [getTagData],
+        filter: [],
+        leftJoin: [
+          { joinTable: "users", leftKey: "tagCreateBy", joinKey: "userId" },
+        ],
       });
       res.status(201).send({ doseGetAll });
     } catch (error) {
