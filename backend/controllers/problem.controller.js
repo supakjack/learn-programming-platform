@@ -1,6 +1,10 @@
 const createError = require('http-errors')
-const globalModel = require('../models/global.model')
+const problemsModel = require('../models/problems.model')
 const { createAssessSchema } = require('./../helpers/validation.helper')
+
+const {
+  getProblemSchema,
+} = require("./../helpers/validation.helper");
 
 module.exports = {
   assess: async (req, res, next) => {
@@ -18,5 +22,27 @@ module.exports = {
       if (error.isJoi === true) return next(createError.InternalServerError())
       next(error)
     }
-  }
+  },
+  // function name: get
+  // description: get problems data from condition by id 
+  // input : query string : condition {problemId}
+  // output : 
+  // CreateBy: Yotsapat Phurahong / CreateDate: 
+  // UpdateBy: Yotsapat Phurahong / UpdateDate: 
+  get: async (req, res, next) => {
+    // passing data from query string validate data from 
+    const getProblemData = await getProblemSchema.validateAsync(req.query);
+
+    // try call function getTagById in tags model then catch if error
+    try {
+      const doseGetAll = await problemsModel.select({
+        name: "problems",
+        condition: [getProblemData],
+      });
+      res.status(201).send({ doseGetAll });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
 }

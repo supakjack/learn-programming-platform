@@ -1,14 +1,14 @@
 <template>
   <v-card class="kanit-font">
     <v-tabs centered v-model="tab">
-      <v-tab href="#problem">โจทย์ปัญหา</v-tab>
+      <v-tab href="#problems">โจทย์ปัญหา</v-tab>
       <v-tab href="#tag">แท็ก</v-tab>
     </v-tabs>
 
     <v-tabs-items :value="tab">
-      <v-tab-item value="problem">
+      <v-tab-item value="problems">
         <div>
-          <problem />
+          <problems />
         </div>
       </v-tab-item>
       <v-tab-item value="tag">
@@ -23,10 +23,12 @@
 <script>
 import tags from "./../problem-tag/tags/index";
 import problems from "./../problem-tag/problems/index";
-// import problem from "./../../components/problem";
 import tagsmixin from "../../components/tags";
+import problemsmixin from "../../components/problems";
+
 export default {
-  mixins: [tagsmixin],
+  mixins: [tagsmixin], 
+  mixins: [problemsmixin],
   computed: {
     tab: {
       set(tab) {

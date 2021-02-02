@@ -43,11 +43,23 @@ const createAssessSchema = joi.object({
   assessUpdateBy: joi.number().max(99999999).min(1).required()
 })
 
+// get problem schema
+const getProblemSchema = joi.object({
+  problemId: joi.number().max(99999999).min(1)
+})
+
+// get problem schema
+const getAssignmentSchema = joi.object({
+  assignmentId: joi.number().max(99999999).min(1)
+})
+
 module.exports = {
   authSchema,
   createTagSchema,
   getTagSchema,
   updateTagConditionSchema,
   updateTagSchema,
-  createAssessSchema
+  createAssessSchema,
+  getProblemSchema,
+  getAssignmentSchema
 }
