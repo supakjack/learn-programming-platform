@@ -17,6 +17,15 @@ module.exports = {
     return new Promise((resolve, reject) => {
       try {
         const doseSelect = knex.select(table.filter).from(table.name);
+        if (table.leftJoin) {
+          table.leftJoin.forEach((leftJoin) => {
+            doseSelect.leftJoin(
+              leftJoin.joinTable,
+              table.name + "." + leftJoin.leftKey,
+              leftJoin.joinTable + "." + leftJoin.joinKey
+            );
+          });
+        }
         if (table.condition) {
           table.condition.forEach((condition) => {
             doseSelect.where(condition);
