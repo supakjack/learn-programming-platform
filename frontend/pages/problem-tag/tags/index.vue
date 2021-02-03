@@ -130,10 +130,10 @@ export default {
         // value: "tagId"
       },
       { text: "ชื่อแท็ก", value: "tagName" },
-      { text: "tagCreateDate", value: "tagCreateDate" },
-      { text: "tagUpdateDate", value: "tagUpdateDate" },
-      { text: "tagCreateBy", value: "tagCreateBy" },
-      { text: "tagUpdateBy", value: "tagUpdateBy" },
+      { text: "สร้างขึ้นเมื่อ", value: "tagCreateDate" },
+      { text: "แก้ไขล่าสุด", value: "tagUpdateDate" },
+      { text: "สร้างโดย", value: "tagCreateBy" },
+      { text: "แก้ไขล่าสุดโดย", value: "tagUpdateBy" },
       { text: "สถานะ", value: "tagStatus" },
       { text: "Actions", value: "actions", sortable: false }
     ],

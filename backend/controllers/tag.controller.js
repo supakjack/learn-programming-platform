@@ -67,7 +67,7 @@ module.exports = {
   get: async (req, res, next) => {
     // passing data from query string validate data from getTagSchema
     const getTagData = await getTagSchema.validateAsync(req.query);
-
+  
     // try call function getTagById in tags model then catch if error
     try {
       const doseGetAll = await globalModel.select({
