@@ -68,9 +68,8 @@ module.exports = {
         "\\no-" +
         no;
       await mkdirp(filePath);
-      await singleFile.mv(path.resolve(__dirname), function (error) {
-        console.log(error);
-      });
+
+      await singleFile.mv(filePath + "\\" + singleFile.name);
 
       res.status(200).send(req.files);
     } catch (error) {
