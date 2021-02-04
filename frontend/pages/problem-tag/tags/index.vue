@@ -142,8 +142,8 @@ export default {
     ]
   }),
   async mounted() {
-    // const { doseGetAll } = await this.getTag();
-    // this.allTags = doseGetAll;
+    // const { doesGetAll } = await this.getTag();
+    // this.allTags = doesGetAll;
     // console.log(this.allTags);
   },
 
@@ -168,21 +168,21 @@ export default {
 
   methods: {
     async initialize() {
-      const { doseGetAll } = await this.getTag();
-      doseGetAll.map(doseGetAll => {
-        doseGetAll.tagCreateDate = this.$moment(
-          doseGetAll.tagCreateDate
+      const { doesGetAll } = await this.getTag();
+      doesGetAll.map(doesGetAll => {
+        doesGetAll.tagCreateDate = this.$moment(
+          doesGetAll.tagCreateDate
         ).format("Do MMM YY เวลา LT");
-        doseGetAll.tagUpdateDate = this.$moment(
-          doseGetAll.tagUpdateDate
+        doesGetAll.tagUpdateDate = this.$moment(
+          doesGetAll.tagUpdateDate
         ).format("Do MMM YY เวลา LT");
-        if (doseGetAll.tagStatus == "active") {
-          doseGetAll.tagStatus = "ใช้งาน";
+        if (doesGetAll.tagStatus == "active") {
+          doesGetAll.tagStatus = "ใช้งาน";
         } else {
-          doseGetAll.tagStatus = "ไม่ใช้งาน";
+          doesGetAll.tagStatus = "ไม่ใช้งาน";
         }
       });
-      this.allTags = doseGetAll;
+      this.allTags = doesGetAll;
     },
 
     editItem(item) {
