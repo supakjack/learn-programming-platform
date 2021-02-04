@@ -5,10 +5,6 @@ const authSchema = joi.object({
   password: joi.string().min(2).required(),
 });
 
-const userSchema = joi.object({
-  userUsername: joi.string().required(),
-});
-
 // create tag schema
 const createTagSchema = joi.object({
   tagName: joi.string().max(255).required(),
@@ -58,6 +54,13 @@ const getAssignmentSchema = joi.object({
   assignmentId: joi.number().max(99999999).min(1),
 });
 
+// create compile log schema
+const createFiles = joi.object({
+  filePath: joi.string().max(255).required(),
+  fileCreateBy: joi.number().max(99999999).min(1),
+  fileUpdateBy: joi.number().max(99999999).min(1),
+});
+
 module.exports = {
   authSchema,
   createTagSchema,
@@ -67,4 +70,5 @@ module.exports = {
   createAssessSchema,
   getProblemSchema,
   getAssignmentSchema,
+  createFiles,
 };
