@@ -63,7 +63,7 @@ module.exports = {
   // input : query string : condition {tagId , tagCreateBy}
   // output : tagId, tagName, tagStatus, tagCreateDate, tagUpdateDate, tagCreateBy, tagUpdateBy
   // CreateBy: Niphitphon Thanatkulkit / CreateDate: 14/1/2021
-  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 3/2/2021
+  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 4/2/2021
   get: async (req, res, next) => {
     // passing data from query string validate data from getTagSchema
     const getTagData = await getTagSchema.validateAsync(req.query);
