@@ -57,42 +57,46 @@
 
 <script>
 export default {
-  layout: 'blank',
+  layout: "blank",
   data() {
     return {
-      username: '60160344',
-      password: '050440705bB_',
+      username: "60160344",
+      password: "050440705bB_",
       loading: false,
       hidePassword: true,
       error: false,
       showResult: false,
-      result: '',
+      result: "",
       rules: {
-        required: (value) => !!value || 'Required.'
-      }
-    }
+        required: (value) => !!value || "Required.",
+      },
+    };
   },
   methods: {
     async handleLoginClicked() {
+      const payload = {
+        username: this.username,
+        password: this.password,
+      };
       try {
-        const response = await this.$auth.loginWith('local', {
-          data: { username: this.username, password: this.password }
-        })
-        console.log(response)
-        if (response.data.success) {
-          this.$router.replace({ name: 'blogs' })
-          this.$vs.notify({
-            color: 'danger',
-            title: 'Invalid Username and password',
-            text: 'Please enter your username or password again.'
-          })
-        }
+        const response = await this.$auth.loginWith("local", {
+          data: payload,
+        });
+        console.log(response);
+        // if (response.data.success) {
+        //   this.$router.replace({ name: "home" });
+        //   this.$vs.notify({
+        //     color: "danger",
+        //     title: "Invalid Username and password",
+        //     text: "Please enter your username or password again.",
+        //   });
+        // }nk
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped lang="css">
@@ -102,7 +106,7 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  content: '';
+  content: "";
   z-index: 0;
 }
 </style>
