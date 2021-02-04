@@ -86,20 +86,6 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogInsert" max-width="500px">
-          <v-card>
-            <v-card-title class="headline">
-              Insert Success
-            </v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeInsert">
-                ok
-              </v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
       </v-toolbar>
     </template>
     <template v-slot:[`item.actions`]="{ item }">
@@ -126,7 +112,6 @@ export default {
     allTags: [],
     dialog: false,
     dialogDelete: false,
-    dialogInsert: false,
     search: "",
     headers: [
       {
@@ -145,15 +130,11 @@ export default {
     editedIndex: -1,
     editedItem: {
       tagName: "",
-      tagStatus: 0,
-      tagCreateBy: 0,
-      tagUpdateBy: 0
+      tagStatus: 0
     },
     defaultItem: {
       tagName: "",
-      tagStatus: 0,
-      tagCreateBy: 0,
-      tagUpdateBy: 0
+      tagStatus: 0
     },
     tagStatus: [
       { text: "ใช้งาน", value: 1 },
@@ -161,8 +142,8 @@ export default {
     ]
   }),
   async mounted() {
-    // const { doesGetAll } = await this.getTag();
-    // this.allTags = doesGetAll;
+    // const { doseGetAll } = await this.getTag();
+    // this.allTags = doseGetAll;
     // console.log(this.allTags);
   },
 
@@ -187,22 +168,21 @@ export default {
 
   methods: {
     async initialize() {
-      const { doesGetAll } = await this.getTag();
-      console.log(doesGetAll);
-      doesGetAll.map(doesGetAll => {
-        doesGetAll.tagCreateDate = this.$moment(
-          doesGetAll.tagCreateDate
+      const { doseGetAll } = await this.getTag();
+      doseGetAll.map(doseGetAll => {
+        doseGetAll.tagCreateDate = this.$moment(
+          doseGetAll.tagCreateDate
         ).format("Do MMM YY เวลา LT");
-        doesGetAll.tagUpdateDate = this.$moment(
-          doesGetAll.tagUpdateDate
+        doseGetAll.tagUpdateDate = this.$moment(
+          doseGetAll.tagUpdateDate
         ).format("Do MMM YY เวลา LT");
-        if (doesGetAll.tagStatus == "active") {
-          doesGetAll.tagStatus = "ใช้งาน";
+        if (doseGetAll.tagStatus == "active") {
+          doseGetAll.tagStatus = "ใช้งาน";
         } else {
-          doesGetAll.tagStatus = "ไม่ใช้งาน";
+          doseGetAll.tagStatus = "ไม่ใช้งาน";
         }
       });
-      this.allTags = doesGetAll;
+      this.allTags = doseGetAll;
     },
 
     editItem(item) {
@@ -228,7 +208,6 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
-      this.initialize();
     },
 
     closeDelete() {
@@ -238,24 +217,15 @@ export default {
         this.editedIndex = -1;
       });
     },
-    closeInsert() {
-      this.dialogInsert = false;
-    },
 
-    async save() {
-      this.editedItem.tagCreateBy = 1;
-      this.editedItem.tagUpdateBy = 1;
-      const [insertResult] = await this.insertTag(this.editedItem);
-      if (typeof insertResult === "number") {
-        console.log("congrat");
-        this.close();
-        this.dialogInsert = true;
-      }
+    save() {
+      await this.insertTag();
       if (this.editedIndex > -1) {
         Object.assign(this.allTags[this.editedIndex], this.editedItem);
       } else {
         this.allTags.push(this.editedItem);
       }
+      this.close();
     }
   }
 };
