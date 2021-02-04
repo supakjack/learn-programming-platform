@@ -83,6 +83,7 @@ export default {
           data: payload,
         });
         console.log(response);
+        this.$router.push('/home');
         // if (response.data.success) {
         //   this.$router.replace({ name: "home" });
         //   this.$vs.notify({
