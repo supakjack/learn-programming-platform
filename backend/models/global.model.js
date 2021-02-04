@@ -31,11 +31,20 @@ module.exports = {
         const doseSelect = knex.select(table.filter).from(table.name);
         if (table.leftJoin) {
           table.leftJoin.forEach((leftJoin) => {
-            doseSelect.leftJoin(
-              leftJoin.joinTable,
-              table.name + "." + leftJoin.leftKey,
-              leftJoin.joinTable + "." + leftJoin.joinKey
-            );
+            if (leftJoin.As) {
+              doseSelect
+                .leftJoin(
+                  leftJoin.tableAs,
+                  table.name + "." + leftJoin.leftKey,
+                  leftJoin.As + "." + leftJoin.joinKey
+                );
+            } else {
+              doseSelect.leftJoin(
+                leftJoin.joinTable,
+                table.name + "." + leftJoin.leftKey,
+                leftJoin.joinTable + "." + leftJoin.joinKey
+              );
+            }
           });
         }
         if (table.condition) {
@@ -48,6 +57,7 @@ module.exports = {
             doseSelect.whereNot(whereNot);
           });
         }
+        // console.log(doseSelect);
         resolve(doseSelect);
       } catch (error) {
         console.log(error.message);

@@ -47,6 +47,7 @@
 
                   <v-col justify="right" cols="12" sm="6" md="4">
                     <v-select
+                      v-model="editedItem.tagStatus"
                       :items="tagStatus"
                       menu-props="auto"
                       label="สถานะ"
@@ -57,7 +58,6 @@
                 </v-row>
               </v-container>
             </v-card-text>
-
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="close">
@@ -71,17 +71,17 @@
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
-            <v-card-title class="headline"
-              >Are you sure you want to delete this item?</v-card-title
-            >
+            <v-card-title class="headline">
+              Are you sure you want to delete this item?
+            </v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete"
-                >Cancel</v-btn
-              >
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                >OK</v-btn
-              >
+              <v-btn color="blue darken-1" text @click="closeDelete">
+                Cancel
+              </v-btn>
+              <v-btn color="blue darken-1" text @click="deleteItemConfirm">
+                OK
+              </v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -121,8 +121,8 @@ export default {
       { text: "ชื่อแท็ก", value: "tagName" },
       { text: "สร้างขึ้นเมื่อ", value: "tagCreateDate" },
       { text: "แก้ไขล่าสุด", value: "tagUpdateDate" },
-      // { text: "สร้างโดย", value: "userFirstnameEnglish" },
-      { text: "แก้ไขล่าสุดโดย", value: "userFirstnameEnglish" },
+      { text: "สร้างโดย", value: "createName" },
+      { text: "แก้ไขล่าสุดโดย", value: "updateName" },
       { text: "สถานะ", value: "tagStatus" },
       { text: "ดำเนินการ", value: "actions", sortable: false }
     ],
@@ -219,6 +219,7 @@ export default {
     },
 
     save() {
+      await this.insertTag();
       if (this.editedIndex > -1) {
         Object.assign(this.allTags[this.editedIndex], this.editedItem);
       } else {

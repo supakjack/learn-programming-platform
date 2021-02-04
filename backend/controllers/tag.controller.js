@@ -74,11 +74,33 @@ module.exports = {
         name: "tags",
         condition: [getTagData],
         whereNot: [{ tagStatus: "delete" }],
-        filter: ['tagId','tagName','tagStatus','tagCreateDate','tagUpdateDate','tagUpdateBy','userFirstnameEnglish'],
+        filter: [
+          "tagId",
+          "tagName",
+          "tagStatus",
+          "tagCreateDate",
+          "tagUpdateDate",
+          "createUser.UserFirstnameEnglish AS createName",
+          "updateUser.UserFirstnameEnglish AS updateName",
+        ],
         leftJoin: [
-          { joinTable: "users", leftKey: "tagUpdateBy", joinKey: "userId" },
+          {
+            joinTable: "users",
+            tableAs: "users AS createUser",
+            As: "createUser",
+            leftKey: "tagCreateBy",
+            joinKey: "userId",
+          },
+          {
+            joinTable: "users",
+            tableAs: "users AS updateUser",
+            As: "updateUser",
+            leftKey: "tagUpdateBy",
+            joinKey: "userId",
+          },
         ],
       });
+      console.log(doseGetAll);
       res.status(201).send({ doseGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
