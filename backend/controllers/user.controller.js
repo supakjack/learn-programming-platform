@@ -9,7 +9,7 @@ module.exports = {
   get: async (req, res, next) => {
     const getUserData = await userSchema.validateAsync(req.query);
     try {
-      const doseGetAll = await globalModel.select({
+      const doesGetAll = await globalModel.select({
         name: "users",
         condition: [getUserData],
         filter: [
@@ -25,8 +25,8 @@ module.exports = {
           userStatus,
         ],
       });
-      console.log(doseGetAll);
-      res.status(201).send({ doseGetAll });
+      console.log(doesGetAll);
+      res.status(201).send({ doesGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
@@ -35,11 +35,11 @@ module.exports = {
   add: async (req, res, next) => {
     const addUserData = await userSchema.validateAsync(req.body);
     try {
-      const doseCreate = await globalModel.insert({
+      const doesCreate = await globalModel.insert({
         name: "users",
         insertData: [addUserData],
       });
-      res.status(200).send({ doseCreate });
+      res.status(200).send({ doesCreate });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
@@ -48,12 +48,12 @@ module.exports = {
   update: async (req, res, next) => {
     const updateUser = await userSchema.validateAsync(req.query);
     try {
-      const doseUpdate = await globalModel.update({
+      const doesUpdate = await globalModel.update({
         name: "users",
         condition: [updateUser],
         updateData: [updateuserData],
       });
-      res.status(200).send({ doseUpdate });
+      res.status(200).send({ doesUpdate });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);

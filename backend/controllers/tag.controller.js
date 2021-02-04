@@ -21,11 +21,11 @@ module.exports = {
 
     // try call function createTag in tags model then catch if error
     try {
-      const doseCreate = await globalModel.insert({
+      const doesCreate = await globalModel.insert({
         name: "tags",
         insertData: [createTagData],
       });
-      res.status(200).send({ doseCreate });
+      res.status(200).send({ doesCreate });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
@@ -46,12 +46,12 @@ module.exports = {
 
     // try call function deleteTag in tags model then catch if error
     try {
-      const doseUpdate = await globalModel.update({
+      const doesUpdate = await globalModel.update({
         name: "tags",
         condition: [updateCondition],
         updateData: [updateTagData],
       });
-      res.status(200).send({ doseUpdate });
+      res.status(200).send({ doesUpdate });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
@@ -70,7 +70,7 @@ module.exports = {
 
     // try call function getTagById in tags model then catch if error
     try {
-      const doseGetAll = await globalModel.select({
+      const doesGetAll = await globalModel.select({
         name: "tags",
         condition: [getTagData],
         whereNot: [{ tagStatus: "delete" }],
@@ -86,22 +86,22 @@ module.exports = {
         leftJoin: [
           {
             joinTable: "users",
-            tableAs: "users AS createUser",
-            As: "createUser",
+            tableAs: "users as createUser",
+            as: "createUser",
             leftKey: "tagCreateBy",
             joinKey: "userId",
           },
           {
             joinTable: "users",
-            tableAs: "users AS updateUser",
-            As: "updateUser",
+            tableAs: "users as updateUser",
+            as: "updateUser",
             leftKey: "tagUpdateBy",
             joinKey: "userId",
           },
         ],
       });
-      console.log(doseGetAll);
-      res.status(201).send({ doseGetAll });
+      console.log(doesGetAll);
+      res.status(201).send({ doesGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);

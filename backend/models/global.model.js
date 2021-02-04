@@ -11,8 +11,8 @@ module.exports = {
   insert: async (table) => {
     return new Promise((resolve, reject) => {
       try {
-        const doseInsert = knex(table.name).insert(table.insertData);
-        resolve(doseInsert);
+        const doesInsert = knex(table.name).insert(table.insertData);
+        resolve(doesInsert);
       } catch (error) {
         console.log(error.message);
         reject(createError.InternalServerError());
@@ -28,18 +28,18 @@ module.exports = {
   select: async (table) => {
     return new Promise((resolve, reject) => {
       try {
-        const doseSelect = knex.select(table.filter).from(table.name);
+        const doesSelect = knex.select(table.filter).from(table.name);
         if (table.leftJoin) {
           table.leftJoin.forEach((leftJoin) => {
-            if (leftJoin.As) {
-              doseSelect
+            if (leftJoin.as) {
+              doesSelect
                 .leftJoin(
                   leftJoin.tableAs,
                   table.name + "." + leftJoin.leftKey,
-                  leftJoin.As + "." + leftJoin.joinKey
+                  leftJoin.as + "." + leftJoin.joinKey
                 );
             } else {
-              doseSelect.leftJoin(
+              doesSelect.leftJoin(
                 leftJoin.joinTable,
                 table.name + "." + leftJoin.leftKey,
                 leftJoin.joinTable + "." + leftJoin.joinKey
@@ -49,16 +49,16 @@ module.exports = {
         }
         if (table.condition) {
           table.condition.forEach((condition) => {
-            doseSelect.where(condition);
+            doesSelect.where(condition);
           });
         }
         if (table.whereNot) {
           table.whereNot.forEach((whereNot) => {
-            doseSelect.whereNot(whereNot);
+            doesSelect.whereNot(whereNot);
           });
         }
-        // console.log(doseSelect);
-        resolve(doseSelect);
+        // console.log(doesSelect);
+        resolve(doesSelect);
       } catch (error) {
         console.log(error.message);
         reject(createError.InternalServerError());
@@ -74,18 +74,18 @@ module.exports = {
   update: async (table) => {
     return new Promise((resolve, reject) => {
       try {
-        const doseUpdate = knex(table.name);
+        const doesUpdate = knex(table.name);
         if (table.condition) {
           table.condition.forEach((condition) => {
-            doseUpdate.where(condition);
+            doesUpdate.where(condition);
           });
           if (table.updateData) {
             table.updateData.forEach((updateData) => {
-              doseUpdate.update(updateData);
+              doesUpdate.update(updateData);
             });
           }
         }
-        resolve(doseUpdate);
+        resolve(doesUpdate);
       } catch (error) {
         console.log(error.message);
         reject(createError.InternalServerError());
@@ -101,8 +101,8 @@ module.exports = {
   delete: async (table) => {
     return new Promise((resolve, reject) => {
       try {
-        const doseDelete = knex(table.name).where(table.condition).del();
-        resolve(doseDelete);
+        const doesDelete = knex(table.name).where(table.condition).del();
+        resolve(doesDelete);
       } catch (error) {
         console.log(error.message);
         reject(createError.InternalServerError());

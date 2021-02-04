@@ -13,11 +13,11 @@ module.exports = {
 
     // try call function createTag in assesses model then catch if error
     try {
-      const doseCreate = await globalModel.insert({
+      const doesCreate = await globalModel.insert({
         name: 'assesses',
         insertData: [createAssessData]
       })
-      res.status(201).send({ doseCreate })
+      res.status(201).send({ doesCreate })
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError())
       next(error)
@@ -35,11 +35,11 @@ module.exports = {
 
     // try call function getTagById in tags model then catch if error
     try {
-      const doseGetAll = await problemsModel.select({
+      const doesGetAll = await problemsModel.select({
         name: "problems",
         condition: [getProblemData],
       });
-      res.status(201).send({ doseGetAll });
+      res.status(201).send({ doesGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
