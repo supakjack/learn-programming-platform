@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const fileupload = require("express-fileupload");
 require("dotenv").config();
 
+const accountRoute = require("./routers/user.router");
 const assignmentRoute = require("./routers/assignment.router");
 const tagRoute = require("./routers/tag.router");
 const ideRoute = require("./routers/ide.router");
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(fileupload());
 
+app.use("/user", accountRoute);
 app.use("/assignment", assignmentRoute);
 app.use("/tag", tagRoute);
 app.use("/ide", ideRoute);

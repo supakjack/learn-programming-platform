@@ -26,18 +26,53 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     "@nuxtjs/vuetify",
-    "@nuxtjs/tailwindcss"
+    "@nuxtjs/tailwindcss",
+    "@nuxtjs/moment"
   ],
 
+  // moment nuxt plugin
+  moment: {
+    timezone: true,
+    locales: ["th"]
+  },
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     // https://go.nuxtjs.dev/axios
-    "@nuxtjs/axios"
+    "@nuxtjs/axios",
+    "@nuxtjs/auth-next"
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
     baseURL: "http://localhost:3002"
+  },
+  auth: {
+    cookie: {
+      prefix: "token"
+    },
+    localStorage: false,
+    strategies: {
+      local: {
+        token: {
+          required: true,
+          type: "Bearer"
+        },
+        endpoints: {
+          login: {
+            url: "auth/login",
+            method: "post",
+            propertyName: "data.token"
+          },
+          logout: false,
+          user: false
+        }
+      }
+    },
+    redirect: {
+      login: "/sign-in",
+      logout: "/sign-in",
+      home: "/home"
+    }
   },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)

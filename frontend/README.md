@@ -1,5 +1,5 @@
 # lpp-frontend
-
+# After pull from git always run npm i command for update project
 ## Build Setup
 
 ```bash

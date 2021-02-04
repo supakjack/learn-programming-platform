@@ -17,6 +17,7 @@ const createTagSchema = joi.object({
 const getTagSchema = joi.object({
   tagId: joi.number().max(99999999).min(1),
   tagCreateBy: joi.number().integer().max(99999999).min(1),
+  tagStatus: joi.number().integer().max(3),
 });
 
 // filter update params schema

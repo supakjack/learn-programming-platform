@@ -63,7 +63,7 @@ module.exports = {
   // input : query string : condition {tagId , tagCreateBy}
   // output : tagId, tagName, tagStatus, tagCreateDate, tagUpdateDate, tagCreateBy, tagUpdateBy
   // CreateBy: Niphitphon Thanatkulkit / CreateDate: 14/1/2021
-  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 25/1/2021
+  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 4/2/2021
   get: async (req, res, next) => {
     // passing data from query string validate data from getTagSchema
     const getTagData = await getTagSchema.validateAsync(req.query);
@@ -73,7 +73,34 @@ module.exports = {
       const doseGetAll = await globalModel.select({
         name: "tags",
         condition: [getTagData],
+        whereNot: [{ tagStatus: "delete" }],
+        filter: [
+          "tagId",
+          "tagName",
+          "tagStatus",
+          "tagCreateDate",
+          "tagUpdateDate",
+          "createUser.UserFirstnameEnglish AS createName",
+          "updateUser.UserFirstnameEnglish AS updateName",
+        ],
+        leftJoin: [
+          {
+            joinTable: "users",
+            tableAs: "users AS createUser",
+            As: "createUser",
+            leftKey: "tagCreateBy",
+            joinKey: "userId",
+          },
+          {
+            joinTable: "users",
+            tableAs: "users AS updateUser",
+            As: "updateUser",
+            leftKey: "tagUpdateBy",
+            joinKey: "userId",
+          },
+        ],
       });
+      console.log(doseGetAll);
       res.status(201).send({ doseGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
