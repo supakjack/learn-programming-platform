@@ -4,10 +4,12 @@
     :items="allTags"
     :items-per-page="8"
     item-key="tagId"
-    sort-by="tagStatus"
+    :sort-by="['tagStatus', 'tagUpdateDate']"
+    :sort-desc="[false, true]"
+    multi-sort
     :search="search"
-    class="elevation-1 kanit-font"
     height="450"
+    class="elevation-1 kanit-font"
   >
     <template v-slot:top>
       <v-toolbar flat class="kanit-font">
@@ -113,18 +115,17 @@ export default {
     search: "",
     headers: [
       {
-        align: "end",
+        align: "center",
         sortable: false
       },
       { text: "ชื่อแท็ก", value: "tagName" },
       { text: "สร้างขึ้นเมื่อ", value: "tagCreateDate" },
       { text: "แก้ไขล่าสุด", value: "tagUpdateDate" },
-      { text: "สร้างโดย", value: "userFirstnameEnglish" },
+      // { text: "สร้างโดย", value: "userFirstnameEnglish" },
       { text: "แก้ไขล่าสุดโดย", value: "userFirstnameEnglish" },
       { text: "สถานะ", value: "tagStatus" },
       { text: "ดำเนินการ", value: "actions", sortable: false }
     ],
-    desserts: [],
     tag: [],
     editedIndex: -1,
     editedItem: {
@@ -143,7 +144,7 @@ export default {
   async mounted() {
     // const { doseGetAll } = await this.getTag();
     // this.allTags = doseGetAll;
-    console.log(this.allTags);
+    // console.log(this.allTags);
   },
 
   computed: {
