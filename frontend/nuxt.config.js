@@ -38,12 +38,41 @@ export default {
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     // https://go.nuxtjs.dev/axios
-    "@nuxtjs/axios"
+    "@nuxtjs/axios",
+    "@nuxtjs/auth-next"
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    baseURL: "http://localhost:3002"
+    baseURL: "http://localhost:3001"
+  },
+  auth: {
+    cookie: {
+      prefix: "token"
+    },
+    localStorage: false,
+    strategies: {
+      local: {
+        token: {
+          required: true,
+          type: "Bearer"
+        },
+        endpoints: {
+          login: {
+            url: "auth/login",
+            method: "post",
+            propertyName: "data.token"
+          },
+          logout: false,
+          user: false
+        }
+      }
+    },
+    redirect: {
+      login: "/sign-in",
+      logout: "/sign-in",
+      home: "/"
+    }
   },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
