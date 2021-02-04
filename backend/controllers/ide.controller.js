@@ -1,8 +1,11 @@
 const createError = require("http-errors");
 const { comileLogic } = require("./../helpers/compile.helper");
+const globalModel = require("../models/global.model");
 const nanoid = require("nanoid");
 const mkdirp = require("mkdirp");
 const path = require("path");
+
+const { createFiles } = require("./../helpers/validation.helper");
 
 module.exports = {
   // function name: run
@@ -39,6 +42,7 @@ module.exports = {
   // CreateBy: Theo Seathan / CreateDate: 1/2/2021
   // UpdateBy: Theo Seathan / UpdateDate: 1/2/2021
   submit: async (req, res, next) => {
+    //Create dir path
     const yearName = req.body.yearName,
       courseCode = req.body.courseCode,
       sectionNumber = req.body.sectionNumber,
@@ -47,7 +51,11 @@ module.exports = {
       userUsername = req.body.userUsername,
       taskId = req.body.taskId,
       memeFile = req.body.memeFile,
-      singleFile = req.files.singleFile;
+      singleFile = req.files.singleFile,
+      //insert files table
+      fileCreateBy = req.body.fileCreateBy,
+      fileUpdateBy = req.body.fileUpdateBy;
+
     const no = 1;
     try {
       singleFile.name = nanoid(6) + "." + memeFile;
@@ -71,7 +79,20 @@ module.exports = {
 
       await singleFile.mv(filePath + "\\" + singleFile.name);
 
-      res.status(200).send(req.files);
+      // schema files table
+      const createFilesData = await createFiles.validateAsync({
+        filePath: filePath,
+        fileCreateBy: fileCreateBy,
+        fileUpdateBy: fileUpdateBy,
+      });
+
+      // insert to files table
+      const doseCreateLog = await globalModel.insert({
+        name: "files",
+        insertData: [createFilesData],
+      });
+
+      res.status(200).send(doseCreateLog);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
