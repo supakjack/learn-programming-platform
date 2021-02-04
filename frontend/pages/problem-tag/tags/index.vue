@@ -2,10 +2,12 @@
   <v-data-table
     :headers="headers"
     :items="allTags"
-    :items-per-page="5"
+    :items-per-page="8"
+    item-key="tagId"
     sort-by="tagStatus"
     :search="search"
     class="elevation-1 kanit-font"
+    height="450"
   >
     <template v-slot:top>
       <v-toolbar flat class="kanit-font">
@@ -34,35 +36,21 @@
             <v-card-text class="kanit-font">
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="12" md="12">
                     <v-text-field
-                      v-model="editedItem.name"
-                      label="Dessert name"
+                      v-model="editedItem.tagName"
+                      label="ชื่อแท็ก"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.calories"
-                      label="Calories"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.fat"
-                      label="Fat (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.carbs"
-                      label="Carbs (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.protein"
-                      label="Protein (g)"
-                    ></v-text-field>
+
+                  <v-col justify="right" cols="12" sm="6" md="4">
+                    <v-select
+                      :items="tagStatus"
+                      menu-props="auto"
+                      label="สถานะ"
+                      hide-details
+                      single-line
+                    ></v-select>
                   </v-col>
                 </v-row>
               </v-container>
@@ -98,7 +86,7 @@
         </v-dialog>
       </v-toolbar>
     </template>
-    <template>
+    <template v-slot:[`item.actions`]="{ item }">
       <v-icon small class="mr-2" @click="editItem(item)">
         mdi-pencil
       </v-icon>
@@ -125,35 +113,32 @@ export default {
     search: "",
     headers: [
       {
-        align: "start",
+        align: "end",
         sortable: false
-        // value: "tagId"
       },
       { text: "ชื่อแท็ก", value: "tagName" },
       { text: "สร้างขึ้นเมื่อ", value: "tagCreateDate" },
       { text: "แก้ไขล่าสุด", value: "tagUpdateDate" },
-      { text: "สร้างโดย", value: "tagCreateBy" },
-      { text: "แก้ไขล่าสุดโดย", value: "tagUpdateBy" },
+      { text: "สร้างโดย", value: "userFirstnameEnglish" },
+      { text: "แก้ไขล่าสุดโดย", value: "userFirstnameEnglish" },
       { text: "สถานะ", value: "tagStatus" },
-      { text: "Actions", value: "actions", sortable: false }
+      { text: "ดำเนินการ", value: "actions", sortable: false }
     ],
     desserts: [],
     tag: [],
     editedIndex: -1,
     editedItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
+      tagName: "",
+      tagStatus: 0
     },
     defaultItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
-    }
+      tagName: "",
+      tagStatus: 0
+    },
+    tagStatus: [
+      { text: "ใช้งาน", value: 1 },
+      { text: "ไม่ใช้งาน", value: 2 }
+    ]
   }),
   async mounted() {
     // const { doseGetAll } = await this.getTag();
@@ -178,15 +163,24 @@ export default {
 
   async created() {
     this.initialize();
-    // console.log("call getTag from mixin");
-    // this.getTag()
-
-    // console.log(this.response);
   },
 
   methods: {
     async initialize() {
       const { doseGetAll } = await this.getTag();
+      doseGetAll.map(doseGetAll => {
+        doseGetAll.tagCreateDate = this.$moment(
+          doseGetAll.tagCreateDate
+        ).format("Do MMM YY เวลา LT");
+        doseGetAll.tagUpdateDate = this.$moment(
+          doseGetAll.tagUpdateDate
+        ).format("Do MMM YY เวลา LT");
+        if (doseGetAll.tagStatus == "active") {
+          doseGetAll.tagStatus = "ใช้งาน";
+        } else {
+          doseGetAll.tagStatus = "ไม่ใช้งาน";
+        }
+      });
       this.allTags = doseGetAll;
     },
 

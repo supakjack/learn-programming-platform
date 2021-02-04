@@ -31,6 +31,11 @@ module.exports = {
             doseSelect.where(condition);
           });
         }
+        if (table.whereNot) {
+          table.whereNot.forEach((whereNot) => {
+            doseSelect.whereNot(whereNot);
+          });
+        }
         resolve(doseSelect);
       } catch (error) {
         console.log(error.message);
