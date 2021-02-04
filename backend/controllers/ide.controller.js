@@ -81,7 +81,7 @@ module.exports = {
 
       // schema files table
       const createFilesData = await createFiles.validateAsync({
-        filePath: filePath,
+        filePath: filePath + "\\" + singleFile.name,
         fileCreateBy: fileCreateBy,
         fileUpdateBy: fileUpdateBy,
       });
