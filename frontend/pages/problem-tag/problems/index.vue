@@ -155,8 +155,8 @@ export default {
     }
   }),
   async mounted() {
-    // const { doseGetAll } = await this.getProblem();
-    // this.allProblems = doseGetAll;
+    // const { doesGetAll } = await this.getProblem();
+    // this.allProblems = doesGetAll;
     console.log(this.allProblems);
   },
 
@@ -185,8 +185,8 @@ export default {
 
   methods: {
     async initialize() {
-      const { doseGetAll } = await this.getProblem();
-      this.allProblems = doseGetAll;
+      const { doesGetAll } = await this.getProblem();
+      this.allProblems = doesGetAll;
     },
 
     editItem(item) {

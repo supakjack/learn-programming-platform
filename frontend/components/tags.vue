@@ -10,8 +10,8 @@ export default {
     async editTag() {
       return this.$axios.$patch("/tag");
     },
-    async insertTag() {
-      return this.$axios.$post("/tag");
+    async insertTag(data) {
+      return this.$axios.$post("/tag", data).then(response => response.doesCreate);
     }
   }
 };
