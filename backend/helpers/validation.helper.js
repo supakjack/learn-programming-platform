@@ -5,6 +5,10 @@ const authSchema = joi.object({
   password: joi.string().min(2).required(),
 });
 
+const userSchema = joi.object({
+  userUsername: joi.string().required(),
+});
+
 // create tag schema
 const createTagSchema = joi.object({
   tagName: joi.string().max(255).required(),
