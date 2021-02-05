@@ -1,6 +1,11 @@
 <template>
   <v-data-table
     :headers="headers"
+    :footer-props="{
+      'items-per-page-options': [8, 15, 20, -1],
+      'items-per-page-text': `จำนวนแถวต่อหน้า`,
+      'items-per-page-all-text': `ทั้งหมด`
+    }"
     :items="allTags"
     :items-per-page="8"
     item-key="tagId"
@@ -88,13 +93,13 @@
         </v-dialog>
         <v-dialog v-model="dialogInsert" max-width="500px">
           <v-card>
-            <v-card-title class="headline">
-              Insert Success
+            <v-card-title class="headline kanit-font">
+              {{ SuccessTitle }}
             </v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeInsert">
-                ok
+              <v-btn color="blue darken-1 kanit-font" text @click="closeInsert">
+                ตกลง
               </v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
@@ -144,12 +149,14 @@ export default {
     tag: [],
     editedIndex: -1,
     editedItem: {
+      tagId: 0,
       tagName: "",
       tagStatus: 0,
       tagCreateBy: 0,
       tagUpdateBy: 0
     },
     defaultItem: {
+      tagId: 0,
       tagName: "",
       tagStatus: 0,
       tagCreateBy: 0,
@@ -169,6 +176,9 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "สร้างแท็ก" : "แก้ไขแท็ก";
+    },
+    SuccessTitle() {
+      return this.editedIndex === -1 ? "บันทึกสำเร็จ" : "แก้ไขสำเร็จ";
     }
   },
 
@@ -188,7 +198,7 @@ export default {
   methods: {
     async initialize() {
       const { doesGetAll } = await this.getTag();
-     
+
       doesGetAll.map(doesGetAll => {
         doesGetAll.tagCreateDate = this.$moment(
           doesGetAll.tagCreateDate
@@ -207,7 +217,17 @@ export default {
 
     editItem(item) {
       this.editedIndex = this.allTags.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.editedItem.tagId = item.tagId;
+      this.editedItem.tagStatus = item.tagStatus;
+      this.editedItem.tagName = item.tagName;
+      this.editedItem.tagCreateBy = 1;
+      this.editedItem.tagUpdateBy = this.editedItem.tagCreateBy;
+      this.editedItem.tagUpdateDate = this.$moment().format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      // this.editedItem.tagCreateBy = item.tagCreateBy;
+      // this.editedItem.tagUpdateBy = this.editedItem.tagCreateBy;
+
       this.dialog = true;
     },
 
@@ -243,18 +263,23 @@ export default {
     },
 
     async save() {
-      this.editedItem.tagCreateBy = 1;
-      this.editedItem.tagUpdateBy = 1;
-      const [insertResult] = await this.insertTag(this.editedItem);
-      if (typeof insertResult === "number") {
-      
-        this.close();
-        this.dialogInsert = true;
-      }
+      // if  this.editedIndex > -1 == it edited tag else insert tag
       if (this.editedIndex > -1) {
-        Object.assign(this.allTags[this.editedIndex], this.editedItem);
+        const EditResult = await this.editTag(this.editedItem);
+        if (typeof EditResult === "number") {
+          this.close();
+          this.dialogInsert = true;
+        }
       } else {
-        this.allTags.push(this.editedItem);
+        this.editedItem.tagCreateBy = 1;
+        this.editedItem.tagUpdateBy = this.editedItem.tagCreateBy;
+
+        const [insertResult] = await this.insertTag(this.editedItem);
+
+        if (typeof insertResult === "number") {
+          this.close();
+          this.dialogInsert = true;
+        }
       }
     }
   }
