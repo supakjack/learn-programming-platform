@@ -27,11 +27,9 @@ const updateTagConditionSchema = joi.object({
 
 // update tag schema
 const updateTagSchema = joi.object({
-  tagId: joi.number().integer().max(99999999),
   tagName: joi.string().max(255),
-  tagUpdateDate: joi.date().timestamp(),
   tagUpdateBy: joi.number().max(99999999).min(1),
-  tagCreateBy: joi.number().max(99999999).min(1),
+  tagUpdateDate: joi.date().raw(),
   tagStatus: joi.number().integer().max(3),
 });
 
