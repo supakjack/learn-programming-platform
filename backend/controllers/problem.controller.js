@@ -12,11 +12,19 @@ module.exports = {
 
     // try call function createTag in assesses model then catch if error
     try {
+<<<<<<< HEAD
       const doseCreate = await globalModel.insert({
         name: "assesses",
         insertData: [createAssessData],
       });
       res.status(201).send({ doseCreate });
+=======
+      const doesCreate = await globalModel.insert({
+        name: 'assesses',
+        insertData: [createAssessData]
+      })
+      res.status(201).send({ doesCreate })
+>>>>>>> 998cccdcb0dab8369bc29c7ae111d1860730227b
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
@@ -51,7 +59,11 @@ module.exports = {
 
     // try call function getTagById in tags model then catch if error
     try {
+<<<<<<< HEAD
       const doseGetAll = await globalModel.select({
+=======
+      const doesGetAll = await problemsModel.select({
+>>>>>>> 998cccdcb0dab8369bc29c7ae111d1860730227b
         name: "problems",
         condition: [getProblemData],
         leftJoin: [
@@ -62,7 +74,7 @@ module.exports = {
           },
         ],
       });
-      res.status(201).send({ doseGetAll });
+      res.status(201).send({ doesGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);

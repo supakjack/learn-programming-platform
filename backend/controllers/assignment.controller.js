@@ -21,11 +21,11 @@ module.exports = {
 
     // try call function getTagById in tags model then catch if error
     try {
-      const doseGetAll = await assignmentModel.select({
+      const doesGetAll = await assignmentModel.select({
         name: "assignment",
         condition: [getAssignmentData],
       });
-      res.status(201).send({ doseGetAll });
+      res.status(201).send({ doesGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);

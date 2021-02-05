@@ -5,13 +5,13 @@ module.exports = {
   select: async (table) => {
     return new Promise((resolve, reject) => {
       try {
-        const doseSelect = knex.select(table.filter).from(table.name);
+        const doesSelect = knex.select(table.filter).from(table.name);
         if (table.condition) {
           table.condition.forEach((condition) => {
-            doseSelect.where(condition);
+            doesSelect.where(condition);
           });
         }
-        resolve(doseSelect);
+        resolve(doesSelect);
       } catch (error) {
         console.log(error.message);
         reject(createError.InternalServerError());
