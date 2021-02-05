@@ -132,7 +132,7 @@ export default {
       { text: "ข้อ", value: "problemId" },
       { text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
       { text: "วันที่สร้าง", value: "problemCreateDate" },
-      { text: "คะแนน", value: "problemScore" },
+      { text: "คะแนน", value: "taskScore" },
       { text: "สถานะ", value: "problemStatus" },
       { text: "การจัดการ", value: "actions", sortable: false }
     ],

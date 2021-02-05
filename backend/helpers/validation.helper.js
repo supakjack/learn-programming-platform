@@ -48,6 +48,16 @@ const getProblemSchema = joi.object({
 });
 
 // get problem schema
+// const getProblemSchema = joi.object({
+//   problemId: joi.number().max(99999999).min(1).required(),
+//   tasksProblemId: joi.number().max(99999999).min(1),
+//   problemTitle: joi.string().max(255),
+//   problemCreateDate: joi.number().max(99999999).min(1),
+//   problemStatus: joi.number().integer().max(3),
+//   taskScore: joi.number().max(10).min(1).required()
+// })
+
+// get assignment schema
 const getAssignmentSchema = joi.object({
   assignmentId: joi.number().max(99999999).min(1),
 });
