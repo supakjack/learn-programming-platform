@@ -32,12 +32,11 @@ module.exports = {
         if (table.leftJoin) {
           table.leftJoin.forEach((leftJoin) => {
             if (leftJoin.as) {
-              doesSelect
-                .leftJoin(
-                  leftJoin.tableAs,
-                  table.name + "." + leftJoin.leftKey,
-                  leftJoin.as + "." + leftJoin.joinKey
-                );
+              doesSelect.leftJoin(
+                leftJoin.tableAs,
+                table.name + "." + leftJoin.leftKey,
+                leftJoin.as + "." + leftJoin.joinKey
+              );
             } else {
               doesSelect.leftJoin(
                 leftJoin.joinTable,
@@ -57,7 +56,6 @@ module.exports = {
             doesSelect.whereNot(whereNot);
           });
         }
-        // console.log(doesSelect);
         resolve(doesSelect);
       } catch (error) {
         console.log(error.message);
