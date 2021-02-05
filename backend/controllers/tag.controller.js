@@ -14,12 +14,12 @@ module.exports = {
   // input: tagName, tagStatus, tagCreateby , tagUpdateBy
   // output: text response
   // CreateBy: Niphitphon Thanatkulkit / CreateDate: 14/1/2021
-  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 25/1/2021
+  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 5/2/2021
   create: async (req, res, next) => {
     // passing data from body and valid by createTagSchema
     const createTagData = await createTagSchema.validateAsync(req.body);
 
-    // try call function createTag in tags model then catch if error
+    // try call function createTag in global model then catch if error
     try {
       const doesCreate = await globalModel.insert({
         name: "tags",
@@ -37,14 +37,13 @@ module.exports = {
   // input: condition when update / condition: {tagId, tagName, tagUpdateDate, tagUpdateBy, tagCreateBy, tagStatus }
   // output: text response
   // CreateBy: Niphitphon Thanatkulkit / CreateDate: 14/1/2021
-  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 25/1/2021
+  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 5/2/2021
   update: async (req, res, next) => {
     const updateCondition = await updateTagConditionSchema.validateAsync(
       req.query
     );
     const updateTagData = await updateTagSchema.validateAsync(req.body);
-
-    // try call function deleteTag in tags model then catch if error
+    // try call function deleteTag in global model then catch if error
     try {
       const doesUpdate = await globalModel.update({
         name: "tags",
@@ -63,12 +62,12 @@ module.exports = {
   // input : query string : condition {tagId , tagCreateBy}
   // output : tagId, tagName, tagStatus, tagCreateDate, tagUpdateDate, tagCreateBy, tagUpdateBy
   // CreateBy: Niphitphon Thanatkulkit / CreateDate: 14/1/2021
-  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 4/2/2021
+  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 5/2/2021
   get: async (req, res, next) => {
     // passing data from query string validate data from getTagSchema
     const getTagData = await getTagSchema.validateAsync(req.query);
 
-    // try call function getTagById in tags model then catch if error
+    // try call function getTagById in global model then catch if error
     try {
       const doesGetAll = await globalModel.select({
         name: "tags",
@@ -100,7 +99,6 @@ module.exports = {
           },
         ],
       });
-      console.log(doesGetAll);
       res.status(201).send({ doesGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
