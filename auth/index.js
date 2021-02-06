@@ -5,11 +5,11 @@ const path = require('path')
 const createError = require('http-errors')
 const cors = require('cors')
 const passport = require('passport')
+const proxy = require('express-http-proxy')
 require('dotenv').config()
 require('./configs/passport.config')
 
 const authRoute = require('./routers/auth.router')
-const serviceRoute = require('./routers/service.router')
 
 const app = express()
 
@@ -25,7 +25,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.use('/auth', authRoute)
-app.use('/service', serviceRoute)
+app.all('*', proxy(process.env.END_POINT_BASE_URL))
 
 app.use(
   '/test',

@@ -2,10 +2,10 @@
 export default {
   methods: {
     async getTag() {
-      return this.$axios.$get("/tag");
+      return this.$axios.$get("tag");
     },
     async deleteTag() {
-      return this.$axios.$patch("/tag");
+      return this.$axios.$patch("tag");
     },
     async editTag(data) {
      
@@ -17,7 +17,7 @@ export default {
   
       return this.$axios
         .$patch(
-          `/tag/?tagId=${data.tagId}`,
+          `tag/?tagId=${data.tagId}`,
           UpdateData
         )
         .catch(err => console.log(err))
@@ -30,7 +30,7 @@ export default {
       InsertData.tagCreateBy = data.tagCreateBy;
       InsertData.tagUpdateBy = data.tagUpdateBy;
       return this.$axios
-        .$post("/tag", InsertData)
+        .$post("tag", InsertData)
         .catch(error => {
           console.error(error);
         })

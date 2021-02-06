@@ -2,7 +2,7 @@
 export default {
   methods: {
     async getProblem() {
-      return this.$axios.$get("/problem");
+      return this.$axios.$get("problem");
     }
   }
 };

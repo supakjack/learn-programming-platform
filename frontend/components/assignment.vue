@@ -2,7 +2,7 @@
 export default {
   methods: {
     async getAssignment() {
-      return this.$axios.$get("/assignment");
+      return this.$axios.$get("assignment");
     }
   }
 };
