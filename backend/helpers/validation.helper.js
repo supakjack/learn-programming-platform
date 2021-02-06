@@ -69,6 +69,19 @@ const createFiles = joi.object({
   fileUpdateBy: joi.number().max(99999999).min(1),
 });
 
+const creteCompileLogSchema = joi.object({
+  compilelogTaskId: joi.number().max(8).min(1),
+  compilelogScore: joi.number().max(4).min(1),
+  compilelogSubmitNo: joi.number().max(2).min(1),
+  compilelogTestResult: joi.string().max(10),
+  compilelogErrorMessage: joi.string().max(255),
+  compilelogCompileStatus: joi.string().max(255),
+  compileloglanguage: joi.string().max(255).min(1),
+  compilelogFileId: joi.number().max(8).min(1),
+  compilelogCreateBy: joi.number().max(8).min(1),
+  compilelogUpdateBy: joi.number().max(8).min(1),
+});
+
 module.exports = {
   authSchema,
   createTagSchema,
@@ -79,4 +92,5 @@ module.exports = {
   getProblemSchema,
   getAssignmentSchema,
   createFiles,
+  creteCompileLogSchema,
 };

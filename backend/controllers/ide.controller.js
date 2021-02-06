@@ -6,6 +6,7 @@ const mkdirp = require("mkdirp");
 const path = require("path");
 
 const { createFiles } = require("./../helpers/validation.helper");
+const { creteCompileLogSchema } = require("./../helpers/validation.helper");
 
 module.exports = {
   // function name: run
@@ -93,6 +94,30 @@ module.exports = {
       });
 
       res.status(200).send(doseCreateLog);
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
+  // function name: create
+  // description: create compile log
+  // input:
+  // output: text response
+  // CreateBy: Theo Seathan / CreateDate: 6/2/2021
+  // UpdateBy: Theo Seathan / UpdateDate: 5/2/2021
+  create: async (req, res, next) => {
+    // passing data from body and valid by createTagSchema
+    const createCompileLogData = await creteCompileLogSchema.validateAsync(
+      req.body
+    );
+
+    // try call function createTag in global model then catch if error
+    try {
+      const doesCreate = await globalModel.insert({
+        name: "compilelogs",
+        insertData: [createCompileLogData],
+      });
+      res.status(200).send({ doesCreate });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
