@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import tagsmixin from "../../../components/tags";
+import tagsmixin from "@/components/tags";
 export default {
   mixins: [tagsmixin],
   // declare variable and data in this component

@@ -21,10 +21,10 @@
 </template>
 
 <script>
-import tags from "./../problem-tag/tags/index";
-import problems from "./../problem-tag/problems/index";
-import tagsmixin from "../../components/tags";
-import problemsmixin from "../../components/problems";
+import tags from "@/pages/problem-tag/tags/index";
+import problems from "@/pages/problem-tag/problems/index";
+import tagsmixin from "@/components/tags";
+import problemsmixin from "@/components/problems";
 
 export default {
   mixins: [tagsmixin], 
