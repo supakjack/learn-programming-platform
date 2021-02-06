@@ -37,7 +37,7 @@
           </template>
           <v-card class="kanit-font">
             <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
+              <span class="text-center">{{ formTitle }}</span>
             </v-card-title>
 
             <v-card-text class="kanit-font">
@@ -49,8 +49,9 @@
                       label="ชื่อแท็ก"
                     ></v-text-field>
                   </v-col>
-
-                  <v-col justify="right" cols="12" sm="6" md="4">
+                </v-row>
+                <v-row>
+                  <v-col cols="12" sm="6" md="4">
                     <v-select
                       v-model="editedItem.tagStatus"
                       :items="tagStatus"
@@ -76,16 +77,16 @@
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
-            <v-card-title class="headline">
-              Are you sure you want to delete this item?
+            <v-card-title class="text-center">
+              ต้องการลบแท็กนี้ใช่หรือไม่?
             </v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="closeDelete">
-                Cancel
+                ไม่
               </v-btn>
               <v-btn color="blue darken-1" text @click="deleteItemConfirm">
-                OK
+                ใช่
               </v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
@@ -93,7 +94,7 @@
         </v-dialog>
         <v-dialog v-model="dialogInsert" max-width="500px">
           <v-card>
-            <v-card-title class="headline kanit-font">
+            <v-card-title class="kanit-font text-center">
               {{ SuccessTitle }}
             </v-card-title>
             <v-card-actions>
@@ -127,18 +128,20 @@
 import tagsmixin from "../../../components/tags";
 export default {
   mixins: [tagsmixin],
+  // declare variable and data in this component
   data: () => ({
     allTags: [],
-    dialog: false,
-    dialogDelete: false,
-    dialogInsert: false,
-    search: "",
+    dialog: false, // if true show insert or edit modal
+    dialogDelete: false, // if true show delete modal
+    dialogInsert: false, // if true show Inserted success modal
+    search: "", // use for search in table all column
     headers: [
+      // use to declare data and map value in header of table
       {
         align: "center",
         sortable: false
       },
-      { text: "ชื่อแท็ก", value: "tagName" },
+      { text: "ชื่อแท็ก", value: "tagName" }, // define column name and value
       { text: "สร้างขึ้นเมื่อ", value: "tagCreateDate" },
       { text: "แก้ไขล่าสุด", value: "tagUpdateDate" },
       { text: "สร้างโดย", value: "createName" },
@@ -146,9 +149,9 @@ export default {
       { text: "สถานะ", value: "tagStatus" },
       { text: "ดำเนินการ", value: "actions", sortable: false }
     ],
-    tag: [],
-    editedIndex: -1,
+    editedIndex: -1, //  editedIndex default to -1
     editedItem: {
+      // use to add, edit and delete item
       tagId: 0,
       tagName: "",
       tagStatus: 0,
@@ -156,6 +159,7 @@ export default {
       tagUpdateBy: 0
     },
     defaultItem: {
+      // default of item value
       tagId: 0,
       tagName: "",
       tagStatus: 0,
@@ -163,15 +167,11 @@ export default {
       tagUpdateBy: 0
     },
     tagStatus: [
+      // use in select options
       { text: "ใช้งาน", value: 1 },
       { text: "ไม่ใช้งาน", value: 2 }
     ]
   }),
-  async mounted() {
-    // const { doesGetAll } = await this.getTag();
-    // this.allTags = doesGetAll;
-    // console.log(this.allTags);
-  },
 
   computed: {
     formTitle() {
@@ -191,11 +191,18 @@ export default {
     }
   },
 
+ // when created call initialize to geting all tag data
   async created() {
     this.initialize();
   },
 
   methods: {
+    // function name: initialize
+    // description: for geting data from backend using api
+    // input: -
+    // output: [doesGetAll]: {tagName, tagId, tagStatus, tagUpdateDate, tagCraeteDate ,CreateName, UpdateName}
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 1/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
     async initialize() {
       const { doesGetAll } = await this.getTag();
 
@@ -215,6 +222,41 @@ export default {
       this.allTags = doesGetAll;
     },
 
+    // function name: save
+    // description: insert tag data or edit tag data send to backend by using API
+    // input: insert: [editItem]: {tagName,tagStatus,tagCreateBy,tagUpdateBy}
+    //        edit:   [editItem]: {tagId,tagName,tagStatus,tagCreateBy,tagUpdateBy,tagUpdatedate}
+    // output: insert: TagId
+    //         edit:   rows edited
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 4/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
+    async save() {
+      // if  this.editedIndex > -1 == it edited tag else insert tag
+      if (this.editedIndex > -1) {
+        const EditResult = await this.editTag(this.editedItem);
+        if (typeof EditResult === "number") {
+          this.dialog = false;
+          this.dialogInsert = true;
+        }
+      } else {
+        this.editedItem.tagCreateBy = 1;
+        this.editedItem.tagUpdateBy = this.editedItem.tagCreateBy;
+
+        const [insertResult] = await this.insertTag(this.editedItem);
+
+        if (typeof insertResult === "number") {
+          this.close();
+          this.dialogInsert = true;
+        }
+      }
+    },
+
+    // function name: editItem
+    // description: setting value from item to editItem object for edit tag
+    // input: [item]: {tagId,tagName,tagStatus,tagCreateBy,tagUpdateBy,tagUpdatedate}
+    // output: -
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 4/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
     editItem(item) {
       this.editedIndex = this.allTags.indexOf(item);
       this.editedItem.tagId = item.tagId;
@@ -231,17 +273,44 @@ export default {
       this.dialog = true;
     },
 
+    // function name: deleteItem
+    // description: setting value from item to editItem object for delete tag
+    // input: [item]: {tagId,tagName,tagStatus,tagCreateBy,tagUpdateBy,tagUpdatedate}
+    // output: -
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 4/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
     deleteItem(item) {
       this.editedIndex = this.allTags.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.editedItem.tagId = item.tagId;
+      this.editedItem.tagName = item.tagName;
+      this.editedItem.tagStatus = 3;
+      this.editedItem.tagCreateBy = 1;
+      this.editedItem.tagUpdateBy = this.editedItem.tagCreateBy;
+      this.editedItem.tagUpdateDate = this.$moment().format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
       this.dialogDelete = true;
     },
 
-    deleteItemConfirm() {
-      this.allTags.splice(this.editedIndex, 1);
-      this.closeDelete();
+    // function name: deleteItemConfirm
+    // description: delete tag by change tagStatus to 3 number {3 meaning to delete}
+    // input: [item]: editedItem
+    // output: -
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 6/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
+    async deleteItemConfirm() {
+      const EditResult = await this.editTag(this.editedItem);
+      if (typeof EditResult === "number") {
+        this.closeDelete();
+      }
     },
 
+    // function name: close
+    // description: close insert or edit modal
+    // input: -
+    // output: -
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 4/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
     close() {
       this.dialog = false;
       this.$nextTick(() => {
@@ -251,40 +320,38 @@ export default {
       this.initialize();
     },
 
+    // function name: closeDelete
+    // description: close delete modal
+    // input: -
+    // output: -
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 6/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
     closeDelete() {
       this.dialogDelete = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
+      this.initialize();
     },
+
+    // function name: closeInsert
+    // description: close inserted modal
+    // input: -
+    // output: -
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 4/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
     closeInsert() {
       this.dialogInsert = false;
-    },
-
-    async save() {
-      // if  this.editedIndex > -1 == it edited tag else insert tag
-      if (this.editedIndex > -1) {
-        const EditResult = await this.editTag(this.editedItem);
-        if (typeof EditResult === "number") {
-          this.close();
-          this.dialogInsert = true;
-        }
-      } else {
-        this.editedItem.tagCreateBy = 1;
-        this.editedItem.tagUpdateBy = this.editedItem.tagCreateBy;
-
-        const [insertResult] = await this.insertTag(this.editedItem);
-
-        if (typeof insertResult === "number") {
-          this.close();
-          this.dialogInsert = true;
-        }
-      }
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
     }
   }
 };
 </script>
+
 <style>
 .roboto-font {
   font-family: "Roboto", sans-serif;

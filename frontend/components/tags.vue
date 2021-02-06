@@ -1,28 +1,59 @@
 <script>
 export default {
   methods: {
+    // function name: getTag
+    // description: get from backend API
+    // input: -
+    // output: [doesGetAll]: {tagName, tagId, tagStatus, tagUpdateDate, tagCraeteDate ,CreateName, UpdateName}
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 1/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
     async getTag() {
       return this.$axios.$get("tag");
     },
+
+    // function name: deleteTag
+    // description: for geting data from backend using api
+    // input: tagId,tagCreateDate,tagStatus,tagUpdateDate
+    // output: number of edited items
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 1/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
     async deleteTag() {
-      return this.$axios.$patch("tag");
-    },
-    async editTag(data) {
-     
-      const UpdateData = {};
-      UpdateData.tagName = data.tagName;
-      UpdateData.tagUpdateBy = data.tagUpdateBy;
-      UpdateData.tagStatus = data.tagStatus;
-      UpdateData.tagUpdateDate = data.tagUpdateDate;
-  
+      const deleteData = {};
+      deleteData.tagStatus = data.tagStatus;
+      deleteData.tagUpdateDate = data.tagUpdateDate;
       return this.$axios
-        .$patch(
-          `tag/?tagId=${data.tagId}`,
-          UpdateData
-        )
+        .$patch(`tag/?tagId=${data.tagId}`, deleteData)
         .catch(err => console.log(err))
         .then(response => response.doesUpdate);
     },
+
+    // function name: editTag
+    // description: sending tag data from tag component to backend and use API to update in database
+    // input: [data]: {tagId,tagName,tagStatus,tagCreateBy,tagUpdateBy,tagUpdatedate}
+    // output: number of row edited
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 1/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
+    async editTag(data) {
+      const editData = {};
+      editData.tagName = data.tagName;
+      editData.tagUpdateBy = data.tagUpdateBy;
+      editData.tagStatus = data.tagStatus;
+      editData.tagUpdateDate = data.tagUpdateDate;
+
+      const result = this.$axios
+        .$patch(`tag/?tagId=${data.tagId}`, editData)
+        .catch(err => console.log(err))
+        .then(response => response.doesUpdate);
+      console.log(result);
+      return result;
+    },
+
+    // function name: insertTag
+    // description: sending tag insert data from tag component to backend and use API to create in database
+    // input: [data]: {tagName,tagStatus,tagCreateBy,tagUpdateBy}
+    // output: tagId
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 1/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
     async insertTag(data) {
       const InsertData = {};
       InsertData.tagName = data.tagName;
