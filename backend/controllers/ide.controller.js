@@ -4,7 +4,9 @@ const globalModel = require("../models/global.model");
 const nanoid = require("nanoid");
 const mkdirp = require("mkdirp");
 const path = require("path");
+const fs = require("fs-extra");
 
+const { writeFileLogic } = require("./../helpers/writeFile.helper");
 const { createFiles } = require("./../helpers/validation.helper");
 const { creteCompileLogSchema } = require("./../helpers/validation.helper");
 
@@ -50,17 +52,40 @@ module.exports = {
       assignmentTitle = req.body.assignmentTitle,
       problemTitle = req.body.problemTitle,
       userUsername = req.body.userUsername,
-      taskId = req.body.taskId,
       memeFile = req.body.memeFile,
-      singleFile = req.files.singleFile,
+      singleFile = req.files ? req.files.singleFile : null,
       //insert files table
       fileCreateBy = req.body.fileCreateBy,
-      fileUpdateBy = req.body.fileUpdateBy;
+      fileUpdateBy = req.body.fileUpdateBy,
+      //source code
+      sourceCode = req.body.sourceCode;
 
-    const no = 1;
     try {
-      singleFile.name = nanoid(6) + "." + memeFile;
-      // console.log(singleFile.name);
+      const doesSelect = await globalModel.select({
+        name: "files",
+        like: [
+          {
+            name: "filePath",
+            condition:
+              "%" +
+              yearName +
+              "_" +
+              courseCode +
+              "_sec-" +
+              sectionNumber +
+              "_" +
+              assignmentTitle +
+              "_" +
+              problemTitle +
+              "_" +
+              userUsername +
+              "%",
+          },
+        ],
+        count: [{ name: "filePath", newName: "numFile" }],
+      });
+      const no = doesSelect[0].numFile + 1;
+
       const filePath =
         process.env.BASE_STORAGE_PATH +
         yearName +
@@ -78,13 +103,21 @@ module.exports = {
         no;
       await mkdirp(filePath);
 
-      await singleFile.mv(filePath + "\\" + singleFile.name);
+      if (sourceCode) {
+        await fs.writeFile(
+          filePath + "\\" + "main" + memeFile,
+          JSON.stringify(sourceCode)
+        );
+      } else {
+        await singleFile.mv(filePath + "\\" + singleFile.name);
+      }
 
+      const fileName = await writeFileLogic(sourceCode, singleFile, memeFile);
       // schema files table
       const createFilesData = await createFiles.validateAsync({
-        filePath: filePath + "\\" + singleFile.name,
-        fileCreateBy: fileCreateBy,
-        fileUpdateBy: fileUpdateBy,
+        filePath: filePath + "\\" + fileName,
+        fileCreateBy,
+        fileUpdateBy,
       });
 
       // insert to files table
