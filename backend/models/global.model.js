@@ -51,9 +51,19 @@ module.exports = {
             doesSelect.where(condition);
           });
         }
+        if (table.like) {
+          table.like.forEach((like) => {
+            doesSelect.where(like.name, "like", like.condition);
+          });
+        }
         if (table.whereNot) {
           table.whereNot.forEach((whereNot) => {
             doesSelect.whereNot(whereNot);
+          });
+        }
+        if (table.count) {
+          table.count.forEach((count) => {
+            doesSelect.count(count.name, { as: count.newName });
           });
         }
         resolve(doesSelect);
