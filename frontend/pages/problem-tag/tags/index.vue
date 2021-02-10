@@ -92,14 +92,18 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogInsert" max-width="500px">
+        <v-dialog v-model="dialogSuccess" max-width="500px">
           <v-card>
             <v-card-title class="kanit-font text-center">
               {{ SuccessTitle }}
             </v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1 kanit-font" text @click="closeInsert">
+              <v-btn
+                color="blue darken-1 kanit-font"
+                text
+                @click="closeSuccess"
+              >
                 ตกลง
               </v-btn>
               <v-spacer></v-spacer>
@@ -130,10 +134,12 @@ export default {
   mixins: [tagsmixin],
   // declare variable and data in this component
   data: () => ({
+    formTitle: "สร้างแท็ก",
+    SuccessTitle: "",
     allTags: [],
     dialog: false, // if true show insert or edit modal
     dialogDelete: false, // if true show delete modal
-    dialogInsert: false, // if true show Inserted success modal
+    dialogSuccess: false, // if true show Inserted success modal
     search: "", // use for search in table all column
     headers: [
       // use to declare data and map value in header of table
@@ -173,14 +179,7 @@ export default {
     ]
   }),
 
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "สร้างแท็ก" : "แก้ไขแท็ก";
-    },
-    SuccessTitle() {
-      return this.editedIndex === -1 ? "บันทึกสำเร็จ" : "แก้ไขสำเร็จ";
-    }
-  },
+  computed: {},
 
   watch: {
     dialog(val) {
@@ -191,7 +190,7 @@ export default {
     }
   },
 
- // when created call initialize to geting all tag data
+  // when created call initialize to geting all tag data
   async created() {
     this.initialize();
   },
@@ -205,7 +204,6 @@ export default {
     // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
     async initialize() {
       const { doesGetAll } = await this.getTag();
-
       doesGetAll.map(doesGetAll => {
         doesGetAll.tagCreateDate = this.$moment(
           doesGetAll.tagCreateDate
@@ -229,14 +227,15 @@ export default {
     // output: insert: TagId
     //         edit:   rows edited
     // CreateBy: Niphitphon Thanatkulkit / CreateDate: 4/2/2021
-    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 10/2/2021
     async save() {
-      // if  this.editedIndex > -1 == it edited tag else insert tag
+      // if  this.editedIndex > -1 == it edited tag else this.editedIndex == -1 insert tag
       if (this.editedIndex > -1) {
         const EditResult = await this.editTag(this.editedItem);
         if (typeof EditResult === "number") {
           this.dialog = false;
-          this.dialogInsert = true;
+          this.SuccessTitle = "แก้ไขสำเร็จ";
+          this.dialogSuccess = true;
         }
       } else {
         this.editedItem.tagCreateBy = 1;
@@ -246,7 +245,8 @@ export default {
 
         if (typeof insertResult === "number") {
           this.close();
-          this.dialogInsert = true;
+          this.SuccessTitle = "บันทึกสำเร็จ";
+          this.dialogSuccess = true;
         }
       }
     },
@@ -256,8 +256,9 @@ export default {
     // input: [item]: {tagId,tagName,tagStatus,tagCreateBy,tagUpdateBy,tagUpdatedate}
     // output: -
     // CreateBy: Niphitphon Thanatkulkit / CreateDate: 4/2/2021
-    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 10/2/2021
     editItem(item) {
+      this.formTitle = "แก้ไขแท็ก";
       this.editedIndex = this.allTags.indexOf(item);
       this.editedItem.tagId = item.tagId;
       this.editedItem.tagStatus = item.tagStatus;
@@ -325,9 +326,11 @@ export default {
     // input: -
     // output: -
     // CreateBy: Niphitphon Thanatkulkit / CreateDate: 6/2/2021
-    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 10/2/2021
     closeDelete() {
       this.dialogDelete = false;
+      this.SuccessTitle = "ลบสำเร็จ";
+      this.dialogSuccess = true;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
@@ -335,17 +338,19 @@ export default {
       this.initialize();
     },
 
-    // function name: closeInsert
+    // function name: closeSuccess
     // description: close inserted modal
     // input: -
     // output: -
     // CreateBy: Niphitphon Thanatkulkit / CreateDate: 4/2/2021
-    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
-    closeInsert() {
-      this.dialogInsert = false;
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 10/2/2021
+    closeSuccess() {
+      this.dialogSuccess = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
+        this.SuccessTitle = "สร้างแท็ก";
+        this.SuccessTitle = "";
       });
     }
   }
