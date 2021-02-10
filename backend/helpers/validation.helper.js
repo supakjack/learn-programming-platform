@@ -113,7 +113,7 @@ const createTestsetsSchema = joi.object({
   testsetInput: joi.string().max(8).min(1).required(),
   testsetOutput: joi.string().max(8).min(1).required(),
   testsetProblemId: joi.number().max(8).min(1).required(),
-  testsetIsExample: joi.number().max(1).min(1).required(),
+  testsetIsExample: joi.number().max(8).min(1).required(),
   testsetCreateBy: joi.number().max(8).min(1).required(),
   testsetUpdateBy: joi.number().max(8).min(1).required(),
 });

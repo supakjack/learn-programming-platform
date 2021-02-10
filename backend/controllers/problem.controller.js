@@ -7,7 +7,7 @@ const {
   createPicturesScheme,
   createHashtagSchema,
   createTestsetsSchema,
-  createFiles
+  createFiles,
 } = require("./../helpers/validation.helper");
 
 const {
@@ -22,6 +22,7 @@ module.exports = {
     const createProblemData = await createProblemSchema.validateAsync(
       req.body.createProblemData
     );
+
     const createPicturesData = await createPicturesScheme.validateAsync(
       req.body.createPicturesData
     );
