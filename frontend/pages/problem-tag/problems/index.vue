@@ -51,9 +51,8 @@
                   </div>
                 </v-stepper-content>
 
-                <v-stepper-content step="2"> 
-                    <insertStep2 />
-
+                <v-stepper-content step="2">
+                  <insertStep2 />
                 </v-stepper-content>
               </v-stepper-items>
             </v-stepper>
@@ -87,9 +86,11 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
       </v-toolbar>
     </template>
-    <template>
+
+    <template v-slot:[`item.actions`]="{ item }">
       <v-icon small class="mr-2" @click="editItem(item)">
         mdi-pencil
       </v-icon>
@@ -97,11 +98,13 @@
         mdi-delete
       </v-icon>
     </template>
+
     <template v-slot:no-data>
       <v-btn color="primary" @click="initialize">
         โหลดข้อมูลใหม่
       </v-btn>
     </template>
+
   </v-data-table>
 </template>
 
@@ -140,9 +143,10 @@ export default {
       problemId: 0,
       problemTitle: "",
       problemDiscription: "",
-      tagName: "",
-      problemPath: "",
+      // problemPath: "",
       problemStatus: 0,
+      problemCreateBy: 0,
+      problemUpdateBy: 0,
       problemCreateDate: 0,
       taskScore: 0
     },
@@ -151,9 +155,10 @@ export default {
       problemId: 0,
       problemTitle: "",
       problemDiscription: "",
-      tagName: "",
-      problemPath: "",
+      // problemPath: "",
       problemStatus: 0,
+      problemCreateBy: 0,
+      problemUpdateBy: 0,
       problemCreateDate: 0,
       taskScore: 0
     },
@@ -172,6 +177,9 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "สร้างโจทย์ปัญหา" : "แก้ไขโจทย์ปัญหา";
+    },
+    SuccessTitle() {
+      return this.editedIndex === -1 ? "บันทึกสำเร็จ" : "แก้ไขสำเร็จ";
     }
   },
 
@@ -186,33 +194,92 @@ export default {
 
   async created() {
     this.initialize();
-    // console.log("call getProblem from mixin");
-    // this.getProblem()
-
-    // console.log(this.response);
   },
 
   methods: {
     async initialize() {
       const { doesGetAll } = await this.getProblem();
+
+      doesGetAll.map(doesGetAll => {
+        doesGetAll.problemCreateDate = this.$moment(
+          doesGetAll.problemCreateDate
+        ).format("Do MMM YY เวลา LT");
+        doesGetAll.problemUpdateDate = this.$moment(
+          doesGetAll.problemUpdateDate
+        ).format("Do MMM YY เวลา LT");
+        if (doesGetAll.problemStatus == "active") {
+          doesGetAll.problemStatus = "ใช้งาน";
+        } else {
+          doesGetAll.problemStatus = "ไม่ใช้งาน";
+        }
+      });
       this.allProblems = doesGetAll;
     },
 
+    async save() {
+      
+      if (this.editedIndex > -1) {
+        const EditResult = await this.editProblem(this.editedItem);
+        if (typeof EditResult === "number") {
+          this.dialog = false;
+          this.dialogInsert = true;
+        }
+      } else {
+        this.editedItem.problemCreateBy = 1;
+        this.editedItem.problemUpdateBy = this.editedItem.problemCreateBy;
+
+        const [insertResult] = await this.insertProblem(this.editedItem);
+
+        if (typeof insertResult === "number") {
+          this.close();
+          this.dialogInsert = true;
+        }
+      }
+    },
+
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.editedIndex = this.allProblems.indexOf(item);
+      this.editedItem.problemId = item.problemId;
+      this.editedItem.problemTitle = item.problemTitle;
+      this.editedItem.problemDiscription = item.problemDiscription;
+      // this.editedItem.problemPath = item.problemPath;
+      this.editedItem.problemStatus = item.problemStatus;
+      this.editedItem.taskScore = 0;
+      this.editedItem.problemCreateBy = 1;
+      this.editedItem.problemUpdateBy = this.editedItem.problemCreateBy;
+      this.editedItem.problemUpdateDate = this.$moment().format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.editedIndex = this.allProblems.indexOf(item);
+      console.log(this.editedIndex );
+      this.editedItem.problemId = item.problemId;
+      this.editedItem.problemTitle = item.problemTitle;
+      this.editedItem.problemDiscription = item.problemDiscription;
+      // this.editedItem.problemPath = item.problemPath;
+      this.editedItem.problemStatus = 3;
+      this.editedItem.taskScore = item.taskScore;
+      this.editedItem.problemCreateBy = 1;
+      this.editedItem.problemUpdateBy = this.editedItem.problemCreateBy;
+      this.editedItem.problemUpdateDate = this.$moment().format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      console.log(this.editedItem);
       this.dialogDelete = true;
     },
 
-    deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
-      this.closeDelete();
+
+    async deleteItemConfirm() {
+      const EditResult = await this.editProblem(this.editedItem);
+
+      console.log(EditResult);
+      if (typeof EditResult === "number") {
+        this.closeDelete();
+      }
     },
 
     close() {
@@ -221,6 +288,7 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
+      this.initialize();
     },
 
     closeDelete() {
@@ -229,15 +297,15 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
+      this.initialize();
     },
 
-    save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
-      } else {
-        this.desserts.push(this.editedItem);
-      }
-      this.close();
+   closeInsert() {
+      this.dialogInsert = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
     }
   }
 };

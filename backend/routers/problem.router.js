@@ -5,8 +5,13 @@ const problemController = require('../controllers/problem.controller')
 // compile by source and path
 router.post('/assess', problemController.assess)
 
-// Get tag by condition
+// Get problem by condition
 router.get("/", problemController.get);
 
+// update a problem by condition
+router.patch("/", problemController.update);
+
+// insert problem
+router.post("/", problemController.create);
 
 module.exports = router

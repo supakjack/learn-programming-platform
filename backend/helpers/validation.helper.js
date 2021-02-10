@@ -55,15 +55,6 @@ const getProblemSchema = joi.object({
   problemId: joi.number().max(99999999).min(1),
 });
 
-// get problem schema
-// const getProblemSchema = joi.object({
-//   problemId: joi.number().max(99999999).min(1).required(),
-//   tasksProblemId: joi.number().max(99999999).min(1),
-//   problemTitle: joi.string().max(255),
-//   problemCreateDate: joi.number().max(99999999).min(1),
-//   problemStatus: joi.number().integer().max(3),
-//   taskScore: joi.number().max(10).min(1).required()
-// })
 
 // get assignment schema
 const getAssignmentSchema = joi.object({
@@ -93,7 +84,7 @@ const creteCompileLogSchema = joi.object({
 // create problem schema
 const createProblemSchema = joi.object({
   problemTitle: joi.string().max(255).required(),
-  problemPath: joi.string().max(255).required(),
+  // problemPath: joi.string().max(255).required(),
   problemDiscription: joi.string().max(255).required(),
   problemCreateBy: joi.number().max(8).min(1).required(),
   problemUpdateBy: joi.number().max(8).min(1).required(),
@@ -119,12 +110,23 @@ const createHashtagSchema = joi.object({
 const createTestsetsSchema = joi.object({
   testsetTitle: joi.string().max(255).min(1).required(),
   testsetDescription: joi.string().max(255).required(),
-  testsetInput: joi.string().max(8).min(255).required(),
-  testsetOutput: joi.string().max(8).min(255).required(),
+  testsetInput: joi.string().max(8).min(1).required(),
+  testsetOutput: joi.string().max(8).min(1).required(),
   testsetProblemId: joi.number().max(8).min(1).required(),
-  testsetIsExample: joi.number().max(1).min(1).required(),
+  testsetIsExample: joi.number().max(8).min(1).required(),
   testsetCreateBy: joi.number().max(8).min(1).required(),
   testsetUpdateBy: joi.number().max(8).min(1).required(),
+});
+
+const updateProblemConditionSchema = joi.object({
+  problemId: joi.number().integer().max(99999999),
+});
+
+const updateProblemSchema = joi.object({
+  problemTitle: joi.string().max(255),
+  problemUpdateBy: joi.number().max(99999999).min(1),
+  problemUpdateDate: joi.date().raw(),
+  problemStatus: joi.number().integer().max(3),
 });
 
 module.exports = {
@@ -143,5 +145,7 @@ module.exports = {
   createProblemSchema,
   createPicturesScheme,
   createHashtagSchema,
-  createTestsetsSchema
+  createTestsetsSchema,
+  updateProblemConditionSchema,
+  updateProblemSchema
 };
