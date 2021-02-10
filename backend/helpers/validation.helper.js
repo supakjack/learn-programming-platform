@@ -12,7 +12,7 @@ const userSchema = joi.object({
 
 // create tag schema
 const createTagSchema = joi.object({
-  tagName: joi.string().max(8).required(),
+  tagName: joi.string().max(255).required(),
   tagStatus: joi.number().integer().max(3).required(),
   tagCreateBy: joi.number().integer().max(99999999).min(1).required(),
   tagUpdateBy: joi.number().integer().max(99999999).min(1).required(),
