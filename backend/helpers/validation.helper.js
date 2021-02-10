@@ -5,9 +5,14 @@ const authSchema = joi.object({
   password: joi.string().min(2).required(),
 });
 
+// user schema
+const userSchema = joi.object({
+  userUsername: joi.string().required(),
+});
+
 // create tag schema
 const createTagSchema = joi.object({
-  tagName: joi.string().max(255).required(),
+  tagName: joi.string().max(8).required(),
   tagStatus: joi.number().integer().max(3).required(),
   tagCreateBy: joi.number().integer().max(99999999).min(1).required(),
   tagUpdateBy: joi.number().integer().max(99999999).min(1).required(),
@@ -121,6 +126,7 @@ const createTestsetsSchema = joi.object({
 
 module.exports = {
   authSchema,
+  userSchema,
   createTagSchema,
   getTagSchema,
   updateTagConditionSchema,

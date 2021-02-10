@@ -4,14 +4,14 @@ const globalModel = require("../models/global.model");
 const { userSchema } = require("../helpers/validation.helper");
 
 module.exports = {
-  get: async (req, res, next) => {
+  findAll: async (req, res, next) => {
     console.log("get user2");
-    // const getUserData = await userSchema.validateAsync(req.query);
+    const getUserData = await userSchema.validateAsync(req.query);
     try {
       console.log("get user");
       const doesGetAll = await globalModel.select({
         name: "users",
-        // condition: [getUserData],
+        condition: [getUserData],
       });
       console.log(doesGetAll);
       res.status(201).send({ doesGetAll });
@@ -20,12 +20,12 @@ module.exports = {
       next(error);
     }
   },
-  add: async (req, res, next) => {
-    // const addUserData = await userSchema.validateAsync(req.body);
+  create: async (req, res, next) => {
+    const addUserData = await userSchema.validateAsync(req.body);
     try {
       const doesCreate = await globalModel.insert({
         name: "users",
-        // insertData: [addUserData],
+        insertData: [addUserData],
       });
       res.status(200).send({ doesCreate });
     } catch (error) {
