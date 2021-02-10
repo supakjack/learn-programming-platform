@@ -39,7 +39,7 @@ export default {
       editData.tagUpdateBy = data.tagUpdateBy;
       editData.tagStatus = data.tagStatus;
       editData.tagUpdateDate = data.tagUpdateDate;
-
+console.log(editData);
       const result = this.$axios
         .$patch(`tag/?tagId=${data.tagId}`, editData)
         .catch(err => console.log(err))

@@ -52,15 +52,6 @@ const getProblemSchema = joi.object({
   problemId: joi.number().max(99999999).min(1),
 });
 
-// get problem schema
-// const getProblemSchema = joi.object({
-//   problemId: joi.number().max(99999999).min(1).required(),
-//   tasksProblemId: joi.number().max(99999999).min(1),
-//   problemTitle: joi.string().max(255),
-//   problemCreateDate: joi.number().max(99999999).min(1),
-//   problemStatus: joi.number().integer().max(3),
-//   taskScore: joi.number().max(10).min(1).required()
-// })
 
 // get assignment schema
 const getAssignmentSchema = joi.object({
@@ -124,6 +115,17 @@ const createTestsetsSchema = joi.object({
   testsetUpdateBy: joi.number().max(8).min(1).required(),
 });
 
+const updateProblemConditionSchema = joi.object({
+  problemId: joi.number().integer().max(99999999),
+});
+
+const updateProblemSchema = joi.object({
+  problemTitle: joi.string().max(255),
+  problemUpdateBy: joi.number().max(99999999).min(1),
+  problemUpdateDate: joi.date().raw(),
+  problemStatus: joi.number().integer().max(3),
+});
+
 module.exports = {
   authSchema,
   userSchema,
@@ -139,5 +141,7 @@ module.exports = {
   createProblemSchema,
   createPicturesScheme,
   createHashtagSchema,
-  createTestsetsSchema
+  createTestsetsSchema,
+  updateProblemConditionSchema,
+  updateProblemSchema
 };
