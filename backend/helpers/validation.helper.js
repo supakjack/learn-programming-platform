@@ -5,6 +5,9 @@ const authSchema = joi.object({
   password: joi.string().min(2).required(),
 });
 
+const updateUserSchema = joi.object({
+  userId: joi.number().integer(),
+});
 // user schema
 const userSchema = joi.object({
   userUsername: joi.string().required(),
@@ -127,6 +130,7 @@ const createTestsetsSchema = joi.object({
 module.exports = {
   authSchema,
   userSchema,
+  updateUserSchema,
   createTagSchema,
   getTagSchema,
   updateTagConditionSchema,

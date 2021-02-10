@@ -1,15 +1,14 @@
 <template>
   <v-app id="login" class="success">
     <v-main>
-      <v-container fluid fill-height>
-        <v-layout align-center justify-center>
+      <v-container fill-height>
+        <v-layout align-center flex justify-center>
           <v-flex xs12 sm8 md4 lg4>
-            <v-card class="elevation-1 pa-3">
+            <v-card>
               <v-card-text>
                 <div class="layout column align-center">
                   <vuetify-logo />
-
-                  <h1 class="flex my-4 success--text">Grader</h1>
+                  <h3 class="flex my-10 success--text">Learn Programming Platform</h3>
                 </div>
                 <v-form>
                   <v-text-field
@@ -83,15 +82,15 @@ export default {
           data: payload,
         });
         console.log(response);
-        this.$router.push('/home');
-        // if (response.data.success) {
-        //   this.$router.replace({ name: "home" });
-        //   this.$vs.notify({
-        //     color: "danger",
-        //     title: "Invalid Username and password",
-        //     text: "Please enter your username or password again.",
-        //   });
-        // }nk
+        // this.$router.push('/home');
+        if (response.data.token) {
+          this.$router.replace({ name: "home" });
+          this.$vs.notify({
+            color: "danger",
+            title: "Invalid Username and password",
+            text: "Please enter your username or password again.",
+          });
+        }
       } catch (err) {
         console.log(err);
       }

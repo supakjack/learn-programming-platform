@@ -60,8 +60,10 @@
                     ></v-autocomplete>
                   </v-col>
                 </v-row>
-                <div class="flex justify-center">หรือ</div>
-                <v-file-input label="Excel"></v-file-input>
+                <div v-if="editedIndex === -1">
+                  <div class="flex justify-center">หรือ</div>
+                  <v-file-input label="Excel"></v-file-input>
+                </div>
               </v-container>
             </v-card-text>
 
@@ -140,7 +142,7 @@ export default {
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+      return this.editedIndex === -1 ? "เพิ่มผู้ใช้งาน" : "แก้ไขผู้ใช้งาน";
     },
   },
 
