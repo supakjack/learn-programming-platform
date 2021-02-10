@@ -1,3 +1,6 @@
+<!-- Author: Nook
+Lasr edit: 10/2/2021 -->
+
 <template>
   <v-data-table
     :headers="headers"
@@ -20,6 +23,7 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
+
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="success" dark class="mb-2" v-bind="attrs" v-on="on">
@@ -34,35 +38,85 @@
             <v-card-text class="kanit-font">
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
+
+                  <!-- Title -->
+                  <v-col cols="12" sm="12" md="12">
                     <v-text-field
-                      v-model="editedItem.name"
-                      label="Dessert name"
+                      v-model="editedItem.assignmentTitle"
+                      label="ชื่องานที่มอบหมาย"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.calories"
-                      label="Calories"
-                    ></v-text-field>
+
+                  <!-- Discription -->
+                  <v-col cols="12" sm="12" md="12">
+                    <v-textarea
+                      v-model="editedItem.assignmentDiscription"
+                      label="คำอธิบาย"
+                    ></v-textarea>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.fat"
-                      label="Fat (g)"
-                    ></v-text-field>
+
+                  <!-- Start date -->
+                  <v-col cols="12" sm="6" md="6">
+                    <v-menu
+                      v-model="menu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="editedItem.assignmentStartDate"
+                          label="วันที่เริ่มส่งงาน"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="editedItem.assignmentStartDate"
+                        @input="menu = false"
+                      ></v-date-picker>
+                    </v-menu>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.carbs"
-                      label="Carbs (g)"
-                    ></v-text-field>
+
+                  <!-- End date -->
+                  <v-col cols="12" sm="6" md="6">
+                    <v-menu
+                      v-model="menu2"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="editedItem.assignmentEndDate"
+                          label="วันที่สิ้นสุดส่งงาน"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="editedItem.assignmentEndDate"
+                        @input="menu2 = false"
+                      ></v-date-picker>
+                    </v-menu>
                   </v-col>
+
+                  <!-- Status -->
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.protein"
-                      label="Protein (g)"
-                    ></v-text-field>
+                    <v-select
+                      :items="status"
+                      v-model="editedItem.assignmentStatus"
+                      label="สถานะ"
+                    >
+                    </v-select>
                   </v-col>
                 </v-row>
               </v-container>
@@ -70,27 +124,25 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">
-                ยกเลิก
-              </v-btn>
-              <v-btn color="blue darken-1" text @click="save">
-                บันทึก
-              </v-btn>
+              <v-btn color="blue darken-1" text @click="close"> ยกเลิก </v-btn>
+              <v-btn color="blue darken-1" text @click="save"> บันทึก </v-btn>
             </v-card-actions>
           </v-card>
+
+        <!-- Dialog for delete -->
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="headline"
-              >Are you sure you want to delete this item?</v-card-title
+              >คุณต้องการลบใช่หรือไม่?</v-card-title
             >
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="closeDelete"
-                >Cancel</v-btn
+                >ไม่ใช่</v-btn
               >
               <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                >OK</v-btn
+                >ใช่</v-btn
               >
               <v-spacer></v-spacer>
             </v-card-actions>
@@ -98,18 +150,15 @@
         </v-dialog>
       </v-toolbar>
     </template>
-    <template>
-      <v-icon small class="mr-2" @click="editItem(item)">
-        mdi-pencil
-      </v-icon>
-      <v-icon small @click="deleteItem(item)">
-        mdi-delete
-      </v-icon>
+
+    <!-- management -->
+    <template v-slot:item.actions="{ item }">
+      <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
+      <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
+
     <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">
-        โหลดข้อมูลใหม่
-      </v-btn>
+      <v-btn color="primary" @click="initialize"> โหลดข้อมูลใหม่ </v-btn>
     </template>
   </v-data-table>
 </template>
@@ -119,6 +168,10 @@ import assignmentmixin from "../../components/assignment";
 export default {
   mixins: [assignmentmixin],
   data: () => ({
+    status: ["ใช้งาน", "ไม่ใช้งาน"],
+    date: new Date().toISOString().substr(0, 10),
+    menu: false,
+    menu2: false,
     allAssignment: [],
     dialog: false,
     dialogDelete: false,
@@ -129,34 +182,33 @@ export default {
         sortable: false
         // value: "assignmentId"
       },
-      { text: "รายวิชา", value: "assignmentId" },
-      { text: "ภาระงาน", value: "assignmentTitle" },
+      { text: "งานที่ได้รับมอบหมาย", value: "assignmentTitle" },
+      { text: "คำอธิบาย", value: "assignmentDiscription" },
       { text: "วันที่เริ่มส่งงาน", value: "assignmentStartDate" },
       { text: "วันที่สิ้นสุดส่งงาน", value: "assignmentEndDate" },
       { text: "สถานะ", value: "assignmentStatus" },
       { text: "การจัดการ", value: "actions", sortable: false }
     ],
-    desserts: [],
     problem: [],
     editedIndex: -1,
     editedItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
+      assignmentTitle: "",
+      assignmentDiscription: "",
+      assignmentStartDate: "",
+      assignmentEndDate: "",
+      assignmentStatus: ""
     },
     defaultItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
+      assignmentTitle: "",
+      assignmentDiscription: "",
+      assignmentStartDate: "",
+      assignmentEndDate: "",
+      assignmentStatus: ""
     }
   }),
   async mounted() {
-    // const { doesGetAll } = await this.getProblem();
-    // this.allProblems = doesGetAll;
+    // const { doseGetAll } = await this.getProblem();
+    // this.allProblems = doseGetAll;
     console.log(this.allProblems);
   },
 
@@ -185,24 +237,24 @@ export default {
 
   methods: {
     async initialize() {
-      const { doesGetAll } = await this.getAssignment();
-      this.allAssignment = doesGetAll;
+      const { doseGetAll } = await this.getAssignment();
+      this.allAssignment = doseGetAll;
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.allAssignment.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.allAssignment.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
     deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
+      this.allAssignment.splice(this.editedIndex, 1);
       this.closeDelete();
     },
 
@@ -223,10 +275,11 @@ export default {
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
-      } else {
-        this.desserts.push(this.editedItem);
+      if (this.editedIndex > -1) {                                                   //Save for edit
+        Object.assign(this.allAssignment[this.editedIndex], this.editedItem);
+      } else {                                                                       //Save for add
+        console.log(this.editedItem);
+        this.allAssignment.push(this.editedItem);
       }
       this.close();
     }

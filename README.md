@@ -10,3 +10,4 @@ $ cd/frontend
 ``` sh
 $ cd/auth
 ```
+jack add
