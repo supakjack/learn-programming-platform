@@ -20,53 +20,43 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" persistent max-width="1000px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="success" dark class="mb-2" v-bind="attrs" v-on="on">
               สร้างโจทย์ปัญหา
             </v-btn>
           </template>
+
           <v-card class="kanit-font">
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
             </v-card-title>
+            <v-stepper non-linear>
+              <v-stepper-header>
+                <v-stepper-step editable step="1">
+                  step 1
+                </v-stepper-step>
 
-            <v-card-text class="kanit-font">
-              <v-container>
-                <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.name"
-                      label="Dessert name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.calories"
-                      label="Calories"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.fat"
-                      label="Fat (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.carbs"
-                      label="Carbs (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.protein"
-                      label="Protein (g)"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
+                <v-divider></v-divider>
+
+                <v-stepper-step editable step="2">
+                  step 2
+                </v-stepper-step>
+              </v-stepper-header>
+
+              <v-stepper-items>
+                <v-stepper-content step="1">
+                  <div>
+                    <insertStep1 />
+                  </div>
+                </v-stepper-content>
+
+                <v-stepper-content step="2"> 
+                    <insertStep2 />
+
+                </v-stepper-content>
+              </v-stepper-items>
+            </v-stepper>
 
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -79,19 +69,20 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
-            <v-card-title class="headline"
-              >Are you sure you want to delete this item?</v-card-title
-            >
+            <v-card-title class="text-center">
+              ต้องการลบแท็กนี้ใช่หรือไม่?
+            </v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete"
-                >Cancel</v-btn
-              >
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                >OK</v-btn
-              >
+              <v-btn color="blue darken-1" text @click="closeDelete">
+                ไม่
+              </v-btn>
+              <v-btn color="blue darken-1" text @click="deleteItemConfirm">
+                ใช่
+              </v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -116,8 +107,15 @@
 
 <script>
 import problemsmixin from "../../../components/problems";
+import insertStep1 from "@/pages/problem-tag/problems/insert-step1";
+import insertStep2 from "@/pages/problem-tag/problems/insert-step2";
+
 export default {
   mixins: [problemsmixin],
+  components: {
+    insertStep1,
+    insertStep2
+  },
   data: () => ({
     allProblems: [],
     dialog: false,
@@ -134,25 +132,36 @@ export default {
       { text: "วันที่สร้าง", value: "problemCreateDate" },
       { text: "คะแนน", value: "taskScore" },
       { text: "สถานะ", value: "problemStatus" },
-      { text: "การจัดการ", value: "actions", sortable: false }
+      { text: "ดำเนินการ", value: "actions", sortable: false }
     ],
-    desserts: [],
-    problem: [],
-    editedIndex: -1,
+    editedIndex: -1, //  editedIndex default to -1
     editedItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
+      // use to add, edit and delete item
+      problemId: 0,
+      problemTitle: "",
+      problemDiscription: "",
+      tagName: "",
+      problemPath: "",
+      problemStatus: 0,
+      problemCreateDate: 0,
+      taskScore: 0
     },
     defaultItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
-    }
+      // default of item value
+      problemId: 0,
+      problemTitle: "",
+      problemDiscription: "",
+      tagName: "",
+      problemPath: "",
+      problemStatus: 0,
+      problemCreateDate: 0,
+      taskScore: 0
+    },
+    problemStatus: [
+      // use in select options
+      { text: "ใช้งาน", value: 1 },
+      { text: "ไม่ใช้งาน", value: 2 }
+    ]
   }),
   async mounted() {
     // const { doesGetAll } = await this.getProblem();

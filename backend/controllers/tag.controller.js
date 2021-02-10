@@ -76,7 +76,7 @@ module.exports = {
         filter: [
           "tagId",
           "tagName",
-          "tagStatus",
+          "tagStatus", 
           "tagCreateDate",
           "tagUpdateDate",
           "createUser.UserFirstnameEnglish AS createName",

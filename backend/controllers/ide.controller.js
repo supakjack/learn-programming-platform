@@ -121,12 +121,12 @@ module.exports = {
       });
 
       // insert to files table
-      const doseCreateLog = await globalModel.insert({
+      const doesCreateLog = await globalModel.insert({
         name: "files",
         insertData: [createFilesData],
       });
 
-      res.status(200).send(doseCreateLog);
+      res.status(200).send(doesCreateLog);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
