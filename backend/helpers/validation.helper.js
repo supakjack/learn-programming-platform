@@ -84,7 +84,7 @@ const creteCompileLogSchema = joi.object({
 // create problem schema
 const createProblemSchema = joi.object({
   problemTitle: joi.string().max(255).required(),
-  problemPath: joi.string().max(255).required(),
+  // problemPath: joi.string().max(255).required(),
   problemDiscription: joi.string().max(255).required(),
   problemCreateBy: joi.number().max(8).min(1).required(),
   problemUpdateBy: joi.number().max(8).min(1).required(),
@@ -110,8 +110,8 @@ const createHashtagSchema = joi.object({
 const createTestsetsSchema = joi.object({
   testsetTitle: joi.string().max(255).min(1).required(),
   testsetDescription: joi.string().max(255).required(),
-  testsetInput: joi.string().max(8).min(255).required(),
-  testsetOutput: joi.string().max(8).min(255).required(),
+  testsetInput: joi.string().max(8).min(1).required(),
+  testsetOutput: joi.string().max(8).min(1).required(),
   testsetProblemId: joi.number().max(8).min(1).required(),
   testsetIsExample: joi.number().max(1).min(1).required(),
   testsetCreateBy: joi.number().max(8).min(1).required(),

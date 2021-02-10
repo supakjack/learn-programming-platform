@@ -10,7 +10,7 @@ const {
 
 module.exports = {
   // function name: create
-  // description: create tag by API
+  // description: create tag by API 
   // input: tagName, tagStatus, tagCreateby , tagUpdateBy
   // output: text response
   // CreateBy: Niphitphon Thanatkulkit / CreateDate: 14/1/2021
@@ -18,14 +18,14 @@ module.exports = {
   create: async (req, res, next) => {
     // passing data from body and valid by createTagSchema
     const createTagData = await createTagSchema.validateAsync(req.body);
-
+ 
     // try call function createTag in global model then catch if error
     try {
       const doesCreate = await globalModel.insert({
         name: "tags",
         insertData: [createTagData],
       });
-      res.status(200).send({ doesCreate });
+      res.status(201).send({ doesCreate });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);

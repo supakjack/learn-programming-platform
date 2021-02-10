@@ -18,16 +18,33 @@ module.exports = {
       }
     });
   },
+
   insert: async (table) => {
     return new Promise((resolve, reject) => {
       try {
         knex.transaction(function (trx) {
-            knex("problems")
+            knex(table.name1)
               .transacting(trx)
-              .insert({ name: "Old Books" })
-              .then(function (resp) {
-                const id = resp[0];
-                return someExternalMethod(id, trx);
+              .insert(table.insertData1)
+              .then(function (response) {
+                return knex(table.name2)
+                  .transacting(trx)
+                  .insert(table.insertData2)
+              })
+              .then(function (response) {
+                return knex(table.name3)
+                  .transacting(trx)
+                  .insert(table.insertData3)
+              })
+              .then(function (response) {
+                return knex(table.name4)
+                  .transacting(trx)
+                  .insert(table.insertData4)
+              })
+              .then(function (response) {
+                return knex(table.name5)
+                  .transacting(trx)
+                  .insert(table.insertData5)
               })
               .then(trx.commit)
               .catch(trx.rollback);

@@ -11,4 +11,7 @@ router.get("/", problemController.get);
 // update a problem by condition
 router.patch("/", problemController.update);
 
+// insert problem
+router.post("/", problemController.create);
+
 module.exports = router

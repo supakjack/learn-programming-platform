@@ -1,7 +1,14 @@
 const createError = require("http-errors");
 const problemsModel = require("../models/problems.model");
 const globalModel = require("../models/global.model");
-const { createAssessSchema } = require("./../helpers/validation.helper");
+const {
+  createAssessSchema,
+  createProblemSchema,
+  createPicturesScheme,
+  createHashtagSchema,
+  createTestsetsSchema,
+  createFiles
+} = require("./../helpers/validation.helper");
 
 const {
   getProblemSchema,
@@ -12,21 +19,42 @@ const {
 module.exports = {
   create: async (req, res, next) => {
     // passing data from body and valid by createProblemSchema
-    const createTagData = await createProblemSchema.validateAsync(req.body);
+    const createProblemData = await createProblemSchema.validateAsync(
+      req.body.createProblemData
+    );
+    const createPicturesData = await createPicturesScheme.validateAsync(
+      req.body.createPicturesData
+    );
+    const createHashtagData = await createHashtagSchema.validateAsync(
+      req.body.createHashtagData
+    );
+    const createTestsetData = await createTestsetsSchema.validateAsync(
+      req.body.createTestsetData
+    );
+    const createFilesData = await createFiles.validateAsync(
+      req.body.createFilesData
+    );
 
     // try call function createTag in global model then catch if error
     try {
-      const doesCreate = await globalModel.insert({
-        name: "tags",
-        insertData: [createTagData],
+      const doesCreate = await problemsModel.insert({
+        name1: "problems",
+        name2: "files",
+        name3: "pictures",
+        name4: "hashtags",
+        name5: "testsets",
+        insertData1: [createProblemData],
+        insertData2: [createFilesData],
+        insertData3: [createPicturesData],
+        insertData4: [createHashtagData],
+        insertData5: [createTestsetData],
       });
-      res.status(200).send({ doesCreate });
+      res.status(201).send(req.body);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
     }
   },
-
 
   assess: async (req, res, next) => {
     // passing data from body and valid by createAssessData
