@@ -20,7 +20,7 @@
             </v-col>
           </v-row>
           <div v-for="(file, index) in files" :key="index">
-            <v-card class="hover" elevation="2">
+            <v-card class="card-file" elevation="2">
               {{ file.name }}
             </v-card>
           </div>
@@ -108,7 +108,14 @@ export default {
 </script>
 
 <style>
-.hover:hover {
+.card-file {
+  height: 30px;
+  padding-top: 3px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+.card-file:hover {
   background-color: lightblue;
   cursor: pointer;
 }
