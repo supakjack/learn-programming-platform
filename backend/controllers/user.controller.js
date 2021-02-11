@@ -12,10 +12,8 @@ const readXlsxFile = require("read-excel-file/node");
 
 module.exports = {
   findAll: async (req, res, next) => {
-    console.log("get user2");
     // const getUserData = await userSchema.validateAsync(req.query);
     try {
-      console.log("get user");
       const doesGetAll = await globalModel.select({
         name: "users",
         // condition: [getUserData],
