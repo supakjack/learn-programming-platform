@@ -1,51 +1,24 @@
 const createError = require("http-errors");
 const globalModel = require("../models/global.model");
-const multer = require("multer");
-const xlstojson = require("xls-to-json-lc");
-const xlsxtojson = require("xlsx-to-json-lc");
-const { userSchema } = require("../helpers/validation.helper");
-var storage = multer.diskStorage({
-  //multers disk storage settings
-  destination: function (req, file, cb) {
-    cb(null, "./uploads/");
-  },
-  filename: function (req, file, cb) {
-    var datetimestamp = Date.now();
-    cb(
-      null,
-      file.fieldname +
-        "-" +
-        datetimestamp +
-        "." +
-        file.originalname.split(".")[file.originalname.split(".").length - 1]
-    );
-  },
-});
+const {
+  userSchema,
+  updateUserConditionSchema,
+  updateUserSchema,
+} = require("../helpers/validation.helper");
+const nanoid = require("nanoid");
+var xlstojson = require("xls-to-json-lc");
+var xlsxtojson = require("xlsx-to-json-lc");
+const readXlsxFile = require("read-excel-file/node");
 
-var upload = multer({
-  //multer settings
-  storage: storage,
-  fileFilter: function (req, file, callback) {
-    //file filter
-    if (
-      ["xls", "xlsx"].indexOf(
-        file.originalname.split(".")[file.originalname.split(".").length - 1]
-      ) === -1
-    ) {
-      return callback(new Error("Wrong extension type"));
-    }
-    callback(null, true);
-  },
-}).single("file");
 module.exports = {
   findAll: async (req, res, next) => {
     console.log("get user2");
-    const getUserData = await userSchema.validateAsync(req.query);
+    // const getUserData = await userSchema.validateAsync(req.query);
     try {
       console.log("get user");
       const doesGetAll = await globalModel.select({
         name: "users",
-        condition: [getUserData],
+        // condition: [getUserData],
       });
       console.log(doesGetAll);
       res.status(201).send({ doesGetAll });
@@ -68,13 +41,16 @@ module.exports = {
     }
   },
   update: async (req, res, next) => {
-    const updateUserSchema = await updateUserSchema.validateAsync(req.query);
-    const updateUser = await userSchema.validateAsync(req.body);
+    const updateCondition = await updateUserConditionSchema.validateAsync(
+      req.query
+    );
+    const updateUserData = await updateUserSchema.validateAsync(req.body);
+    // try call function deleteTag in global model then catch if error
     try {
       const doesUpdate = await globalModel.update({
         name: "users",
-        condition: [updateUserSchema],
-        updateData: [updateUser],
+        condition: [updateCondition],
+        updateData: [updateUserData],
       });
       res.status(200).send({ doesUpdate });
     } catch (error) {
@@ -82,54 +58,63 @@ module.exports = {
       next(error);
     }
   },
-  /** API path that will upload the files */
-  upload: async (req, res, next) => {
-    var exceltojson;
-    upload(req, res, function (err) {
-      console.log(req.files);
-      if (err) {
-        res.json({ error_code: 1, err_desc: err });
-        return;
-      }
-      /** Multer gives us file info in req.file object */
-      if (!req.file) {
-        res.json({ error_code: 1, err_desc: "No file passed" });
-        return;
-      }
-      /** Check the extension of the incoming file and
-       *  use the appropriate module
-       */
-      if (
-        req.file.originalname.split(".")[
-          req.file.originalname.split(".").length - 1
-        ] === "xlsx"
-      ) {
-        exceltojson = xlsxtojson;
-      } else {
-        exceltojson = xlstojson;
-      }
-      console.log(req.file.path);
-      try {
-        exceltojson(
-          {
-            input: req.file.path,
-            output: null, //since we don't need output.json
-            lowerCaseHeaders: true,
-          },
-          function (err, result) {
-            if (err) {
-              return res.json({ error_code: 1, err_desc: err, data: null });
-            }
-            res.json({ error_code: 0, err_desc: null, data: result });
-          }
-        );
-      } catch (e) {
-        res.json({ error_code: 1, err_desc: "Corupted excel file" });
-      }
-    });
-  },
-
   file: async (req, res, next) => {
-    res.sendFile(__dirname + "/index.html");
+    const singleFile = req.files ? req.files.excelFile : null;
+
+    // console.log(req.files);
+    const randomFileName = nanoid(10);
+    const splitFileName = singleFile.name.split(".");
+    // console.log(randomFileName);
+    // console.log(splitFileName);
+    singleFile.name = randomFileName + "." + splitFileName[1];
+    // console.log(singleFile.name);
+    const filePath = process.env.BASE_STORAGE_PATH + "temp";
+    await singleFile.mv(filePath + "\\" + singleFile.name);
+    // console.log(singleFile);
+
+    try {
+      console.log("try");
+      if (req.files == undefined) {
+        return res.status(400).send("Please upload an excel file!");
+      }
+      let path = filePath + singleFile.name;
+      console.log(path);
+
+      readXlsxFile(path).then((rows) => {
+        // skip header
+        rows.shift();
+
+        let users = [];
+
+        rows.forEach((row) => {
+          let user = {
+            id: row[0],
+            title: row[1],
+            description: row[2],
+            published: row[3],
+          };
+
+          users.push(user);
+        });
+
+        User.bulkCreate(users)
+          .then(() => {
+            res.status(200).send({
+              message: "Uploaded the file successfully: " + req.files,
+            });
+          })
+          .catch((error) => {
+            res.status(500).send({
+              message: "Fail to import data into database!",
+              error: error.message,
+            });
+          });
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({
+        message: "Could not upload the file: " + req.files.name,
+      });
+    }
   },
 };

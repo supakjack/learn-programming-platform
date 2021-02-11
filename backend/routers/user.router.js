@@ -7,13 +7,11 @@ const timeout = require("connect-timeout");
 router.get("/", userController.findAll);
 // Create a new user
 router.post("/", userController.create);
-// Retrieve a single user with id
 // router.get('/:id', userController.findById);
 // Update a user with id
 router.patch("/", userController.update);
 // Delete a user with id
-// router.delete('/:id', userController.delete);
-router.post("/upload", userController.upload);
-router.get("/file", userController.file);
+
+router.post("/file", userController.file);
 
 module.exports = router;
