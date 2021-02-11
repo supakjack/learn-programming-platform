@@ -34,6 +34,12 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
+                    <v-text-field
+                      v-model="editedItem.userId"
+                      label="รหัสผู้ใช้"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
                       v-model="editedItem.prefix"
                       :items="prefix"
@@ -110,6 +116,7 @@ export default {
     status: ["ใช้งาน", "ปิด"],
     dialog: false,
     dialogDelete: false,
+    search: "",
     headers: [
       {
         text: "รหัสนิสิต",
