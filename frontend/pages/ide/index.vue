@@ -1,7 +1,7 @@
 <template v-slot:top>
   <v-container>
     <v-row>
-      <v-col cols="12" sm="12" md="4">
+      <v-col cols="12" sm="12" md="3">
         <v-card width="auto" height="500px" outlined>
           <v-row>
             <v-col>
@@ -9,26 +9,25 @@
             </v-col>
             <v-col>
               <v-card-actions class="float-right">
-                <v-btn
-                  :loading="loading5"
-                  :disabled="loading5"
-                  color="blue-grey"
-                  class="mx-2 white--text"
-                  x-small
-                  fab
-                  @click="loader = 'loading5'"
+                <v-file-input
+                  v-model="files"
+                  hide-input
+                  multiple
+                  truncate-length="14"
                 >
-                  <v-icon dark>
-                    mdi-cloud-upload
-                  </v-icon>
-                </v-btn>
+                </v-file-input>
               </v-card-actions>
             </v-col>
           </v-row>
+          <div v-for="(file, index) in files" :key="index">
+            <v-card class="hover" elevation="2">
+              {{ file.name }}
+            </v-card>
+          </div>
         </v-card>
       </v-col>
 
-      <v-col cols="12" sm="12" md="8">
+      <v-col cols="12" sm="12" md="9">
         <v-row>
           <v-col cols="12" md="4">
             <v-card-text> main.cpp </v-card-text>
@@ -84,7 +83,8 @@ import problems from "./../problem-tag/problems/index";
 import tagsmixin from "../../components/tags";
 export default {
   data: () => ({
-    items: ["C++", "JavaScript", "JAVA", "PYTTHON"]
+    items: ["C++", "JavaScript", "JAVA", "PYTTHON"],
+    files: []
   }),
 
   mixins: [tagsmixin],
@@ -108,6 +108,13 @@ export default {
 </script>
 
 <style>
+.hover:hover {
+  background-color: lightblue;
+  cursor: pointer;
+}
+.v-text-field {
+  padding-top: 0px !important;
+}
 .roboto-font {
   font-family: "Roboto", sans-serif;
 }
