@@ -3,7 +3,7 @@
     :headers="headers"
     :items="users"
     :search="search"
-    sort-by="userId"
+    sort-by="userUsername"
     class="elevation-1"
   >
     <template v-slot:top>
@@ -35,33 +35,33 @@
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem.userId"
+                      v-model="editedItem.userUsername"
                       label="รหัสผู้ใช้"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="editedItem.prefix"
-                      :items="prefix"
+                      v-model="editedItem.userPrefixThai"
+                      :items="userPrefixThai"
                       label="คำนำหน้า"
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem.firstname"
+                      v-model="editedItem.userFirstnameThai"
                       label="ชื่อจริง"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem.lastname"
+                      v-model="editedItem.userLastnameThai"
                       label="นามสกุล"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="editedItem.status"
-                      :items="status"
+                      v-model="editedItem.userStatus"
+                      :items="userStatus"
                       label="สถานะ"
                     ></v-autocomplete>
                   </v-col>
@@ -110,10 +110,12 @@
 </template>
 
 <script>
+import usersmixin from "../../../components/users";
 export default {
+  mixins: [usersmixin],
   data: () => ({
-    prefix: ["นาย", "นางสาว"],
-    status: ["ใช้งาน", "ปิด"],
+    userPrefixThai: ["นาย", "นางสาว"],
+    userStatus: ["ใช้งาน", "ปิด"],
     dialog: false,
     dialogDelete: false,
     search: "",
@@ -122,28 +124,28 @@ export default {
         text: "รหัสนิสิต",
         align: "start",
         sortable: true,
-        value: "userId",
+        value: "userUsername",
       },
-      { text: "คำนำหน้า", value: "prefix" },
-      { text: "ชื่อ", value: "firstname" },
-      { text: "นามสกุล", value: "lastname" },
+      { text: "คำนำหน้า", value: "userPrefixThai" },
+      { text: "ชื่อ", value: "userFirstnameThai" },
+      { text: "นามสกุล", value: "userLastnameThai" },
       { text: "สิทธิ์", value: "role" },
-      { text: "สถานะ", value: "status" },
+      { text: "สถานะ", value: "userStatus" },
       { text: "การจัดการ", value: "actions", sortable: false },
     ],
     users: [],
     editedIndex: -1,
     editedItem: {
-      prefix: "",
-      firstname: "",
-      lastname: "",
-      status: "",
+      userPrefixThai: "",
+      userFirstnameThai: "",
+      userLastnameThai: "",
+      userStatus: "",
     },
     defaultItem: {
-      prefix: "",
-      firstname: "",
-      lastname: "",
-      status: "",
+      userPrefixThai: "",
+      userFirstnameThai: "",
+      userLastnameThai: "",
+      userStatus: "",
     },
   }),
 
@@ -167,88 +169,106 @@ export default {
   },
 
   methods: {
-    initialize() {
-      this.users = [
-        {
-          prefix: "นาย",
-          firstname: "Frozen",
-          lastname: "Yogurt",
-          userId: 159,
-          role: "นักเรียน",
-          status: "ใช้งาน",
-        },
-        {
-          prefix: "นางสาว",
-          firstname: "Ice cream sandwich",
-          userId: 237,
-          role: "นักเรียน",
-          status: "ใช้งาน",
-        },
-        {
-          prefix: "นาย",
+    // initialize() {
+    //   this.users = [
+    //     {
+    //       userPrefixThai: "นาย",
+    //       userFirstnameThai: "Frozen",
+    //       userLastnameThai: "Yogurt",
+    //       userUsername: 159,
+    //       role: "นักเรียน",
+    //       userStatus: "ใช้งาน",
+    //     },
+    //     {
+    //       userPrefixThai: "นางสาว",
+    //       userFirstnameThai: "Ice cream sandwich",
+    //       userUsername: 237,
+    //       role: "นักเรียน",
+    //       userStatus: "ใช้งาน",
+    //     },
+    //     {
+    //       userPrefixThai: "นาย",
 
-          firstname: "Eclair",
-          userId: 262,
-          role: "นักเรียน",
-          status: "ใช้งาน",
-        },
-        {
-          prefix: "นาย",
+    //       userFirstnameThai: "Eclair",
+    //       userUsername: 262,
+    //       role: "นักเรียน",
+    //       userStatus: "ใช้งาน",
+    //     },
+    //     {
+    //       userPrefixThai: "นาย",
 
-          firstname: "Cupcake",
-          userId: 305,
-          role: "นักเรียน",
-          status: "ใช้งาน",
-        },
-        {
-          prefix: "นาย",
+    //       userFirstnameThai: "Cupcake",
+    //       userUsername: 305,
+    //       role: "นักเรียน",
+    //       userStatus: "ใช้งาน",
+    //     },
+    //     {
+    //       userPrefixThai: "นาย",
 
-          firstname: "Gingerbread",
-          userId: 356,
-          role: "นักเรียน",
-          status: "ใช้งาน",
-        },
-        {
-          prefix: "นาย",
+    //       userFirstnameThai: "Gingerbread",
+    //       userUsername: 356,
+    //       role: "นักเรียน",
+    //       userStatus: "ใช้งาน",
+    //     },
+    //     {
+    //       userPrefixThai: "นาย",
 
-          firstname: "Jelly bean",
-          userId: 375,
-          role: "นักเรียน",
-          status: "ใช้งาน",
-        },
-        {
-          prefix: "นาย",
+    //       userFirstnameThai: "Jelly bean",
+    //       userUsername: 375,
+    //       role: "นักเรียน",
+    //       userStatus: "ใช้งาน",
+    //     },
+    //     {
+    //       userPrefixThai: "นาย",
 
-          firstname: "Lollipop",
-          userId: 392,
-          role: "นักเรียน",
-          status: "ใช้งาน",
-        },
-        {
-          prefix: "นาย",
+    //       userFirstnameThai: "Lollipop",
+    //       userUsername: 392,
+    //       role: "นักเรียน",
+    //       userStatus: "ใช้งาน",
+    //     },
+    //     {
+    //       userPrefixThai: "นาย",
 
-          firstname: "Honeycomb",
-          userId: 408,
-          role: "นักเรียน",
-          status: "ใช้งาน",
-        },
-        {
-          prefix: "นาย",
+    //       userFirstnameThai: "Honeycomb",
+    //       userUsername: 408,
+    //       role: "นักเรียน",  
+    //       userStatus: "ใช้งาน",
+    //     },
+    //     {
+    //       userPrefixThai: "นาย",
 
-          firstname: "Donut",
-          userId: 452,
-          role: "นักเรียน",
-          status: "ใช้งาน",
-        },
-        {
-          prefix: "นาย",
+    //       userFirstnameThai: "Donut",
+    //       userUsername: 452,
+    //       role: "นักเรียน",
+    //       userStatus: "ใช้งาน",
+    //     },
+    //     {
+    //       userPrefixThai: "นาย",
 
-          firstname: "KitKat",
-          userId: 518,
-          role: "นักเรียน",
-          status: "ใช้งาน",
-        },
-      ];
+    //       userFirstnameThai: "KitKat",
+    //       userUsername: 518,
+    //       role: "นักเรียน",
+    //       userStatus: "ใช้งาน",
+    //     },
+    //   ];
+    // },
+    async initialize() {
+      const { doesGetAll } = await this.getUser();
+      doesGetAll.map((doesGetAll) => {
+        doesGetAll.userCreateDate = this.$moment(
+          doesGetAll.userCreateDate
+        ).format("Do MMM YY เวลา LT");
+        doesGetAll.userUpdateDate = this.$moment(
+          doesGetAll.userUpdateDate
+        ).format("Do MMM YY เวลา LT");
+        if (doesGetAll.useruserStatus == "active") {
+          doesGetAll.useruserStatus = "ใช้งาน";
+        } else {
+          doesGetAll.useruserStatus = "ไม่ใช้งาน";
+        }
+      });
+      this.users = doesGetAll;
+      console.log(this.users);
     },
 
     editItem(item) {
