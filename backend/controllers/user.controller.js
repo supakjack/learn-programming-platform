@@ -4,10 +4,9 @@ const {
   userSchema,
   updateUserConditionSchema,
   updateUserSchema,
+  FileuserSchema
 } = require("../helpers/validation.helper");
 const nanoid = require("nanoid");
-var xlstojson = require("xls-to-json-lc");
-var xlsxtojson = require("xlsx-to-json-lc");
 const readXlsxFile = require("read-excel-file/node");
 
 module.exports = {
@@ -27,6 +26,7 @@ module.exports = {
   },
   create: async (req, res, next) => {
     const addUserData = await userSchema.validateAsync(req.body);
+    console.log(addUserData);
     try {
       const doesCreate = await globalModel.insert({
         name: "users",
@@ -56,64 +56,41 @@ module.exports = {
       next(error);
     }
   },
-  file: async (req, res, next) => {},
-  // file: async (req, res, next) => {
-  //   const singleFile = req.files ? req.files.excelFile : null;
+  upload : async (req, res, next) => {
+    const singleFile = req.files ? req.files.file : null;
+    const randomFileName = nanoid(10);
+    const splitFileName = singleFile.name.split(".");
+    singleFile.name = randomFileName + "." + splitFileName[1];
+    const filePath = process.env.BASE_STORAGE_PATH + "temp";
+    await singleFile.mv(filePath + "\\" + singleFile.name);
 
-  //   // console.log(req.files);
-  //   const randomFileName = nanoid(10);
-  //   const splitFileName = singleFile.name.split(".");
-  //   // console.log(randomFileName);
-  //   // console.log(splitFileName);
-  //   singleFile.name = randomFileName + "." + splitFileName[1];
-  //   // console.log(singleFile.name);
-  //   const filePath = process.env.BASE_STORAGE_PATH + "temp";
-  //   await singleFile.mv(filePath + "\\" + singleFile.name);
-  //   // console.log(singleFile);
+    let path = "..\\storages\\temp\\" + singleFile.name;
+    // D:\Software Engineering Project\learn-programming-platform\storages\temp
 
-  //   try {
-  //     console.log("try");
-  //     if (req.files == undefined) {
-  //       return res.status(400).send("Please upload an excel file!");
-  //     }
-  //     let path = filePath + singleFile.name;
-  //     console.log(path);
-
-  //     readXlsxFile(path).then((rows) => {
-  //       // skip header
-  //       rows.shift();
-
-  //       let users = [];
-
-  //       rows.forEach((row) => {
-  //         let user = {
-  //           id: row[0],
-  //           title: row[1],
-  //           description: row[2],
-  //           published: row[3],
-  //         };
-
-  //         users.push(user);
-  //       });
-
-  //       User.bulkCreate(users)
-  //         .then(() => {
-  //           res.status(200).send({
-  //             message: "Uploaded the file successfully: " + req.files,
-  //           });
-  //         })
-  //         .catch((error) => {
-  //           res.status(500).send({
-  //             message: "Fail to import data into database!",
-  //             error: error.message,
-  //           });
-  //         });
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //     res.status(500).send({
-  //       message: "Could not upload the file: " + req.files.name,
-  //     });
-  //   }
-  // },
+    readXlsxFile(path).then((rows) => {
+      // skip header
+      rows.shift();
+      let users = [];
+      rows.forEach((row) => {
+        let user = {
+          userUsername: row[0],
+          userPrefixThai: row[1],
+          userFirstnameThai: row[2],
+          userLastnameThai: row[3],
+        };
+        users.push(user);
+      });
+      console.log(users);
+      try {
+        const doesCreate = globalModel.insert({
+          name: "users",
+          insertData: users,
+        });
+        res.status(200).send({ doesCreate });
+      } catch (error) {
+        if (error.isJoi === true) return next(createError.InternalServerError());
+        next(error);
+      }
+    });
+  },
 };

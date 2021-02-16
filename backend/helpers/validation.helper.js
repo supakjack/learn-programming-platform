@@ -18,7 +18,14 @@ const updateUserSchema = joi.object({
 });
 // user schema
 const userSchema = joi.object({
+  userId: joi.string().required(),
+});
+
+const FileuserSchema = joi.object({
   userUsername: joi.string().required(),
+  userFirstnameThai: joi.string().required(),
+  userLastnameThai: joi.string().required(),
+
 });
 
 // create tag schema
@@ -140,6 +147,7 @@ const updateProblemSchema = joi.object({
 module.exports = {
   authSchema,
   userSchema,
+  FileuserSchema,
   updateUserSchema,
   updateUserConditionSchema,
   createTagSchema,
