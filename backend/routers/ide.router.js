@@ -8,4 +8,6 @@ router.post('/run', ideController.run)
 // compile by source and path
 router.post('/submit', ideController.submit)
 
+// testset by testsetId and filePath
+router.get('/testset', ideController.testset)
 module.exports = router
