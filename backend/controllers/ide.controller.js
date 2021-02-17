@@ -38,6 +38,36 @@ module.exports = {
       next(error);
     }
   },
+
+  
+  // function name: testset
+  // description: compile with test set of problem question by API
+  // input: testset of problem, problemid,
+  // output: number of success or error log
+  // CreateBy: Niphitphon Thanatkulkit / CreateDate: 15/2/2021
+  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 15/2/2021
+  testset: async (req, res, next) => {
+    const compile = req.query.compile,
+      language = req.query.language,
+      source = req.body.source,
+      path = req.body.path,
+      stdin = req.body.stdin;
+    try {
+      const doesCompile = await comileLogic(
+        language,
+        compile,
+        stdin,
+        source,
+        path
+      );
+
+      res.status(200).send(doesCompile);
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
+
   // function name: submit
   // description: submit files by API
   // input: yearName,courseCode,sectionNumber,assignmentTitle,problemTitle,userUsername,taskId,memeFile,singleFile
@@ -82,9 +112,19 @@ module.exports = {
               "%",
           },
         ],
-        count: [{ name: "filePath", newName: "numFile" }],
       });
-      const no = doesSelect[0].numFile + 1;
+
+      // console.log(doesSelect);
+      const number = doesSelect.map((rowFile) => {
+        const index = rowFile.filePath.search("no-");
+        const file = rowFile.filePath
+          .substr(index + 3, rowFile.length)
+          .split("\\");
+        return Number(file[0]);
+      });
+      const lastNumber = Math.max(...number);
+
+      const no = lastNumber + 1;
 
       const filePath =
         process.env.BASE_STORAGE_PATH +
@@ -108,25 +148,71 @@ module.exports = {
           filePath + "\\" + "main" + memeFile,
           JSON.stringify(sourceCode)
         );
+
+        const fileName = await writeFileLogic(sourceCode, single, memeFile);
+
+        // schema files table
+        const createFilesData = await createFiles.validateAsync({
+          filePath: filePath + "\\" + fileName,
+          fileCreateBy,
+          fileUpdateBy,
+        });
+
+        // insert to files table
+        const doesCreateLog = await globalModel.insert({
+          name: "files",
+          insertData: [createFilesData],
+        });
       } else {
-        await singleFile.mv(filePath + "\\" + singleFile.name);
+        if (singleFile.length) {
+          await singleFile.map(async (single) => {
+            await single.mv(filePath + "\\" + single.name);
+            const fileName = await writeFileLogic(sourceCode, single, memeFile);
+
+            // schema files table
+            const createFilesData = await createFiles.validateAsync({
+              filePath: filePath + "\\" + fileName,
+              fileCreateBy,
+              fileUpdateBy,
+            });
+
+            // insert to files table
+            const doesCreateLog = await globalModel.insert({
+              name: "files",
+              insertData: [createFilesData],
+            });
+          });
+        } else {
+          await singleFile.mv(filePath + "\\" + singleFile.name);
+
+          const fileName = await writeFileLogic(
+            sourceCode,
+            singleFile,
+            memeFile
+          );
+          // schema files table
+          const createFilesData = await createFiles.validateAsync({
+            filePath: filePath + "\\" + fileName,
+            fileCreateBy,
+            fileUpdateBy,
+          });
+
+          // insert to files table
+          const doesCreateLog = await globalModel.insert({
+            name: "files",
+            insertData: [createFilesData],
+          });
+        }
       }
 
-      const fileName = await writeFileLogic(sourceCode, singleFile, memeFile);
-      // schema files table
-      const createFilesData = await createFiles.validateAsync({
-        filePath: filePath + "\\" + fileName,
-        fileCreateBy,
-        fileUpdateBy,
-      });
-
-      // insert to files table
-      const doesCreateLog = await globalModel.insert({
-        name: "files",
-        insertData: [createFilesData],
-      });
-
-      res.status(200).send(doesCreateLog);
+      // const doesCompile = await comileLogic(
+      //   "cpp",
+      //   "path",
+      //   "1\n2",
+      //   null,
+      //   filePath + "\\" + singleFile.name
+      // );
+      res.status(200).send(singleFile);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);

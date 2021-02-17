@@ -24,7 +24,7 @@ module.exports = {
   // input : table data and schema from controller
   // output : base on tabel schema field filter if doesn't use filter will default use on `select *`
   // CreateBy: Supak pukdam / CreateDate: 4/2/2021
-  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 4/2/2021
+  // UpdateBy: Yotsapat phurahong / UpdateDate: 17/2/2021
   select: async (table) => {
     return new Promise((resolve, reject) => {
       try {
@@ -36,6 +36,12 @@ module.exports = {
                 leftJoin.tableAs,
                 table.name + "." + leftJoin.leftKey,
                 leftJoin.as + "." + leftJoin.joinKey
+              );
+            } else if (leftJoin.leftTableName) {
+              doesSelect.leftJoin(
+                leftJoin.joinTable,
+                leftJoin.leftTableName + "." + leftJoin.leftKey,
+                leftJoin.joinTable + "." + leftJoin.joinKey
               );
             } else {
               doesSelect.leftJoin(
