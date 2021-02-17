@@ -9,5 +9,5 @@ router.post('/run', ideController.run)
 router.post('/submit', ideController.submit)
 
 // testset by testsetId and filePath
-router.get('/testset', ideController.testset)
+router.post('/testset', ideController.testset)
 module.exports = router
