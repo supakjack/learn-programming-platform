@@ -82,9 +82,19 @@ module.exports = {
               "%",
           },
         ],
-        count: [{ name: "filePath", newName: "numFile" }],
       });
-      const no = doesSelect[0].numFile + 1;
+
+      // console.log(doesSelect);
+      const number = doesSelect.map((rowFile) => {
+        const index = rowFile.filePath.search("no-");
+        const file = rowFile.filePath
+          .substr(index + 3, rowFile.length)
+          .split("\\");
+        return Number(file[0]);
+      });
+      const lastNumber = Math.max(...number);
+
+      const no = lastNumber + 1;
 
       const filePath =
         process.env.BASE_STORAGE_PATH +
@@ -108,25 +118,71 @@ module.exports = {
           filePath + "\\" + "main" + memeFile,
           JSON.stringify(sourceCode)
         );
+
+        const fileName = await writeFileLogic(sourceCode, single, memeFile);
+
+        // schema files table
+        const createFilesData = await createFiles.validateAsync({
+          filePath: filePath + "\\" + fileName,
+          fileCreateBy,
+          fileUpdateBy,
+        });
+
+        // insert to files table
+        const doesCreateLog = await globalModel.insert({
+          name: "files",
+          insertData: [createFilesData],
+        });
       } else {
-        await singleFile.mv(filePath + "\\" + singleFile.name);
+        if (singleFile.length) {
+          await singleFile.map(async (single) => {
+            await single.mv(filePath + "\\" + single.name);
+            const fileName = await writeFileLogic(sourceCode, single, memeFile);
+
+            // schema files table
+            const createFilesData = await createFiles.validateAsync({
+              filePath: filePath + "\\" + fileName,
+              fileCreateBy,
+              fileUpdateBy,
+            });
+
+            // insert to files table
+            const doesCreateLog = await globalModel.insert({
+              name: "files",
+              insertData: [createFilesData],
+            });
+          });
+        } else {
+          await singleFile.mv(filePath + "\\" + singleFile.name);
+
+          const fileName = await writeFileLogic(
+            sourceCode,
+            singleFile,
+            memeFile
+          );
+          // schema files table
+          const createFilesData = await createFiles.validateAsync({
+            filePath: filePath + "\\" + fileName,
+            fileCreateBy,
+            fileUpdateBy,
+          });
+
+          // insert to files table
+          const doesCreateLog = await globalModel.insert({
+            name: "files",
+            insertData: [createFilesData],
+          });
+        }
       }
 
-      const fileName = await writeFileLogic(sourceCode, singleFile, memeFile);
-      // schema files table
-      const createFilesData = await createFiles.validateAsync({
-        filePath: filePath + "\\" + fileName,
-        fileCreateBy,
-        fileUpdateBy,
-      });
-
-      // insert to files table
-      const doesCreateLog = await globalModel.insert({
-        name: "files",
-        insertData: [createFilesData],
-      });
-
-      res.status(200).send(doesCreateLog);
+      // const doesCompile = await comileLogic(
+      //   "cpp",
+      //   "path",
+      //   "1\n2",
+      //   null,
+      //   filePath + "\\" + singleFile.name
+      // );
+      res.status(200).send(singleFile);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
