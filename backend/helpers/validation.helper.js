@@ -11,21 +11,56 @@ const updateUserConditionSchema = joi.object({
 
 // update user schema
 const updateUserSchema = joi.object({
-  userPrefixThai: joi.string().max(255),
-  userFirstnameThai: joi.string().max(255),
-  userLastnameThai: joi.string().max(255),
-  userStatus: joi.number().integer().max(3),
+  userUsername: joi.any(),
+  userPrefixThai: joi.any(),
+  userFirstnameThai: joi.any(),
+  userLastnameThai: joi.any(),
+  userPrefixEnglish: joi.any(),
+  userFistnameEnglish: joi.any(),
+  userLastnameEnglish: joi.any(),
+  userCreateBy: joi.number().integer().max(99999999).min(1),
+  userUpdateBy: joi.number().integer().max(99999999).min(1),
+  userStatus: joi.any(),
 });
 // user schema
 const userSchema = joi.object({
-  userId: joi.string().required(),
+  userUsername: joi.string(),
+
+  userPrefixThai: joi.string(),
+  userFirstnameThai: joi.string(),
+  userLastnameThai: joi.string(),
+  
+  userPrefixEnglish: joi.string(),
+  userFistnameEnglish: joi.string(),
+  userLastnameEnglish: joi.string(),
+
+  userCreateBy: joi.number().integer().max(99999999).min(1),
+  userUpdateBy: joi.number().integer().max(99999999).min(1),
+
+  userStatus: joi.number().integer().max(3),
+});
+
+const createUserSchema = joi.object({
+  userUsername: joi.string(),
+
+  userPrefixThai: joi.string(),
+  userFirstnameThai: joi.string(),
+  userLastnameThai: joi.string(),
+  
+  userPrefixEnglish: joi.string(),
+  userFistnameEnglish: joi.string(),
+  userLastnameEnglish: joi.string(),
+
+  userCreateBy: joi.number().integer().max(99999999).min(1),
+  userUpdateBy: joi.number().integer().max(99999999).min(1),
+
+  userStatus: joi.number().integer().max(3),
 });
 
 const FileuserSchema = joi.object({
   userUsername: joi.string().required(),
   userFirstnameThai: joi.string().required(),
   userLastnameThai: joi.string().required(),
-
 });
 
 // create tag schema
@@ -69,7 +104,6 @@ const createAssessSchema = joi.object({
 const getProblemSchema = joi.object({
   problemId: joi.number().max(99999999).min(1),
 });
-
 
 // get assignment schema
 const getAssignmentSchema = joi.object({
@@ -147,6 +181,7 @@ const updateProblemSchema = joi.object({
 module.exports = {
   authSchema,
   userSchema,
+  createUserSchema,
   FileuserSchema,
   updateUserSchema,
   updateUserConditionSchema,
@@ -164,5 +199,5 @@ module.exports = {
   createHashtagSchema,
   createTestsetsSchema,
   updateProblemConditionSchema,
-  updateProblemSchema
+  updateProblemSchema,
 };

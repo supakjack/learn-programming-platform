@@ -10,6 +10,8 @@ require('dotenv').config()
 require('./configs/passport.config')
 
 const authRoute = require('./routers/auth.router')
+const userRoute = require('./routers/user.router')
+
 
 const app = express()
 
@@ -25,6 +27,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.use('/auth', authRoute)
+app.use('/user', userRoute)
 app.all('*', proxy(process.env.END_POINT_BASE_URL))
 
 app.use(
