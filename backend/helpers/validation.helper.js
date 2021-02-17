@@ -5,12 +5,27 @@ const authSchema = joi.object({
   password: joi.string().min(2).required(),
 });
 
+const updateUserConditionSchema = joi.object({
+  userId: joi.number().integer().max(99999999),
+});
+
+// update user schema
 const updateUserSchema = joi.object({
-  userId: joi.number().integer(),
+  userPrefixThai: joi.string().max(255),
+  userFirstnameThai: joi.string().max(255),
+  userLastnameThai: joi.string().max(255),
+  userStatus: joi.number().integer().max(3),
 });
 // user schema
 const userSchema = joi.object({
+  userId: joi.string().required(),
+});
+
+const FileuserSchema = joi.object({
   userUsername: joi.string().required(),
+  userFirstnameThai: joi.string().required(),
+  userLastnameThai: joi.string().required(),
+
 });
 
 // create tag schema
@@ -132,7 +147,9 @@ const updateProblemSchema = joi.object({
 module.exports = {
   authSchema,
   userSchema,
+  FileuserSchema,
   updateUserSchema,
+  updateUserConditionSchema,
   createTagSchema,
   getTagSchema,
   updateTagConditionSchema,

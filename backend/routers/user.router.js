@@ -1,19 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user.controller");
-const timeout = require("connect-timeout");
+const upload = require("../helpers/upload");
 
 // Retrieve all users
 router.get("/", userController.findAll);
 // Create a new user
 router.post("/", userController.create);
-// Retrieve a single user with id
 // router.get('/:id', userController.findById);
 // Update a user with id
 router.patch("/", userController.update);
-// Delete a user with id
-// router.delete('/:id', userController.delete);
-router.post("/upload", userController.upload);
-router.get("/file", userController.file);
+router.post("/upload", upload.single("file"), userController.upload);
 
 module.exports = router;
