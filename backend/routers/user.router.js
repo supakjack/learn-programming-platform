@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user.controller");
-const upload = require("../helpers/upload");
 
 // Retrieve all users
 router.get("/", userController.findAll);
 // Create a new user
 router.post("/", userController.create);
-// router.get('/:id', userController.findById);
+router.get("/:id", userController.findById);
 // Update a user with id
 router.patch("/", userController.update);
-router.post("/upload", upload.single("file"), userController.upload);
+
+router.post("/upload", userController.upload);
 
 module.exports = router;

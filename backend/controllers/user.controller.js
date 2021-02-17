@@ -4,8 +4,9 @@ const {
   userSchema,
   updateUserConditionSchema,
   updateUserSchema,
-  FileuserSchema
-} = require("../helpers/validation.helper");
+  FileuserSchema,
+  createUserSchema,
+} = require("./../helpers/validation.helper");
 const nanoid = require("nanoid");
 const readXlsxFile = require("read-excel-file/node");
 
@@ -17,20 +18,35 @@ module.exports = {
         name: "users",
         // condition: [getUserData],
       });
-      console.log(doesGetAll);
+      // console.log(doesGetAll);
       res.status(201).send({ doesGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
     }
   },
+  findById: async (req, res, next) => {
+    try {
+      const doesGet = await globalModel.select({
+        name: "users",
+        // condition: [getUserData],
+      });
+      // console.log(doesGetAll);
+      res.status(201).send({ doesGetAll });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
+
   create: async (req, res, next) => {
-    const addUserData = await userSchema.validateAsync(req.body);
-    console.log(addUserData);
+    console.log(req.body);
+    // const addUserData = await createUserSchema.validateAsync(req.body);
+    // console.log(addUserData);
     try {
       const doesCreate = await globalModel.insert({
         name: "users",
-        insertData: [addUserData],
+        insertData: [req.body],
       });
       res.status(200).send({ doesCreate });
     } catch (error) {
@@ -39,16 +55,17 @@ module.exports = {
     }
   },
   update: async (req, res, next) => {
+    console.log(req.query);
+    console.log(req.body);
     const updateCondition = await updateUserConditionSchema.validateAsync(
       req.query
     );
-    const updateUserData = await updateUserSchema.validateAsync(req.body);
-    // try call function deleteTag in global model then catch if error
+    // const updateUserData = await updateUserSchema.validateAsync(req.body);
     try {
       const doesUpdate = await globalModel.update({
         name: "users",
         condition: [updateCondition],
-        updateData: [updateUserData],
+        updateData: [req.body],
       });
       res.status(200).send({ doesUpdate });
     } catch (error) {
@@ -56,7 +73,7 @@ module.exports = {
       next(error);
     }
   },
-  upload : async (req, res, next) => {
+  upload: async (req, res, next) => {
     const singleFile = req.files ? req.files.file : null;
     const randomFileName = nanoid(10);
     const splitFileName = singleFile.name.split(".");
@@ -88,7 +105,8 @@ module.exports = {
         });
         res.status(200).send({ doesCreate });
       } catch (error) {
-        if (error.isJoi === true) return next(createError.InternalServerError());
+        if (error.isJoi === true)
+          return next(createError.InternalServerError());
         next(error);
       }
     });

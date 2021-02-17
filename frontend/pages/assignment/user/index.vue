@@ -38,13 +38,41 @@
                       v-model="editedItem.userUsername"
                       label="รหัสผู้ใช้"
                     ></v-text-field>
+                    <v-btn color="blue darken-1" text @click="getUserLdap">
+                      ค้นหา
+                    </v-btn>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-autocomplete
+                    <v-select
+                      v-model="editedItem.userPrefixEnglish"
+                      :items="userPrefixEnglish"
+                      menu-props="auto"
+                      label="Prefix"
+                      hide-details
+                      single-line
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field
+                      v-model="userLDAP.givenName"
+                      label="Firstname"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field
+                      v-model="userLDAP.sn"
+                      label="Lastname"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-select
                       v-model="editedItem.userPrefixThai"
                       :items="userPrefixThai"
+                      menu-props="auto"
                       label="คำนำหน้า"
-                    ></v-autocomplete>
+                      hide-details
+                      single-line
+                    ></v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
@@ -59,11 +87,14 @@
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-autocomplete
+                    <v-select
                       v-model="editedItem.userStatus"
                       :items="userStatus"
+                      menu-props="auto"
                       label="สถานะ"
-                    ></v-autocomplete>
+                      hide-details
+                      single-line
+                    ></v-select>
                   </v-col>
                 </v-row>
                 <div v-if="editedIndex === -1">
@@ -114,8 +145,6 @@ import usersmixin from "../../../components/users";
 export default {
   mixins: [usersmixin],
   data: () => ({
-    userPrefixThai: ["นาย", "นางสาว"],
-    userStatus: ["ใช้งาน", "ปิด"],
     dialog: false,
     dialogDelete: false,
     search: "",
@@ -133,20 +162,41 @@ export default {
       { text: "สถานะ", value: "userStatus" },
       { text: "การจัดการ", value: "actions", sortable: false },
     ],
+    userLDAP: [],
     users: [],
     editedIndex: -1,
     editedItem: {
+      userId: 0,
+      userUsername: "",
       userPrefixThai: "",
       userFirstnameThai: "",
       userLastnameThai: "",
-      userStatus: "",
+      userPrefixEnglish: "",
+      userFirstnameEnglish: "",
+      userLastnameEnglish: "",
+      userStatus: 1,
+      userCreateBy: 0,
+      userUpdateBy: 0,
     },
     defaultItem: {
+      userId: 0,
+      userUsername: "",
       userPrefixThai: "",
       userFirstnameThai: "",
       userLastnameThai: "",
-      userStatus: "",
+      userPrefixEnglish: "",
+      userFirstnameEnglish: "",
+      userLastnameEnglish: "",
+      userStatus: 1,
+      userCreateBy: 0,
+      userUpdateBy: 0,
     },
+    userStatus: [
+      { text: "ใช้งาน", value: 1 },
+      { text: "ไม่ใช้งาน", value: 2 },
+    ],
+    userPrefixEnglish: [{ text: "Mr." }, { text: "Mrs." }, { text: "Ms." }],
+    userPrefixThai: [{ text: "นาง" }, { text: "นางสาว" }, { text: "นาย" }],
   }),
 
   computed: {
@@ -169,89 +219,6 @@ export default {
   },
 
   methods: {
-    // initialize() {
-    //   this.users = [
-    //     {
-    //       userPrefixThai: "นาย",
-    //       userFirstnameThai: "Frozen",
-    //       userLastnameThai: "Yogurt",
-    //       userUsername: 159,
-    //       role: "นักเรียน",
-    //       userStatus: "ใช้งาน",
-    //     },
-    //     {
-    //       userPrefixThai: "นางสาว",
-    //       userFirstnameThai: "Ice cream sandwich",
-    //       userUsername: 237,
-    //       role: "นักเรียน",
-    //       userStatus: "ใช้งาน",
-    //     },
-    //     {
-    //       userPrefixThai: "นาย",
-
-    //       userFirstnameThai: "Eclair",
-    //       userUsername: 262,
-    //       role: "นักเรียน",
-    //       userStatus: "ใช้งาน",
-    //     },
-    //     {
-    //       userPrefixThai: "นาย",
-
-    //       userFirstnameThai: "Cupcake",
-    //       userUsername: 305,
-    //       role: "นักเรียน",
-    //       userStatus: "ใช้งาน",
-    //     },
-    //     {
-    //       userPrefixThai: "นาย",
-
-    //       userFirstnameThai: "Gingerbread",
-    //       userUsername: 356,
-    //       role: "นักเรียน",
-    //       userStatus: "ใช้งาน",
-    //     },
-    //     {
-    //       userPrefixThai: "นาย",
-
-    //       userFirstnameThai: "Jelly bean",
-    //       userUsername: 375,
-    //       role: "นักเรียน",
-    //       userStatus: "ใช้งาน",
-    //     },
-    //     {
-    //       userPrefixThai: "นาย",
-
-    //       userFirstnameThai: "Lollipop",
-    //       userUsername: 392,
-    //       role: "นักเรียน",
-    //       userStatus: "ใช้งาน",
-    //     },
-    //     {
-    //       userPrefixThai: "นาย",
-
-    //       userFirstnameThai: "Honeycomb",
-    //       userUsername: 408,
-    //       role: "นักเรียน",  
-    //       userStatus: "ใช้งาน",
-    //     },
-    //     {
-    //       userPrefixThai: "นาย",
-
-    //       userFirstnameThai: "Donut",
-    //       userUsername: 452,
-    //       role: "นักเรียน",
-    //       userStatus: "ใช้งาน",
-    //     },
-    //     {
-    //       userPrefixThai: "นาย",
-
-    //       userFirstnameThai: "KitKat",
-    //       userUsername: 518,
-    //       role: "นักเรียน",
-    //       userStatus: "ใช้งาน",
-    //     },
-    //   ];
-    // },
     async initialize() {
       const { doesGetAll } = await this.getUser();
       doesGetAll.map((doesGetAll) => {
@@ -261,31 +228,69 @@ export default {
         doesGetAll.userUpdateDate = this.$moment(
           doesGetAll.userUpdateDate
         ).format("Do MMM YY เวลา LT");
-        if (doesGetAll.useruserStatus == "active") {
-          doesGetAll.useruserStatus = "ใช้งาน";
+        if (doesGetAll.userStatus == "active") {
+          doesGetAll.userStatus = "ใช้งาน";
         } else {
-          doesGetAll.useruserStatus = "ไม่ใช้งาน";
+          doesGetAll.userStatus = "ไม่ใช้งาน";
         }
       });
       this.users = doesGetAll;
-      console.log(this.users);
+      // console.log(this.users);
     },
 
+    async getUserLdap() {
+      const { user } = await this.getUserByUsername(
+        this.editedItem.userUsername
+      );
+      this.userLDAP = user;
+      console.log(this.userLDAP);
+    },
     editItem(item) {
       this.editedIndex = this.users.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.editedItem.userId = item.userId;
+      this.editedItem.userUsername = item.userUsername;
+      this.editedItem.userPrefixEnglish = item.userPrefixEnglish;
+      this.editedItem.userFirstnameEnglish = item.userFirstnameEnglish;
+      this.editedItem.userLastnameEnglish = item.userLastnameEnglish;
+      this.editedItem.userPrefixThai = item.userPrefixThai;
+      this.editedItem.userFirstnameThai = item.userFirstnameThai;
+      this.editedItem.userLastnameThai = item.userLastnameThai;
+      this.editedItem.userStatus = item.userStatus;
+      this.editedItem.userCreateBy = 1;
+      this.editedItem.userUpdateBy = this.editedItem.userCreateBy;
+      this.editedItem.userUpdateDate = this.$moment().format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
       this.dialog = true;
     },
 
     deleteItem(item) {
       this.editedIndex = this.users.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.editedItem.userId = item.userId;
+      this.editedItem.userUsername = item.userUsername;
+      this.editedItem.userPrefixEnglish = item.userPrefixEnglish;
+      this.editedItem.userFirstnameEnglish = item.userFirstnameEnglish;
+      this.editedItem.userLastnameEnglish = item.userLastnameEnglish;
+      this.editedItem.userPrefixThai = item.userPrefixThai;
+      this.editedItem.userFirstnameThai = item.userFirstnameThai;
+      this.editedItem.userLastnameThai = item.userLastnameThai;
+      this.editedItem.userStatus = item.userStatus;
+      this.editedItem.userCreateBy = 1;
+      this.editedItem.userUpdateBy = this.editedItem.userCreateBy;
+      this.editedItem.userUpdateDate = this.$moment().format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      console.log(this.editedItem);
       this.dialogDelete = true;
     },
 
-    deleteItemConfirm() {
-      this.users.splice(this.editedIndex, 1);
-      this.closeDelete();
+    async deleteItemConfirm() {
+      const EditResult = await this.editUser(this.editedItem);
+      console.log(EditResult);
+
+      if (typeof EditResult === "number") {
+        this.closeDelete();
+      }
     },
 
     close() {
@@ -304,29 +309,32 @@ export default {
       });
     },
 
-    save() {
+    async save() {
+      // if  this.editedIndex > -1 == it edited tag else this.editedIndex == -1 insert tag
       if (this.editedIndex > -1) {
-        Object.assign(this.users[this.editedIndex], this.editedItem);
+        console.log("userCreateBy 0");
+        const EditResult = await this.editUser(this.editedItem);
+        console.log(EditResult);
+        if (typeof EditResult === "number") {
+          this.dialog = false;
+          this.SuccessTitle = "แก้ไขสำเร็จ";
+          this.dialogSuccess = true;
+        }
       } else {
-        this.users.push(this.editedItem);
+        console.log("userCreateBy -1");
+        this.editedItem.userCreateBy = 1;
+        this.editedItem.userUpdateBy = this.editedItem.userCreateBy;
+        this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
+        this.editedItem.userLastnameEnglish = this.userLDAP.sn;
+
+        const [insertResult] = await this.insertUser(this.editedItem);
+
+        if (typeof insertResult === "number") {
+          this.close();
+          this.SuccessTitle = "บันทึกสำเร็จ";
+          this.dialogSuccess = true;
+        }
       }
-      this.close();
-    },
-    editItem(item) {
-      this.editedIndex = this.users.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-    },
-
-    deleteItem(item) {
-      this.editedIndex = this.users.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogDelete = true;
-    },
-
-    deleteItemConfirm() {
-      this.users.splice(this.editedIndex, 1);
-      this.closeDelete();
     },
 
     close() {
@@ -343,15 +351,6 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
-    },
-
-    save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.users[this.editedIndex], this.editedItem);
-      } else {
-        this.users.push(this.editedItem);
-      }
-      this.close();
     },
   },
 };
