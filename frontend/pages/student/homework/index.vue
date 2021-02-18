@@ -18,7 +18,7 @@
   >
     <template v-slot:top>
       <v-toolbar flat class="kanit-font">
-        <v-toolbar-title>ตารางการบ้าน</v-toolbar-title>
+        <v-toolbar-title>ตารางงาน</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-text-field
@@ -29,7 +29,28 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
+        <v-dialog v-model="dialogDetail" max-width="1100px">
+          <v-card>
+            <v-data-table
+              :headers="headersDialog"
+              :items="allHomeworks"
+              :items-per-page="5"
+              class="elevation-1"
+            ></v-data-table>
+          </v-card>
+        </v-dialog>
       </v-toolbar>
+    </template>
+
+    <template v-slot:[`item.actions`]="{ item }">
+      <v-btn small class="mr-2" @click="openDialog(item)">
+        เพิ่มเติม
+      </v-btn>
+    </template>
+    <template v-slot:no-data>
+      <v-btn color="primary" @click="initialize">
+        โหลดข้อมูลใหม่
+      </v-btn>
     </template>
   </v-data-table>
 </template>
@@ -43,9 +64,7 @@ export default {
     formTitle: "ข้อมูลการบ้าน",
     SuccessTitle: "",
     allHomeworks: [],
-    dialog: false, // if true show insert or edit modal
-    dialogDelete: false, // if true show delete modal
-    dialogSuccess: false, // if true show Inserted success modal
+    dialogDetail: false,
     search: "", // use for search in table all column
     headers: [
       // use to declare data and map value in header of table
@@ -55,6 +74,23 @@ export default {
       },
       { text: "ชื่อบท", value: "assignmentTitle" }, // define column name and value
       { text: "สถานะการใช้งาน", value: "assignmentStatus" },
+      { text: "สถานะการส่งงาน", value: "" },
+      { text: "คะแนน", value: "taskScore" },
+      { text: "ดำเนินการ", value: "actions", sortable: false }
+    ],
+
+    //datas for show on dialog when click "more"
+    headersDialog: [
+      // use to declare data and map value in header of table
+      {
+        align: "center",
+        sortable: false
+      },
+      { text: "ข้อ", value: "problemId" }, // define column name and value
+      { text: "ชื่อ", value: "problemTitle" },
+      { text: "คำอธิบาย", value: "problemDiscription" },
+      { text: "แท็ก", value: "tagName" },
+      { text: "จำนวนที่ส่ง", value: "" },
       { text: "สถานะการส่งงาน", value: "" },
       { text: "คะแนน", value: "taskScore" }
     ],
@@ -79,9 +115,6 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
-    },
-    dialogDelete(val) {
-      val || this.closeDelete();
     }
   },
 
@@ -94,9 +127,9 @@ export default {
     // function name: initialize
     // description: for geting data from backend using api
     // input: -
-    // output: [doesGetAll]: {tagName, tagId, tagStatus, tagUpdateDate, tagCraeteDate ,CreateName, UpdateName}
-    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 1/2/2021
-    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
+    // output: [doesGetAll]: {assignmentTitle, assignmentStatus, , taskScore}
+    // CreateBy: Yotsapat Phurahong / CreateDate: 18/2/2021
+    // UpdateBy:
 
     async initialize() {
       const { doesGetAll } = await this.getHomework();
@@ -114,6 +147,10 @@ export default {
         }
       });
       this.allHomeworks = doesGetAll;
+    },
+
+    openDialog(item) {
+      this.dialogDetail = true;
     }
   }
 };
