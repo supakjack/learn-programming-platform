@@ -9,16 +9,18 @@
         </v-container>
       </v-main>
       <Footer></Footer>
-      <Sidebar></Sidebar>
+      <!-- <Sidebar></Sidebar> -->
+      <testSidebar></testSidebar>
     </div>
   </v-app>
-</template>
+</template> 
 
 <script>
 import Sidebar from "./Modrens/Sidebar";
 import Topbar from "./Modrens/Topbar";
 import Footer from "./Modrens/Footer";
 import Breadcrumb from "./Modrens/Breadcrumb";
+import testSidebar from "./Modrens/testSidebar";
 
 export default {
   components: {
@@ -26,6 +28,7 @@ export default {
     Topbar,
     Footer,
     Breadcrumb,
+    testSidebar,
   },
 };
 </script>

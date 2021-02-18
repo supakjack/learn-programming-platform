@@ -6,10 +6,10 @@
       'items-per-page-text': `จำนวนแถวต่อหน้า`,
       'items-per-page-all-text': `ทั้งหมด`
     }"
-    :items="allTags"
+    :items="allHomeworks"
     :items-per-page="8"
-    item-key="tagId"
-    :sort-by="['tagStatus', 'tagUpdateDate']"
+    item-key="assignmentId"
+    :sort-by="['assignmentStatus', 'assignmentCreateDate']"
     :sort-desc="[false, true]"
     multi-sort
     :search="search"
@@ -42,7 +42,7 @@ export default {
   data: () => ({
     formTitle: "ข้อมูลการบ้าน",
     SuccessTitle: "",
-    allTags: [],
+    allHomeworks: [],
     dialog: false, // if true show insert or edit modal
     dialogDelete: false, // if true show delete modal
     dialogSuccess: false, // if true show Inserted success modal
@@ -53,29 +53,21 @@ export default {
         align: "center",
         sortable: false
       },
-      { text: "ชื่อบท", value: "tagName" }, // define column name and value
-      { text: "สถานะการใช้งาน", value: "tagCreateDate" },
-      { text: "สถานะการส่งงาน", value: "tagUpdateDate" },
-      { text: "คะแนน", value: "createName" }
+      { text: "ชื่อบท", value: "assignmentTitle" }, // define column name and value
+      { text: "สถานะการใช้งาน", value: "assignmentStatus" },
+      { text: "สถานะการส่งงาน", value: "" },
+      { text: "คะแนน", value: "taskScore" }
     ],
     editedIndex: -1, //  editedIndex default to -1
-    editedItem: {
-      // use to add, edit and delete item
-      tagId: 0,
-      tagName: "",
-      tagStatus: 0,
-      tagCreateBy: 0,
-      tagUpdateBy: 0
-    },
+
     defaultItem: {
       // default of item value
-      tagId: 0,
-      tagName: "",
-      tagStatus: 0,
-      tagCreateBy: 0,
-      tagUpdateBy: 0
+      assignmentTitle: "",
+      assignmentStatus: 0,
+      // assignmentStatus: 0,
+      taskScore: 0
     },
-    tagStatus: [
+    assignmentStatus: [
       // use in select options
       { text: "ใช้งาน", value: 1 },
       { text: "ไม่ใช้งาน", value: 2 }
@@ -105,22 +97,23 @@ export default {
     // output: [doesGetAll]: {tagName, tagId, tagStatus, tagUpdateDate, tagCraeteDate ,CreateName, UpdateName}
     // CreateBy: Niphitphon Thanatkulkit / CreateDate: 1/2/2021
     // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
+
     async initialize() {
-      const { doesGetAll } = await this.getTag();
+      const { doesGetAll } = await this.getHomework();
       doesGetAll.map(doesGetAll => {
-        doesGetAll.tagCreateDate = this.$moment(
-          doesGetAll.tagCreateDate
+        doesGetAll.assignmentCreateDate = this.$moment(
+          doesGetAll.assignmentCreateDate
         ).format("Do MMM YY เวลา LT");
-        doesGetAll.tagUpdateDate = this.$moment(
-          doesGetAll.tagUpdateDate
+        doesGetAll.assignmentUpdateDate = this.$moment(
+          doesGetAll.assignmentUpdateDate
         ).format("Do MMM YY เวลา LT");
-        if (doesGetAll.tagStatus == "active") {
-          doesGetAll.tagStatus = "ใช้งาน";
+        if (doesGetAll.assignmentStatus == "active") {
+          doesGetAll.assignmentStatus = "ใช้งาน";
         } else {
-          doesGetAll.tagStatus = "ไม่ใช้งาน";
+          doesGetAll.assignmentStatus = "ไม่ใช้งาน";
         }
       });
-      this.allTags = doesGetAll;
+      this.allHomeworks = doesGetAll;
     }
   }
 };
