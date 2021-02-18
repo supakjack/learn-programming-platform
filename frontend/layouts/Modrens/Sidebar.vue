@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer v-model="drawer" :mini-variant.sync="mini" permanent>
+  <v-navigation-drawer v-model="drawer" :mini-variant.sync="mini" fixed>
     <v-list-item class="px-2">
       <v-list-item-avatar>
         <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
@@ -48,41 +48,36 @@ export default {
       menus: [
         {
           action: "mdi-chart-bar",
-          items: [
-            { title: "การมอบหมายงาน" },
-            { title: "หลักสูตร" },
-            { title: "นักเรียน" },
-          ],
-          title: "วิเคราะห์"
+          title: "หน้าหลัก",
         },
         {
           action: "mdi-calendar-check",
           items: [
             { title: "ปีการศึกษา" },
             { title: "รายวิชา" },
-            { title: "กลุ่มเรียน" }
+            { title: "กลุ่มเรียน" },
           ],
-          title: "การมอบหมาย"
+          title: "การมอบหมาย",
         },
         {
           action: "mdi-book-open",
           active: true,
           items: [{ title: "ชุดทดสอบ" }, { title: "แท็ก" }],
-          title: "โจทย์ปัญหา"
+          title: "โจทย์ปัญหา",
         },
         {
           action: "mdi-code-braces",
           items: [{ title: "ภาษา C" }, { title: "ภาษา C++" }],
-          title: "เขียนโปรแกรม"
+          title: "เขียนโปรแกรม",
         },
         {
           action: "mdi-human-child",
           items: [{ title: "นักเรียน" }],
-          title: "ผู้ใช้งาน"
-        }
+          title: "ผู้ใช้งาน",
+        },
       ],
-      mini: true
+      mini: true,
     };
-  }
+  },
 };
 </script>
