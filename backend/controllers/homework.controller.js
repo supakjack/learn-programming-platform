@@ -23,6 +23,8 @@ module.exports = {
           "tagUpdateDate",
           "tagName",
           "compilelogScore",
+          "problemDiscription",
+          "problemId",
         ],
         leftJoin: [
           {
