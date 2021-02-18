@@ -44,7 +44,6 @@ export default {
     },
 
     async insertUser(data) {
-      // console.log(data);
       const InsertData = {};
       InsertData.userUsername = data.userUsername;
 

@@ -17,6 +17,7 @@ module.exports = {
       const doesGetAll = await globalModel.select({
         name: "users",
         // condition: [getUserData],
+        
       });
       // console.log(doesGetAll);
       res.status(201).send({ doesGetAll });
