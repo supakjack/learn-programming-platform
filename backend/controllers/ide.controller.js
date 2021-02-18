@@ -1,5 +1,6 @@
 const createError = require("http-errors");
 const { comileLogic } = require("./../helpers/compile.helper");
+const { create } = require("./../helpers/createLog.helper");
 const globalModel = require("../models/global.model");
 const nanoid = require("nanoid");
 const mkdirp = require("mkdirp");
@@ -39,29 +40,47 @@ module.exports = {
     }
   },
 
-  
   // function name: testset
   // description: compile with test set of problem question by API
-  // input: testset of problem, problemid,
-  // output: number of success or error log
+  // input: testsetId, filePath
+  // output: fail, pass, error
   // CreateBy: Niphitphon Thanatkulkit / CreateDate: 15/2/2021
-  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 15/2/2021
+  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 18/2/2021
   testset: async (req, res, next) => {
-    const compile = req.query.compile,
-      language = req.query.language,
-      source = req.body.source,
-      path = req.body.path,
-      stdin = req.body.stdin;
+    const filePath = req.body.filePath,
+      testsetId = req.query.testsetId;
+
+    console.log(testsetId, filePath);
+
     try {
+      const doesGetTestset = await globalModel.select({
+        name: "testsets",
+        condition: [{ testsetId: testsetId }],
+      });
+
       const doesCompile = await comileLogic(
-        language,
-        compile,
-        stdin,
-        source,
-        path
+        "cpp",
+        "path",
+        doesGetTestset[0].testsetInput,
+        null,
+        filePath
       );
 
-      res.status(200).send(doesCompile);
+      if (
+        doesCompile.stdout == doesGetTestset[0].testsetOutput &&
+        doesCompile.stderr == ""
+      ) {
+        const doesCreateLog = await create(
+
+        );
+      } else if (
+        doesCompile.stdout != doesGetTestset[0].testsetOutput &&
+        doesCompile.stderr == ""
+      ) {
+        res.status(200).send("fail");
+      } else {
+        res.status(200).send(doesCompile.strderr);
+      }
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
