@@ -15,25 +15,22 @@
     <v-divider></v-divider>
 
     <v-list>
-      <v-list-group
-        v-for="item in menus"
-        :key="item.title"
-        v-model="item.active"
-        :prepend-icon="item.action"
-        no-action
-      >
-        <template v-slot:activator>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title"></v-list-item-title>
-          </v-list-item-content>
-        </template>
+      <v-list-item v-for="item in menus" :key="item.title" :to="item.to">
+        <v-list-item-content>
+          <v-list-item-title v-text="item.title"></v-list-item-title>
+        </v-list-item-content>
 
-        <v-list-item link v-for="child in item.items" :key="child.title">
+        <v-list-item
+          link
+          v-for="child in item.items"
+          :key="child.title"
+          :to="child.to"
+        >
           <v-list-item-content>
             <v-list-item-title v-text="child.title"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-      </v-list-group>
+      </v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -44,36 +41,63 @@ export default {
     return {
       drawer: true,
       selectedMenu: "",
-      headMenus: [{ text: "หน้าแรก", icon: "mdi-home-variant" }],
+      // headMenus: [{ text: "หน้าแรก", icon: "mdi-home-variant" }],
       menus: [
+        //Teacher menu
+        {
+          header: true,
+          title: "อาจารย์",
+          hiddenOnCollapse: false,
+        },
         {
           action: "mdi-chart-bar",
+          title: "หน้าหลัก",
+          to: "/home",
+          // items: [{ title: "หน้าหลัก", to: "/home" }],
+        },
+        {
+          action: "mdi-calendar-check",
+          items: [
+            { title: "มอบหมาย", to: "/assignment" },
+            { title: "ผู้ใช้งาน", to: "/assignment/user" },
+          ],
+          title: "มอบหมายงาน",
+        },
+        {
+          action: "mdi-book-open",
+          active: true,
+          child: [
+            { title: "โจทย์ปัญหา", to: "/problem-tag/problems" },
+            { title: "แท็ก", to: "/problem-tag/tags" },
+          ],
+          title: "จัดการโจทย์ปัญหา",
+        },
+        {
+          action: "mdi-code-braces",
+          title: "IDE",
+          to: "/ide",
+        },
+        {
+          action: "mdi-human-child",
+          title: "Dashboard ",
+        },
+
+        //Student menu
+        {
+          action: "mdi-human-child",
           title: "หน้าหลัก",
         },
         {
           action: "mdi-calendar-check",
           items: [
-            { title: "ปีการศึกษา" },
-            { title: "รายวิชา" },
-            { title: "กลุ่มเรียน" },
+            { title: "88824125", to: "/assignment" },
+            { title: "88824154", to: "/assignment/user" },
           ],
-          title: "การมอบหมาย",
-        },
-        {
-          action: "mdi-book-open",
-          active: true,
-          items: [{ title: "ชุดทดสอบ" }, { title: "แท็ก" }],
-          title: "โจทย์ปัญหา",
-        },
-        {
-          action: "mdi-code-braces",
-          items: [{ title: "ภาษา C" }, { title: "ภาษา C++" }],
-          title: "เขียนโปรแกรม",
+          title: "การบ้าน",
         },
         {
           action: "mdi-human-child",
-          items: [{ title: "นักเรียน" }],
-          title: "ผู้ใช้งาน",
+          title: "Dashboard",
         },
       ],
       mini: true,
