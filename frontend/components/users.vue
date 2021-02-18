@@ -66,14 +66,18 @@ export default {
         })
         .then((response) => response.doesCreate);
     },
-  },
-  async inserFile(data) {
-    return this.$axios
-      .$post("user/upload", file)
-      .catch((error) => {
-        console.error(error);
-      })
-      .then((response) => response.doesCreate);
+    async insertFile(data) {
+      console.log(data);
+      const InsertFile = {};
+      InsertFile.file = data.file;
+
+      return this.$axios
+        .$post("user/upload", InsertFile)
+        .catch((error) => {
+          console.error(error);
+        })
+        .then((response) => response.doesCreate);
+    },
   },
 };
 </script>

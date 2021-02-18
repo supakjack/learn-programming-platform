@@ -74,6 +74,8 @@ module.exports = {
     }
   },
   upload: async (req, res, next) => {
+    console.log("filesssssss");
+    console.log(req);
     const singleFile = req.files ? req.files.file : null;
     const randomFileName = nanoid(10);
     const splitFileName = singleFile.name.split(".");

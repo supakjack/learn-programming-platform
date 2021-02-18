@@ -1,143 +1,157 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="users"
-    :search="search"
-    sort-by="userUsername"
-    class="elevation-1"
-  >
-    <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title>ตารางผู้ใช้งาน</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="ค้นหา"
-          single-line
-          hide-details
-        ></v-text-field>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-              เพิ่มผู้ใช้งาน
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
+  <div>
+    <v-data-table
+      :headers="headers"
+      :items="users"
+      :search="search"
+      sort-by="userUsername"
+      class="elevation-1"
+    >
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-toolbar-title>ตารางผู้ใช้งาน</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          <v-spacer></v-spacer>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="ค้นหา"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-spacer></v-spacer>
+          <v-dialog v-model="dialog" max-width="500px">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+                เพิ่มผู้ใช้งาน
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="headline">{{ formTitle }}</span>
+              </v-card-title>
 
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.userUsername"
-                      label="รหัสผู้ใช้"
-                    ></v-text-field>
-                    <v-btn color="blue darken-1" text @click="getUserLdap">
-                      ค้นหา
-                    </v-btn>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-select
-                      v-model="editedItem.userPrefixEnglish"
-                      :items="userPrefixEnglish"
-                      menu-props="auto"
-                      label="Prefix"
-                      hide-details
-                      single-line
-                    ></v-select>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="userLDAP.givenName"
-                      label="Firstname"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="userLDAP.sn"
-                      label="Lastname"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-select
-                      v-model="editedItem.userPrefixThai"
-                      :items="userPrefixThai"
-                      menu-props="auto"
-                      label="คำนำหน้า"
-                      hide-details
-                      single-line
-                    ></v-select>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.userFirstnameThai"
-                      label="ชื่อจริง"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.userLastnameThai"
-                      label="นามสกุล"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-select
-                      v-model="editedItem.userStatus"
-                      :items="userStatus"
-                      menu-props="auto"
-                      label="สถานะ"
-                      hide-details
-                      single-line
-                    ></v-select>
-                  </v-col>
-                </v-row>
-                <div v-if="editedIndex === -1">
-                  <div class="flex justify-center">หรือ</div>
-                  <v-file-input label="Excel" v-model="file"></v-file-input>
-                </div>
-              </v-container>
-            </v-card-text>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12" sm="9" md="9">
+                      <v-text-field
+                        v-model="editedItem.userUsername"
+                        label="รหัสผู้ใช้"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-btn color="blue darken-1" text @click="getUserLdap">
+                        ค้นหา
+                      </v-btn>
+                    </v-col>
+                  </v-row>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close"> ยกเลิก </v-btn>
-              <v-btn color="blue darken-1" text @click="save"> บันทึก </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="headline"
-              >คุณต้องการลบผู้ใช้งานคนนี้หรืออไม่?</v-card-title
-            >
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete"
-                >ยกเลิก</v-btn
+                  <v-row>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-select
+                        v-model="editedItem.userPrefixEnglish"
+                        :items="userPrefixEnglish"
+                        menu-props="auto"
+                        label="Prefix"
+                        hide-details
+                        single-line
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-text-field
+                        v-model="userLDAP.givenName"
+                        label="Firstname"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-text-field
+                        v-model="userLDAP.sn"
+                        label="Lastname"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-select
+                        v-model="editedItem.userPrefixThai"
+                        :items="userPrefixThai"
+                        menu-props="auto"
+                        label="คำนำหน้า"
+                        hide-details
+                        single-line
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-text-field
+                        v-model="editedItem.userFirstnameThai"
+                        label="ชื่อจริง"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-text-field
+                        v-model="editedItem.userLastnameThai"
+                        label="นามสกุล"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-select
+                        v-model="editedItem.userStatus"
+                        :items="userStatus"
+                        menu-props="auto"
+                        label="สถานะ"
+                        hide-details
+                        single-line
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+                  <div v-if="editedIndex === -1">
+                    <div class="  ">หรือ</div>
+                    <v-file-input label="Excel" v-model="file"></v-file-input>
+                  </div>
+                </v-container>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="close">
+                  ยกเลิก
+                </v-btn>
+                <v-btn color="blue darken-1" text @click="save"> บันทึก </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="dialogDelete" max-width="500px">
+            <v-card>
+              <v-card-title class="headline"
+                >คุณต้องการลบผู้ใช้งานคนนี้หรืออไม่?</v-card-title
               >
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                >ลบ</v-btn
-              >
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-      <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize"> โหลดข้อมูลใหม่ </v-btn>
-    </template>
-  </v-data-table>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="closeDelete"
+                  >ยกเลิก</v-btn
+                >
+                <v-btn color="blue darken-1" text @click="deleteItemConfirm"
+                  >ลบ</v-btn
+                >
+                <v-spacer></v-spacer>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
+        <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+      </template>
+      <template v-slot:no-data>
+        <v-btn color="primary" @click="initialize"> โหลดข้อมูลใหม่ </v-btn>
+      </template>
+    </v-data-table>
+    <div class="flex flex-wrap">
+      <div>1</div>
+      <div>2</div>
+      <div>3</div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -204,6 +218,9 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? "เพิ่มผู้ใช้งาน" : "แก้ไขผู้ใช้งาน";
     },
+  },
+  mounted() {
+    this.initialize();
   },
 
   watch: {
@@ -323,27 +340,27 @@ export default {
         }
       } else {
         console.log("userCreateBy -1");
-        if (this.file != null) {
-          const [insertResult] = await this.inserFile(this.file);
+        // if (this.file != null) {
+        //   const [insertResult] = await this.inserFile(this.file);
 
-          if (typeof insertResult === "number") {
-            this.close();
-            this.SuccessTitle = "บันทึกสำเร็จ";
-            this.dialogSuccess = true;
-          }
-        } else {
-          this.editedItem.userCreateBy = 1;
-          this.editedItem.userUpdateBy = this.editedItem.userCreateBy;
-          this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
-          this.editedItem.userLastnameEnglish = this.userLDAP.sn;
+        //   if (typeof insertResult === "number") {
+        //     this.close();
+        //     this.SuccessTitle = "บันทึกสำเร็จ";
+        //     this.dialogSuccess = true;
+        //   }
+        // } else {
+        this.editedItem.userCreateBy = 1;
+        this.editedItem.userUpdateBy = this.editedItem.userCreateBy;
+        this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
+        this.editedItem.userLastnameEnglish = this.userLDAP.sn;
 
-          const [insertResult] = await this.insertUser(this.editedItem);
+        const [insertResult] = await this.insertUser(this.editedItem);
 
-          if (typeof insertResult === "number") {
-            this.close();
-            this.SuccessTitle = "บันทึกสำเร็จ";
-            this.dialogSuccess = true;
-          }
+        if (typeof insertResult === "number") {
+          this.close();
+          this.SuccessTitle = "บันทึกสำเร็จ";
+          this.dialogSuccess = true;
+          // }
         }
       }
     },

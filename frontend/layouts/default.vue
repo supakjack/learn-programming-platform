@@ -1,7 +1,8 @@
 <template>
   <v-app>
-    <div class="red--text">
+    <div>
       <Topbar></Topbar>
+      <testSidebar></testSidebar>
       <v-main>
         <v-container>
           <Breadcrumb></Breadcrumb>
@@ -10,7 +11,6 @@
       </v-main>
       <Footer></Footer>
       <!-- <Sidebar></Sidebar> -->
-      <testSidebar></testSidebar>
     </div>
   </v-app>
 </template> 
