@@ -99,7 +99,7 @@
                 </v-row>
                 <div v-if="editedIndex === -1">
                   <div class="flex justify-center">หรือ</div>
-                  <v-file-input label="Excel"></v-file-input>
+                  <v-file-input label="Excel" v-model="file"></v-file-input>
                 </div>
               </v-container>
             </v-card-text>
@@ -148,6 +148,7 @@ export default {
     dialog: false,
     dialogDelete: false,
     search: "",
+    file: "",
     headers: [
       {
         text: "รหัสนิสิต",
@@ -322,17 +323,27 @@ export default {
         }
       } else {
         console.log("userCreateBy -1");
-        this.editedItem.userCreateBy = 1;
-        this.editedItem.userUpdateBy = this.editedItem.userCreateBy;
-        this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
-        this.editedItem.userLastnameEnglish = this.userLDAP.sn;
+        if (this.file != null) {
+          const [insertResult] = await this.inserFile(this.file);
 
-        const [insertResult] = await this.insertUser(this.editedItem);
+          if (typeof insertResult === "number") {
+            this.close();
+            this.SuccessTitle = "บันทึกสำเร็จ";
+            this.dialogSuccess = true;
+          }
+        } else {
+          this.editedItem.userCreateBy = 1;
+          this.editedItem.userUpdateBy = this.editedItem.userCreateBy;
+          this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
+          this.editedItem.userLastnameEnglish = this.userLDAP.sn;
 
-        if (typeof insertResult === "number") {
-          this.close();
-          this.SuccessTitle = "บันทึกสำเร็จ";
-          this.dialogSuccess = true;
+          const [insertResult] = await this.insertUser(this.editedItem);
+
+          if (typeof insertResult === "number") {
+            this.close();
+            this.SuccessTitle = "บันทึกสำเร็จ";
+            this.dialogSuccess = true;
+          }
         }
       }
     },

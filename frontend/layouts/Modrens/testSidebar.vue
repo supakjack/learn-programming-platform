@@ -54,12 +54,12 @@ export default {
           child: [
             {
               title: "โจทย์ปัญหา",
-              href: "/problem-tag/problems",
+              href: "/problem-tag/?tab=problems",
               icon: "fa fa-download",
             },
             {
               title: "แท็ก",
-              href: "/problem-tag/tags",
+              href: "/problem-tag/?tab=tag",
               icon: "fa fa-download",
             },
           ],
