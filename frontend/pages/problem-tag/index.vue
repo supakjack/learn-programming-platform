@@ -27,7 +27,7 @@ import tagsmixin from "@/components/tags";
 import problemsmixin from "@/components/problems";
 
 export default {
-  mixins: [tagsmixin], 
+  mixins: [tagsmixin],
   mixins: [problemsmixin],
   computed: {
     tab: {
