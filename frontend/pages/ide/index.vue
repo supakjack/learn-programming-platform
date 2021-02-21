@@ -9,17 +9,25 @@
             </v-col>
             <v-col>
               <v-card-actions class="float-right">
+                <input
+                  type="file"
+                  id="files"
+                  ref="files"
+                  multiple
+                  v-on:change="handleFilesUpload()"
+                />
                 <v-file-input
-                  v-model="submit.files"
+                  v-model="submit.codeFiles"
                   hide-input
                   multiple
                   truncate-length="14"
+                  v-on:change="handleFilesUpload()"
                 >
                 </v-file-input>
               </v-card-actions>
             </v-col>
           </v-row>
-          <div v-for="(file, index) in submit.files" :key="index">
+          <div v-for="(file, index) in files" :key="index">
             <v-card class="card-file" elevation="2">
               {{ file.name }}
             </v-card>
@@ -90,21 +98,20 @@
 import tags from "./../problem-tag/tags/index";
 import problems from "./../problem-tag/problems/index";
 // import problem from "./../../components/problem";
-import tagsmixin from "../../components/tags";
+import idemixin from "@/components/ide";
 export default {
+  mixins: [idemixin],
   data: () => ({
-    items: ["C++", "JavaScript", "JAVA", "PYTTHON"],
     files: [],
+    items: ["C++", "JavaScript", "JAVA", "PYTTHON"],
     submit: {
       // use for run code
-      files: [],
+      codeFiles: [],
       language: "",
       source: "",
       stdin: ""
     }
   }),
-
-  mixins: [tagsmixin],
   computed: {
     tab: {
       set(tab) {
@@ -121,14 +128,30 @@ export default {
   },
   methods: {
     run() {
-      // console.log(this.submit);
-      const result = this.separate(this.submit);
+      let formData = new FormData();
+      for (var i = 0; i < 1; i++) {
+        let file = this.files[i];
+        formData.append("files[" + i + "]", file);
+      }
+      // console.log(formData);
+      console.log(this.submit.codeFiles);
+      console.log(this.files);
+      const result = this.seperate(this.files);
       // const EditResult = await this.editTag(this.editedItem);
       // if (typeof EditResult === "number") {
       //   this.dialog = false;
       //   this.SuccessTitle = "แก้ไขสำเร็จ";
       //   this.dialogSuccess = true;
       // }
+    },
+    handleFilesUpload() {
+      let uploadedFiles = this.$refs.files.files;
+      /*
+          Adds the uploaded file to the files array
+        */
+      for (var i = 0; i < uploadedFiles.length; i++) {
+        this.files.push(uploadedFiles[i]);
+      }
     }
   }
 

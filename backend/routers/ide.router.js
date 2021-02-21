@@ -5,8 +5,8 @@ const ideController = require("../controllers/ide.controller");
 // compile by source and path
 router.post("/run", ideController.run);
 
-// separate compile by source or path
-router.post("/separate", ideController.separate);
+// seperate compile by source or path
+router.post("/seperate", ideController.seperate);
 
 // compile by source and path
 router.post("/submit", ideController.submit);

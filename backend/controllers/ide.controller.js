@@ -45,31 +45,30 @@ module.exports = {
   // output: text response
   // CreateBy: Supak Pukdam / CreateDate: 26/1/2021
   // UpdateBy: Supak Pukdam / UpdateDate: 26/1/2021
-  separate: async (req, res, next) => {
-    const language = req.query.language,
-      source = req.body.source,
-      files = req.body.files,
-      stdin = req.body.stdin;
+  seperate: async (req, res, next) => {
+    // const language = req.body.language,
+    //   source = req.body.source,
+    //   singleFiles = req.body.run.files,
+    //   stdin = req.body.stdin;
     console.log(req.body);
-    // try {
-    //   const filePath =
-    //     process.env.BASE_STORAGE_PATH +
-    //     "justRun"
-    //   await mkdirp(filePath);
-    //   await files.mv(filePath + "\\" + files.name);
-    //   const doesCompile = await comileLogic(
-    //     language,
-    //     compile,
-    //     stdin,
-    //     source,
-    //     path
-    //   );
+    console.log(req.files);
+    try {
+      const filePath = process.env.BASE_STORAGE_PATH + "justRun";
+      await mkdirp(filePath);
+      await singleFiles.mv(filePath + "\\" + singleFiles.name);
+      // const doesCompile = await comileLogic(
+      //   language,
+      //   compile,
+      //   stdin,
+      //   source,
+      //   path
+      // );
 
-    res.status(200).send(req.body);
-    // } catch (error) {
-    //   if (error.isJoi === true) return next(createError.InternalServerError());
-    //   next(error);
-    // }
+      res.status(200).send(req.body);
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
   },
   // function name: testset
   // description: compile with test set of problem question by API
