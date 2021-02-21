@@ -39,7 +39,38 @@ module.exports = {
       next(error);
     }
   },
+  // function name: run
+  // description: run compile by API
+  // input: language, source, path, stdin
+  // output: text response
+  // CreateBy: Supak Pukdam / CreateDate: 26/1/2021
+  // UpdateBy: Supak Pukdam / UpdateDate: 26/1/2021
+  separate: async (req, res, next) => {
+    const language = req.query.language,
+      source = req.body.source,
+      files = req.body.files,
+      stdin = req.body.stdin;
+    console.log(req.body);
+    // try {
+    //   const filePath =
+    //     process.env.BASE_STORAGE_PATH +
+    //     "justRun"
+    //   await mkdirp(filePath);
+    //   await files.mv(filePath + "\\" + files.name);
+    //   const doesCompile = await comileLogic(
+    //     language,
+    //     compile,
+    //     stdin,
+    //     source,
+    //     path
+    //   );
 
+    res.status(200).send(req.body);
+    // } catch (error) {
+    //   if (error.isJoi === true) return next(createError.InternalServerError());
+    //   next(error);
+    // }
+  },
   // function name: testset
   // description: compile with test set of problem question by API
   // input: testsetId, filePath
@@ -70,9 +101,7 @@ module.exports = {
         doesCompile.stdout == doesGetTestset[0].testsetOutput &&
         doesCompile.stderr == ""
       ) {
-        const doesCreateLog = await create(
-
-        );
+        const doesCreateLog = await create();
       } else if (
         doesCompile.stdout != doesGetTestset[0].testsetOutput &&
         doesCompile.stderr == ""
