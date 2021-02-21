@@ -33,7 +33,7 @@
           <v-card>
             <v-data-table
               :headers="headersDialog"
-              :items="allHomeworks"
+              :items="rowProblem"
               :items-per-page="5"
               class="elevation-1"
             ></v-data-table>
@@ -64,6 +64,7 @@ export default {
     formTitle: "ข้อมูลการบ้าน",
     SuccessTitle: "",
     allHomeworks: [],
+    rowProblem: [],
     dialogDetail: false,
     search: "", // use for search in table all column
     headers: [
@@ -75,7 +76,7 @@ export default {
       { text: "ชื่อบท", value: "assignmentTitle" }, // define column name and value
       { text: "สถานะการใช้งาน", value: "assignmentStatus" },
       { text: "สถานะการส่งงาน", value: "" },
-      { text: "คะแนน", value: "taskScore" },
+      { text: "คะแนน", value: "sumTaskScore" },
       { text: "ดำเนินการ", value: "actions", sortable: false }
     ],
 
@@ -149,7 +150,10 @@ export default {
       this.allHomeworks = doesGetAll;
     },
 
-    openDialog(item) {
+    async openDialog(item) {
+      const { doesGetProblem } = await this.getProblem(item.assignmentId);
+      this.rowProblem = doesGetProblem;
+      console.log({ doesGetProblem });
       this.dialogDetail = true;
     }
   }

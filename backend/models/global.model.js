@@ -72,6 +72,16 @@ module.exports = {
             doesSelect.count(count.name, { as: count.newName });
           });
         }
+        if (table.sum) {
+          table.sum.forEach((sum) => {
+            doesSelect.sum(sum.name, { as: sum.newName });
+          });
+        }
+        if (table.groupBy) {
+          table.groupBy.forEach((groupBy) => {
+            doesSelect.groupBy(groupBy.name);
+          });
+        }
         resolve(doesSelect);
       } catch (error) {
         console.log(error.message);
