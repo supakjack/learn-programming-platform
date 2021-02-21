@@ -24,10 +24,14 @@ module.exports = {
           "assignmentId",
           "assignmentTitle",
           "assignmentStatus",
-          "compilelogScore",
+          "assignmentStartDate",
+          "assignmentEndDate",
         ],
         groupBy: [{ name: "assignmentId" }],
-        sum: [{ name: "taskScore", newName: "sumTaskScore" }],
+        sum: [
+          { name: "taskScore", newName: "sumTaskScore" },
+          { name: "compilelogScore", newName: "sumCompilelogScore" },
+        ],
         leftJoin: [
           {
             joinTable: "tasks",

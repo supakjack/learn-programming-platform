@@ -76,7 +76,7 @@ export default {
       { text: "ชื่อบท", value: "assignmentTitle" }, // define column name and value
       { text: "สถานะการใช้งาน", value: "assignmentStatus" },
       { text: "สถานะการส่งงาน", value: "" },
-      { text: "คะแนน", value: "sumTaskScore" },
+      { text: "คะแนน", value: "sumCompilelogScore" },
       { text: "ดำเนินการ", value: "actions", sortable: false }
     ],
 
@@ -146,6 +146,11 @@ export default {
         } else {
           doesGetAll.assignmentStatus = "ไม่ใช้งาน";
         }
+        if (doesGetAll.sumCompilelogScore == null) {
+          doesGetAll.sumCompilelogScore = 0;
+        }
+        doesGetAll.sumCompilelogScore =
+          doesGetAll.sumCompilelogScore + "/" + doesGetAll.sumTaskScore;
       });
       this.allHomeworks = doesGetAll;
     },
