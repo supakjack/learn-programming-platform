@@ -23,34 +23,62 @@ module.exports = {
       req.body.createProblemData
     );
 
-    const createPicturesData = await createPicturesScheme.validateAsync(
-      req.body.createPicturesData
-    );
-    const createHashtagData = await createHashtagSchema.validateAsync(
-      req.body.createHashtagData
-    );
-    const createTestsetData = await createTestsetsSchema.validateAsync(
-      req.body.createTestsetData
-    );
-    const createFilesData = await createFiles.validateAsync(
-      req.body.createFilesData
-    );
-
     // try call function createTag in global model then catch if error
     try {
-      const doesCreate = await problemsModel.insert({
-        name1: "problems",
-        name2: "files",
-        name3: "pictures",
-        name4: "hashtags",
-        name5: "testsets",
-        insertData1: [createProblemData],
-        insertData2: [createFilesData],
-        insertData3: [createPicturesData],
-        insertData4: [createHashtagData],
-        insertData5: [createTestsetData],
+      const problemId = await problemsModel.insertReturnId({
+        name: "problems",
+        insertData: [createProblemData],
       });
-      res.status(201).send(req.body);
+      console.log(problemId);
+      //set problemId to hashtag schema
+      req.body.createHashtagData.hashtagProblemId = problemId;
+      console.log(req.body);
+      const createHashtagData = await createHashtagSchema.validateAsync(
+        req.body.createHashtagData
+      );
+      console.log(createHashtagData);
+      //insert problem
+      const doesCreateHashtag = await globalModel.insert({
+        name: "hashtags",
+        insertData: [createHashtagData],
+      });
+
+      //set problemId to testset schema
+      req.body.createTestsetData.testsetProblemId = problemId;
+      const createTestsetData = await createTestsetsSchema.validateAsync(
+        req.body.createTestsetData
+      );
+
+      //insert Hashtag
+      const doesCreateTestset = await globalModel.insert({
+        name: "testsets",
+        insertData: [createTestsetData],
+      });
+
+      const createFilesData = await createFiles.validateAsync(
+        req.body.createFilesData
+      );
+
+      //insert Files
+      const fileId = await problemsModel.insertReturnId({
+        name: "files",
+        insertData: [createFilesData],
+      });
+
+      //set probleId,fileId to picture schema
+      req.body.createPicturesData.pictureFileId = fileId;
+      req.body.createPicturesData.pictureProblemId = problemId;
+      const createPicturesData = await createPicturesScheme.validateAsync(
+        req.body.createPicturesData
+      );
+
+      //insert picture
+      const doesCreatePicture = await problemsModel.insertReturnId({
+        name: "pictures",
+        insertData: [createPicturesData],
+      });
+
+      res.status(201).send(createHashtagData);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);

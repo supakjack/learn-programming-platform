@@ -169,36 +169,36 @@ const createProblemSchema = joi.object({
   problemTitle: joi.string().max(255).required(),
   // problemPath: joi.string().max(255).required(),
   problemDiscription: joi.string().max(255).required(),
-  problemCreateBy: joi.number().max(8).min(1).required(),
-  problemUpdateBy: joi.number().max(8).min(1).required(),
+  problemCreateBy: joi.number().max(99999999).min(1).required(),
+  problemUpdateBy: joi.number().max(99999999).min(1).required(),
 });
 
 // create picture schema
 const createPicturesScheme = joi.object({
-  pictureFileId: joi.number().max(8).min(1).required(),
-  pictureProblemId: joi.number().max(8).min(1).required(),
-  pictureCreateBy: joi.number().max(8).min(1).required(),
-  pictureUpdateBy: joi.number().max(8).min(1).required(),
+  pictureFileId: joi.number().max(99999999).min(1).required(),
+  pictureProblemId: joi.number().max(99999999).min(1).required(),
+  pictureCreateBy: joi.number().max(99999999).min(1).required(),
+  pictureUpdateBy: joi.number().max(99999999).min(1).required(),
 });
 
 // create hashtag schema
 const createHashtagSchema = joi.object({
-  hashtagTagId: joi.number().max(8).min(1).required(),
-  hashtagProblemId: joi.number().max(8).min(1).required(),
-  hashtagCreateBy: joi.number().max(8).min(1).required(),
-  hashtagUpdateBy: joi.number().max(8).min(1).required(),
+  hashtagTagId: joi.number().max(99999999).min(1).required(),
+  hashtagProblemId: joi.number().max(99999999).min(1).required(),
+  hashtagCreateBy: joi.number().max(99999999).min(1).required(),
+  hashtagUpdateBy: joi.number().max(99999999).min(1).required(),
 });
 
 // create Testsets schema
 const createTestsetsSchema = joi.object({
   testsetTitle: joi.string().max(255).min(1).required(),
   testsetDescription: joi.string().max(255).required(),
-  testsetInput: joi.string().max(8).min(1).required(),
-  testsetOutput: joi.string().max(8).min(1).required(),
-  testsetProblemId: joi.number().max(8).min(1).required(),
-  testsetIsExample: joi.number().max(8).min(1).required(),
-  testsetCreateBy: joi.number().max(8).min(1).required(),
-  testsetUpdateBy: joi.number().max(8).min(1).required(),
+  testsetInput: joi.string().max(99999999).min(1).required(),
+  testsetOutput: joi.string().max(99999999).min(1).required(),
+  testsetProblemId: joi.number().max(99999999).min(1).required(),
+  testsetIsExample: joi.number().max(99999999).min(1).required(),
+  testsetCreateBy: joi.number().max(99999999).min(1).required(),
+  testsetUpdateBy: joi.number().max(99999999).min(1).required(),
 });
 
 const updateProblemConditionSchema = joi.object({
