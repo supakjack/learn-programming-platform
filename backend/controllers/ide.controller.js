@@ -51,11 +51,12 @@ module.exports = {
     //   singleFiles = req.body.run.files,
     //   stdin = req.body.stdin;
     console.log(req.body);
-    console.log(req.files);
+    // console.log(req.files);
+
     try {
-      const filePath = process.env.BASE_STORAGE_PATH + "justRun";
-      await mkdirp(filePath);
-      await singleFiles.mv(filePath + "\\" + singleFiles.name);
+      // const filePath = process.env.BASE_STORAGE_PATH + "justRun";
+      // await mkdirp(filePath);
+      // await singleFiles.mv(filePath + "\\" + singleFiles.name);
       // const doesCompile = await comileLogic(
       //   language,
       //   compile,
@@ -137,6 +138,7 @@ module.exports = {
       //source code
       sourceCode = req.body.sourceCode;
 
+    console.log(req.files);
     try {
       const doesSelect = await globalModel.select({
         name: "files",

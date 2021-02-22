@@ -9,19 +9,18 @@
             </v-col>
             <v-col>
               <v-card-actions class="float-right">
-                <input
+                <!-- <input
                   type="file"
                   id="files"
                   ref="files"
                   multiple
                   v-on:change="handleFilesUpload()"
-                />
+                /> -->
                 <v-file-input
                   v-model="submit.codeFiles"
                   hide-input
                   multiple
                   truncate-length="14"
-                  v-on:change="handleFilesUpload()"
                 >
                 </v-file-input>
               </v-card-actions>
@@ -102,7 +101,7 @@ import idemixin from "@/components/ide";
 export default {
   mixins: [idemixin],
   data: () => ({
-    files: [],
+    files: {},
     items: ["C++", "JavaScript", "JAVA", "PYTTHON"],
     submit: {
       // use for run code
@@ -129,14 +128,17 @@ export default {
   methods: {
     run() {
       let formData = new FormData();
-      for (var i = 0; i < 1; i++) {
-        let file = this.files[i];
-        formData.append("files[" + i + "]", file);
+      console.log(formData);
+      for (let file of this.submit.codeFiles) {
+        console.log(file.name);
+        formData.append("files", file, file.name);
       }
-      // console.log(formData);
-      console.log(this.submit.codeFiles);
-      console.log(this.files);
-      const result = this.seperate(this.files);
+      // for (var pair of formData.entries()) {
+      //   console.log(pair[0] + ", " + pair[1]);
+      // }
+      console.log("---------");
+      console.log([...formData]);
+      const result = this.seperate(this.submit.codeFiles);
       // const EditResult = await this.editTag(this.editedItem);
       // if (typeof EditResult === "number") {
       //   this.dialog = false;
@@ -150,7 +152,7 @@ export default {
           Adds the uploaded file to the files array
         */
       for (var i = 0; i < uploadedFiles.length; i++) {
-        this.files.push(uploadedFiles[i]);
+        this.submit.codeFiles.push(uploadedFiles[i]);
       }
     }
   }
