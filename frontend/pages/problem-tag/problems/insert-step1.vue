@@ -70,3 +70,89 @@
     </v-container>
   </v-card-text>
 </template>
+
+<script>
+import problemsmixin from "../../../components/problems";
+import insertStep1 from "@/pages/problem-tag/problems/insert-step1";
+import insertStep2 from "@/pages/problem-tag/problems/insert-step2";
+
+export default {
+  mixins: [problemsmixin],
+  components: {},
+  data: () => ({
+    allProblems: [],
+    dialog: false,
+    dialogDelete: false,
+    search: "",
+    headers: [
+      {
+        align: "start",
+        sortable: false
+        // value: "problemId"
+      },
+      { text: "ข้อ", value: "problemId" },
+      { text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
+      { text: "วันที่สร้าง", value: "problemCreateDate" },
+      { text: "คะแนน", value: "taskScore" },
+      { text: "สถานะ", value: "problemStatus" },
+      { text: "ดำเนินการ", value: "actions", sortable: false }
+    ],
+    editedIndex: -1, //  editedIndex default to -1
+    editedItem: {
+      // use to add, edit and delete item
+      problemId: 0,
+      problemTitle: "",
+      problemDiscription: "",
+      // problemPath: "",
+      problemStatus: 0,
+      problemCreateBy: 0,
+      problemUpdateBy: 0,
+      problemCreateDate: 0,
+      taskScore: 0
+    },
+    defaultItem: {
+      // default of item value
+      problemId: 0,
+      problemTitle: "",
+      problemDiscription: "",
+      // problemPath: "",
+      problemStatus: 0,
+      problemCreateBy: 0,
+      problemUpdateBy: 0,
+      problemCreateDate: 0,
+      taskScore: 0
+    },
+    problemStatus: [
+      // use in select options
+      { text: "ใช้งาน", value: 1 },
+      { text: "ไม่ใช้งาน", value: 2 }
+    ]
+  }),
+
+  computed: {},
+
+  watch: {},
+
+  methods: {
+    async save() {
+      if (this.editedIndex > -1) {
+        const EditResult = await this.editProblem(this.editedItem);
+        if (typeof EditResult === "number") {
+          this.dialog = false;
+          this.dialogInsert = true;
+        }
+      } else {
+        this.editedItem.problemCreateBy = 1;
+        this.editedItem.problemUpdateBy = this.editedItem.problemCreateBy;
+
+        const [insertResult] = await this.insertProblem(this.editedItem);
+
+        if (typeof insertResult === "number") {
+          this.close();
+          this.dialogInsert = true;
+        }
+      }
+    }
+  }
+};
+</script>

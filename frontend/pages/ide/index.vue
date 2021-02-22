@@ -9,8 +9,15 @@
             </v-col>
             <v-col>
               <v-card-actions class="float-right">
+                <!-- <input
+                  type="file"
+                  id="files"
+                  ref="files"
+                  multiple
+                  v-on:change="handleFilesUpload()"
+                /> -->
                 <v-file-input
-                  v-model="files"
+                  v-model="submit.codeFiles"
                   hide-input
                   multiple
                   truncate-length="14"
@@ -33,10 +40,16 @@
             <v-card-text> main.cpp </v-card-text>
           </v-col>
           <v-col cols="12" md="4">
-            <v-select :items="items" label="ภาษา" dense outlined></v-select>
+            <v-select
+              v-model="submit.language"
+              :items="items"
+              label="ภาษา"
+              dense
+              outlined
+            ></v-select>
           </v-col>
           <v-col cols="12" md="4">
-            <v-btn depressed color="success" class="float-left">
+            <v-btn depressed color="success" class="float-left" @click="run">
               RUN
             </v-btn>
           </v-col>
@@ -45,6 +58,7 @@
         <v-row>
           <v-col>
             <v-textarea
+              v-model="submit.source"
               autocomplete="coding"
               label="Coding"
               outlined
@@ -58,7 +72,10 @@
             <v-card outlined height="152px">
               <v-card-text>
                 <div>
-                  <v-text-field label="ข้อมูลนำเข้า"></v-text-field>
+                  <v-text-field
+                    v-model="submit.stdin"
+                    label="ข้อมูลนำเข้า"
+                  ></v-text-field>
                 </div>
                 <div>
                   <v-text-field
@@ -80,14 +97,20 @@
 import tags from "./../problem-tag/tags/index";
 import problems from "./../problem-tag/problems/index";
 // import problem from "./../../components/problem";
-import tagsmixin from "../../components/tags";
+import idemixin from "@/components/ide";
 export default {
+  mixins: [idemixin],
   data: () => ({
+    files: {},
     items: ["C++", "JavaScript", "JAVA", "PYTTHON"],
-    files: []
+    submit: {
+      // use for run code
+      codeFiles: [],
+      language: "",
+      source: "",
+      stdin: ""
+    }
   }),
-
-  mixins: [tagsmixin],
   computed: {
     tab: {
       set(tab) {
@@ -101,6 +124,37 @@ export default {
   components: {
     tags,
     problems
+  },
+  methods: {
+    run() {
+      let formData = new FormData();
+      console.log(formData);
+      for (let file of this.submit.codeFiles) {
+        console.log(file.name);
+        formData.append("files", file, file.name);
+      }
+      // for (var pair of formData.entries()) {
+      //   console.log(pair[0] + ", " + pair[1]);
+      // }
+      console.log("---------");
+      console.log([...formData]);
+      const result = this.seperate(this.submit.codeFiles);
+      // const EditResult = await this.editTag(this.editedItem);
+      // if (typeof EditResult === "number") {
+      //   this.dialog = false;
+      //   this.SuccessTitle = "แก้ไขสำเร็จ";
+      //   this.dialogSuccess = true;
+      // }
+    },
+    handleFilesUpload() {
+      let uploadedFiles = this.$refs.files.files;
+      /*
+          Adds the uploaded file to the files array
+        */
+      for (var i = 0; i < uploadedFiles.length; i++) {
+        this.submit.codeFiles.push(uploadedFiles[i]);
+      }
+    }
   }
 
   //   layout: "modren"

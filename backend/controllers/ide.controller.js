@@ -39,7 +39,38 @@ module.exports = {
       next(error);
     }
   },
+  // function name: run
+  // description: run compile by API
+  // input: language, source, path, stdin
+  // output: text response
+  // CreateBy: Supak Pukdam / CreateDate: 26/1/2021
+  // UpdateBy: Supak Pukdam / UpdateDate: 26/1/2021
+  seperate: async (req, res, next) => {
+    // const language = req.body.language,
+    //   source = req.body.source,
+    //   singleFiles = req.body.run.files,
+    //   stdin = req.body.stdin;
+    console.log(req.body);
+    // console.log(req.files);
 
+    try {
+      // const filePath = process.env.BASE_STORAGE_PATH + "justRun";
+      // await mkdirp(filePath);
+      // await singleFiles.mv(filePath + "\\" + singleFiles.name);
+      // const doesCompile = await comileLogic(
+      //   language,
+      //   compile,
+      //   stdin,
+      //   source,
+      //   path
+      // );
+
+      res.status(200).send(req.body);
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
   // function name: testset
   // description: compile with test set of problem question by API
   // input: testsetId, filePath
@@ -87,9 +118,13 @@ module.exports = {
         doesCompile.stdout == doesGetTestset[0].testsetOutput &&
         doesCompile.stderr == ""
       ) {
+<<<<<<< HEAD
         createCompileLogData.compilelogCompileStatus = "Passed";
         createCompileLogData.compilelogErrorMessage = doesCompile.stderr;
         // createCompileLogData.compilelogCompileStatus ;
+=======
+        const doesCreateLog = await create();
+>>>>>>> 3b7a5c181fafa41504e22b82d926830ace6a94b3
       } else if (
         doesCompile.stdout != doesGetTestset[0].testsetOutput &&
         doesCompile.stderr == ""
@@ -131,6 +166,7 @@ module.exports = {
       //source code
       sourceCode = req.body.sourceCode;
 
+    console.log(req.files);
     try {
       const doesSelect = await globalModel.select({
         name: "files",

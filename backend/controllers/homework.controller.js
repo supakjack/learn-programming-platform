@@ -1,6 +1,11 @@
 const createError = require("http-errors");
 const globalModel = require("../models/global.model");
 
+const {
+  getAssignmentSchema,
+  getTaskAssignmentSchema,
+} = require("./../helpers/validation.helper");
+
 module.exports = {
   // function name: get
   // description: get problems data from condition by id
@@ -16,15 +21,16 @@ module.exports = {
       const doesGetAll = await globalModel.select({
         name: "assignments",
         filter: [
+          "assignmentId",
           "assignmentTitle",
           "assignmentStatus",
-          "taskScore",
-          "problemTitle",
-          "tagUpdateDate",
-          "tagName",
-          "compilelogScore",
-          "problemDiscription",
-          "problemId",
+          "assignmentStartDate",
+          "assignmentEndDate",
+        ],
+        groupBy: [{ name: "assignmentId" }],
+        sum: [
+          { name: "taskScore", newName: "sumTaskScore" },
+          { name: "compilelogScore", newName: "sumCompilelogScore" },
         ],
         leftJoin: [
           {
@@ -32,24 +38,6 @@ module.exports = {
             leftTableName: "assignments",
             leftKey: "assignmentId",
             joinKey: "taskAssignmentId",
-          },
-          {
-            joinTable: "problems",
-            leftTableName: "tasks",
-            leftKey: "taskProblemId",
-            joinKey: "problemId",
-          },
-          {
-            joinTable: "hashtags",
-            leftTableName: "problems",
-            leftKey: "problemId",
-            joinKey: "hashtagProblemId",
-          },
-          {
-            joinTable: "tags",
-            leftTableName: "hashtags",
-            leftKey: "hashtagId",
-            joinKey: "tagId",
           },
           {
             joinTable: "compilelogs",
@@ -66,6 +54,58 @@ module.exports = {
         ],
       });
       res.status(201).send({ doesGetAll });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  }, // function name: get
+  // description: get problems data from condition by id
+  // input : query string : condition {problemId}
+  // output :
+  // CreateBy: Yotsapat Phurahong / CreateDate:
+  // UpdateBy: Yotsapat Phurahong / UpdateDate:
+  getProblem: async (req, res, next) => {
+    // passing data from query string validate data from
+    // console.log("params : " + req.params.assignmentId);
+    const getCondition = await getTaskAssignmentSchema.validateAsync(
+      req.params
+    );
+    console.log("asdasdasd" + getCondition);
+    // try call function getTagById in tags model then catch if error
+    try {
+      const doesGetProblem = await globalModel.select({
+        name: "tasks",
+        condition: [getCondition],
+        filter: [
+          "taskScore",
+          "taskLimit",
+          "problemId",
+          "problemTitle",
+          "problemDiscription",
+          "tagName",
+        ],
+        leftJoin: [
+          {
+            joinTable: "problems",
+            leftTableName: "tasks",
+            leftKey: "taskProblemId",
+            joinKey: "problemId",
+          },
+          {
+            joinTable: "hashtags",
+            leftTableName: "problems",
+            leftKey: "problemId",
+            joinKey: "hashtagProblemId",
+          },
+          {
+            joinTable: "tags",
+            leftTableName: "hashtags",
+            leftKey: "hashtagTagId",
+            joinKey: "tagId",
+          },
+        ],
+      });
+      res.status(201).send({ doesGetProblem });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
