@@ -118,13 +118,9 @@ module.exports = {
         doesCompile.stdout == doesGetTestset[0].testsetOutput &&
         doesCompile.stderr == ""
       ) {
-<<<<<<< HEAD
         createCompileLogData.compilelogCompileStatus = "Passed";
         createCompileLogData.compilelogErrorMessage = doesCompile.stderr;
         // createCompileLogData.compilelogCompileStatus ;
-=======
-        const doesCreateLog = await create();
->>>>>>> 3b7a5c181fafa41504e22b82d926830ace6a94b3
       } else if (
         doesCompile.stdout != doesGetTestset[0].testsetOutput &&
         doesCompile.stderr == ""
