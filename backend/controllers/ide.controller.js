@@ -48,9 +48,26 @@ module.exports = {
   // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 18/2/2021
   testset: async (req, res, next) => {
     const filePath = req.body.filePath,
-      testsetId = req.query.testsetId;
+      testsetId = req.query.testsetId,
+      // taskId = req.query.taskId,
+      // SubmitNo = req.query.SubmitNo,
+      language = req.body.language;
+    // fileId = req.query.fileId,
+    // compilelogCreateBy = req.query.CreateBy,
+    // compilelogUpdateBy = req.query.UpdateBy;
 
-    console.log(testsetId, filePath);
+    const createCompileLogData = {
+      //   compilelogTaskId: taskId,
+      //   compilelogSubmitNo: SubmitNo,
+      //   compilelogTestResult,
+      // compilelogErrorMessage,
+      // compilelogCompileStatus,
+      compileloglanguage: language,
+      //   compilelogFileId: fileId,
+      //   compilelogCreateBy: compilelogCreateBy,
+      //   compilelogUpdateBy: compilelogUpdateBy,
+    };
+    console.log(createCompileLogData);
 
     try {
       const doesGetTestset = await globalModel.select({
@@ -59,7 +76,7 @@ module.exports = {
       });
 
       const doesCompile = await comileLogic(
-        "cpp",
+        language,
         "path",
         doesGetTestset[0].testsetInput,
         null,
@@ -70,17 +87,22 @@ module.exports = {
         doesCompile.stdout == doesGetTestset[0].testsetOutput &&
         doesCompile.stderr == ""
       ) {
-        const doesCreateLog = await create(
-
-        );
+        createCompileLogData.compilelogCompileStatus = "Passed";
+        createCompileLogData.compilelogErrorMessage = doesCompile.stderr;
+        // createCompileLogData.compilelogCompileStatus ;
       } else if (
         doesCompile.stdout != doesGetTestset[0].testsetOutput &&
         doesCompile.stderr == ""
       ) {
-        res.status(200).send("fail");
+        createCompileLogData.compilelogCompileStatus = "Failed";
+        createCompileLogData.compilelogErrorMessage = doesCompile.stderr;
+        // res.status(200).send("fail");
       } else {
-        res.status(200).send(doesCompile.strderr);
+        createCompileLogData.compilelogCompileStatus = "Error";
+        createCompileLogData.compilelogErrorMessage = doesCompile.stderr;
+        // res.status(200).send(doesCompile.strderr);
       }
+      res.status(200).send(createCompileLogData);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
@@ -224,41 +246,84 @@ module.exports = {
         }
       }
 
-      // const doesCompile = await comileLogic(
-      //   "cpp",
-      //   "path",
-      //   "1\n2",
-      //   null,
-      //   filePath + "\\" + singleFile.name
-      // );
       res.status(200).send(singleFile);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
     }
   },
+
   // function name: create
   // description: create compile log
   // input:
   // output: text response
   // CreateBy: Theo Seathan / CreateDate: 6/2/2021
-  // UpdateBy: Theo Seathan / UpdateDate: 5/2/2021
+  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 18/2/2021
   create: async (req, res, next) => {
     // passing data from body and valid by createTagSchema
-    const createCompileLogData = await creteCompileLogSchema.validateAsync(
-      req.body
-    );
 
-    // try call function createTag in global model then catch if error
-    try {
-      const doesCreate = await globalModel.insert({
-        name: "compilelogs",
-        insertData: [createCompileLogData],
-      });
-      res.status(200).send({ doesCreate });
-    } catch (error) {
-      if (error.isJoi === true) return next(createError.InternalServerError());
-      next(error);
+    var doesGetTaskAll = await globalModel.select({
+      name: "tasks",
+      condition: [{ taskId: req.body.compilelogTaskId }],
+    });
+
+    doesGetTaskAll = doesGetTaskAll[0];
+    // console.log(doesGetTaskAll);
+
+    const createCompileLogData = {
+      compilelogTaskId: req.body.compilelogTaskId,
+      compilelogSubmitNo: req.body.compilelogSubmitNo,
+      // compilelogTestResult,
+      // compilelogErrorMessage,
+      // compilelogCompileStatus,
+      // compilelogScore,
+      compileloglanguage: req.body.compileloglanguage,
+      compilelogFileId: req.body.compilelogFileId,
+      compilelogCreateBy: req.body.compilelogCreateBy,
+      compilelogUpdateBy: req.body.compilelogCreateBy,
+    };
+
+    const testsetResult = req.body.testsetResult;
+    // console.log(testsetResult);
+    var sumScore = 0;
+    var maxTestset = testsetResult.length;
+    var passedTestset = 0;
+    testsetResult.every((testset) => {
+      if (testset.compilelogCompileStatus == "Passed") {
+        passedTestset += 1;
+        sumScore += doesGetTaskAll.taskScore / maxTestset;
+      } else if (testset.compilelogCompileStatus == "Error") {
+        createCompileLogData.compilelogErrorMessage =
+          testset.compilelogErrorMessage;
+        // return false;
+      } else {
+        console.log(passedTestset);
+      }
+    });
+    console.log(passedTestset);
+    createCompileLogData.compilelogScore = sumScore;
+
+    if (passedTestset == maxTestset) {
+      createCompileLogData.compilelogTestResult = "Accepted";
+      console.log(createCompileLogData.compilelogTestResult);
+    } else if (createCompileLogData.compilelogErrorMessage != "") {
+      createCompileLogData.compilelogTestResult = "Compile Error";
+    } else {
+      createCompileLogData.compilelogTestResult = "Wrong Answer";
     }
+    console.log(maxTestset, passedTestset, sumScore);
+
+    res.status(200).send(createCompileLogData);
+    // try call function createTag in global model then catch if error
+    // try {
+    //   const doesCreate = await globalModel.insert({
+    //     name: "compilelogs",
+    //     insertData: [createCompileLogData],
+    //   });
+    //   res.status(200).send({ doesCreate });
+    // } catch (error) {
+    //   if (error.isJoi === true) return next(createError.InternalServerError());
+    //   next(error);
+    // }
   },
 };
