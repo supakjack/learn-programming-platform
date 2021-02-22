@@ -1,12 +1,18 @@
-<!-- Author: Nook
-Last edit: 10/2/2021 -->
+<!-- CreateBy: Atikom Wongwan
+Last edit: 19/2/2021 -->
 
 <template>
   <v-data-table
     :headers="headers"
+    :footer-props="{
+      'items-per-page-options': [8, 15, 20, -1],
+      'items-per-page-text': `จำนวนแถวต่อหน้า`,
+      'items-per-page-all-text': `ทั้งหมด`
+    }"
     :items="allAssignment"
     :items-per-page="5"
-    sort-by="assignmentStatus"
+    :sort-by="assignmentStatus"
+    :sort-desc="[false, true]"
     :search="search"
     class="elevation-1 kanit-font"
   >
@@ -111,9 +117,12 @@ Last edit: 10/2/2021 -->
                   <!-- Status -->
                   <v-col cols="12" sm="6" md="4">
                     <v-select
-                      :items="status"
+                      :items="assignmentStatus"
                       v-model="editedItem.assignmentStatus"
+                      menu-props="auto"
                       label="สถานะ"
+                      hide-details
+                      single-line
                     >
                     </v-select>
                   </v-col>
@@ -133,7 +142,7 @@ Last edit: 10/2/2021 -->
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="headline"
-              >คุณต้องการลบใช่หรือไม่?</v-card-title
+              >คุณต้องการลบการมอบหมายนี้ใช่หรือไม่?</v-card-title
             >
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -147,11 +156,30 @@ Last edit: 10/2/2021 -->
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <!--
+        <v-dialog v-model="dialogSuccess" max-width="500px">
+          <v-card>
+            <v-card-title class="kanit-font text-center">
+              {{ SuccessTitle }}
+            </v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="blue darken-1 kanit-font"
+                text
+                @click="closeSuccess"
+              >
+                ตกลง
+              </v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog> -->
       </v-toolbar>
     </template>
 
     <!-- management -->
-    <template v-slot:item.actions="{ item }">
+    <template v-slot:[`item.actions`]="{ item }">
       <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
       <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
@@ -167,18 +195,19 @@ import assignmentmixin from "../../../components/assignment";
 export default {
   mixins: [assignmentmixin],
   data: () => ({
-    status: ["ใช้งาน", "ไม่ใช้งาน"],
+    // status: ["ใช้งาน", "ไม่ใช้งาน"],
     date: new Date().toISOString().substr(0, 10),
     menu: false,
     menu2: false,
     allAssignment: [],
     dialog: false,
     dialogDelete: false,
+    dialogSuccess: false,
     search: "",
     headers: [
       {
         align: "start",
-        sortable: false,
+        sortable: false
         // value: "assignmentId"
       },
       { text: "งานที่ได้รับมอบหมาย", value: "assignmentTitle" },
@@ -186,24 +215,35 @@ export default {
       { text: "วันที่เริ่มส่งงาน", value: "assignmentStartDate" },
       { text: "วันที่สิ้นสุดส่งงาน", value: "assignmentEndDate" },
       { text: "สถานะ", value: "assignmentStatus" },
-      { text: "การจัดการ", value: "actions", sortable: false },
+      { text: "การจัดการ", value: "actions", sortable: false }
     ],
     problem: [],
     editedIndex: -1,
     editedItem: {
+      assignmentId: 0,
       assignmentTitle: "",
       assignmentDescription: "",
       assignmentStartDate: "",
       assignmentEndDate: "",
-      assignmentStatus: "",
+      assignmentStatus: 0,
+      assignmentCreateBy: 0,
+      assignmentUpdateBy: 0
     },
     defaultItem: {
+      assignmentId: 0,
       assignmentTitle: "",
       assignmentDescription: "",
       assignmentStartDate: "",
       assignmentEndDate: "",
-      assignmentStatus: "",
+      assignmentStatus: 0,
+      assignmentCreateBy: 0,
+      assignmentUpdateBy: 0
     },
+    assignmentStatus: [
+      // use in select options
+      { text: "ใช้งาน", value: 1 },
+      { text: "ไม่ใช้งาน", value: 2 }
+    ]
   }),
   async mounted() {
     // const { doseGetAll } = await this.getProblem();
@@ -215,6 +255,9 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? "เพิ่มมอบหมายงาน" : "แก้ไขมอบหมายงาน";
     },
+    SuccessTitle() {
+      return this.editedIndex === -1 ? "บันทึกสำเร็จ" : "แก้ไขสำเร็จ";
+    }
   },
 
   watch: {
@@ -223,7 +266,7 @@ export default {
     },
     dialogDelete(val) {
       val || this.closeDelete();
-    },
+    }
   },
 
   async created() {
@@ -238,13 +281,13 @@ export default {
     // function name: initialize
     // description: for geting data from backend using api
     // input: -
-    // output: [doesGetAll]: {assingmentId, assingmetTitle, assingmentDescription, assingmentStartDate, assingmentEndDate ,assingmentStatus}
-    // CreateBy: Atikom Wongwan / CreateDate: 10/2/2021
-    // UpdateBy: Atikom Wongwan / UpdateDate: 16/2/2021
+    // output: [doesGetAll]: {assingmetTitle, assingmentDescription, assingmentStartDate, assingmentEndDate ,assingmentStatus}
+    // CreateBy: Atikom Wongwan / CreateDate: 19/2/2021
+    // UpdateBy: Atikom Wongwan / UpdateDate: 19/2/2021
 
     async initialize() {
       const { doesGetAll } = await this.getAssignment();
-      doesGetAll.map((doesGetAll) => {
+      doesGetAll.map(doesGetAll => {
         doesGetAll.assignmentStartDate = this.$moment(
           doesGetAll.assignmentStartDate
         ).format("Do MMM YY เวลา LT");
@@ -261,6 +304,105 @@ export default {
       this.allAssignment = doesGetAll;
       // console.log(this.assignments);
     },
+
+    async save() {
+      // if  this.editedIndex > -1 == it edited assignment else this.editedIndex == -1 insert assignment
+      if (this.editedIndex > -1) {
+        const editResult = await this.editAssignment(this.editedItem);
+        if (typeof editResult === "number") {
+          this.dialog = false;
+          // this.SuccessTitle = "แก้ไขสำเร็จ";
+          this.dialogSuccess = true;
+        }
+      } else {
+        this.editedItem.assignmentCreateBy = 1;
+        this.editedItem.assignmentUpdateBy = this.editedItem.assignmentCreateBy;
+
+        const [insertResult] = await this.insertAssignment(this.editedItem);
+
+        if (typeof insertResult === "number") {
+          this.close();
+          // this.SuccessTitle = "บันทึกสำเร็จ";
+          this.dialogSuccess = true;
+        }
+      }
+    },
+
+    // editItem(item) {
+    //   this.editedIndex = this.allAssignment.indexOf(item);
+    //   this.editedItem.assignmentId = item.assignmentId;
+    //   this.editedItem.assignmentTitle = item.assignmentTitle;
+    //   this.editedItem.assignmentDescription = item.assignmentDescription;
+    //   this.editedItem.assignmentStartDate = item.assignmentStartDate;
+    //   this.editedItem.assignmentEndDate = item.assignmentEndDate;
+    //   this.editedItem.assignmentStatus = item.assignmentStatus;
+    //   // this.editedItem.assignmentCreateBy = item.assignmentCreateBy;
+    //   // this.editedItem.assignmentUpdateBy = this.editedItem.assignmentCreateBy;
+    //   this.editedItem.assignmentUpdateDate = this.$moment().format(
+    //     "YYYY-MM-DD HH:mm:ss"
+    //   );
+    //   console.log(this.editedItem);
+    //   this.dialogDelete = true;
+    // },
+
+    // deleteItem(item) {
+    //   this.editedIndex = this.allAssignment.indexOf(item);
+    //   this.editedItem.assignmentId = item.assignmentId;
+    //   this.editedItem.assignmentTitle = item.assignmentTitle;
+    //   this.editedItem.assignmentDescription = item.assignmentDescription;
+    //   this.editedItem.assignmentStartDate = this.$moment().format(
+    //     "YYYY-MM-DD HH:mm:ss"
+    //   );
+    //   this.editedItem.assignmentEndDate = this.$moment().format(
+    //     "YYYY-MM-DD HH:mm:ss"
+    //   );
+    //   this.editedItem.assignmentStatus = 3;
+    //   this.editedItem.assignmentCreateBy = 1;
+    //   this.editedItem.assignmentUpdateBy = this.editedItem.assignmentCreateBy;
+    //   this.editedItem.assignmentUpdateDate = this.$moment().format(
+    //     "YYYY-MM-DD HH:mm:ss"
+    //   );
+    //   console.log(this.editedItem);
+    //   this.dialogDelete = true;
+    // },
+
+    // async deleteItemConfirm() {
+    //   const EditResult = await this.editAssignment(this.editedItem);
+    //   console.log(EditResult);
+
+    //   if (typeof EditResult === "number") {
+    //     this.closeDelete();
+    //   }
+    // },
+
+    // close() {
+    //   this.dialog = false;
+    //   this.$nextTick(() => {
+    //     this.editedItem = Object.assign({}, this.defaultItem);
+    //     this.editedIndex = -1;
+    //   });
+    // },
+
+    // closeDelete() {
+    //   this.dialogDelete = false;
+    //   this.SuccessTitle = "ลบสำเร็จ";
+    //   this.dialogSuccess = true;
+    //   this.$nextTick(() => {
+    //     this.editedItem = Object.assign({}, this.defaultItem);
+    //     this.editedIndex = -1;
+    //   });
+    //   this.initialize();
+    // },
+
+    // closeSuccess() {
+    //   this.dialogSuccess = false;
+    //   this.$nextTick(() => {
+    //     this.editedItem = Object.assign({}, this.defaultItem);
+    //     this.editedIndex = -1;
+    //     this.SuccessTitle = "สร้างการมอบหมายงาน";
+    //     this.SuccessTitle = "";
+    //   });
+    // },
 
     editItem(item) {
       this.editedIndex = this.allAssignment.indexOf(item);
@@ -293,20 +435,20 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
-    },
+    }
 
-    save() {
-      if (this.editedIndex > -1) {
-        //Save for edit
-        Object.assign(this.allAssignment[this.editedIndex], this.editedItem);
-      } else {
-        //Save for add
-        console.log(this.editedItem);
-        this.allAssignment.push(this.editedItem);
-      }
-      this.close();
-    },
-  },
+    // save() {
+    //   if (this.editedIndex > -1) {
+    //     //Save for edit
+    //     Object.assign(this.allAssignment[this.editedIndex], this.editedItem);
+    //   } else {
+    //     //Save for add
+    //     console.log(this.editedItem);
+    //     this.allAssignment.push(this.editedItem);
+    //   }
+    //   this.close();
+    // },
+  }
 };
 </script>
 

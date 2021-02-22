@@ -108,6 +108,35 @@ const getProblemSchema = joi.object({
 // get assignment schema
 const getAssignmentSchema = joi.object({
   assignmentId: joi.number().max(99999999).min(1),
+  assignmentCreateBy: joi.number().integer().max(99999999).min(1),
+  assignmentStatus: joi.number().integer().max(3),
+});
+
+// create assignment schema
+const createAssignmentSchema = joi.object({
+  assignmentTitle: joi.string().max(255).required(),
+  assignmentDescription: joi.string().max(255).required(),
+  assignmentStartDate: joi.date().raw().required(),
+  assignmentEndDate: joi.date().raw().required(),
+  assignmentStatus: joi.number().integer().max(3).required(),
+  assignmentCreateBy: joi.number().integer().max(99999999).min(1).required(),
+  assignmentUpdateBy: joi.number().integer().max(99999999).min(1).required(),
+});
+
+// update assignment schema
+const updateAssignmentSchema = joi.object({
+  assignmentTitle: joi.string().max(255),
+  assignmentDescription: joi.string().max(255),
+  assignmentStartDate: joi.date().raw(),
+  assignmentEndDate: joi.date().raw(),
+  assignmentUpdateBy: joi.number().max(99999999).min(1),
+  assignmentUpdateDate: joi.date().raw(),
+  assignmentStatus: joi.number().integer().max(3),
+});
+
+// filter update params schema
+const updateAssignmentConditionSchema = joi.object({
+  assignmentId: joi.number().integer().max(99999999),
 });
 
 // get assignment schema
@@ -206,4 +235,7 @@ module.exports = {
   updateProblemConditionSchema,
   updateProblemSchema,
   getTaskAssignmentSchema,
+  createAssignmentSchema,
+  updateAssignmentConditionSchema,
+  updateAssignmentSchema,
 };
