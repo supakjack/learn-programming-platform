@@ -86,7 +86,6 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-
       </v-toolbar>
     </template>
 
@@ -104,7 +103,6 @@
         โหลดข้อมูลใหม่
       </v-btn>
     </template>
-
   </v-data-table>
 </template>
 
@@ -217,7 +215,6 @@ export default {
     },
 
     async save() {
-      
       if (this.editedIndex > -1) {
         const EditResult = await this.editProblem(this.editedItem);
         if (typeof EditResult === "number") {
@@ -256,7 +253,7 @@ export default {
 
     deleteItem(item) {
       this.editedIndex = this.allProblems.indexOf(item);
-      console.log(this.editedIndex );
+      console.log(this.editedIndex);
       this.editedItem.problemId = item.problemId;
       this.editedItem.problemTitle = item.problemTitle;
       this.editedItem.problemDiscription = item.problemDiscription;
@@ -271,7 +268,6 @@ export default {
       console.log(this.editedItem);
       this.dialogDelete = true;
     },
-
 
     async deleteItemConfirm() {
       const EditResult = await this.editProblem(this.editedItem);
@@ -300,7 +296,7 @@ export default {
       this.initialize();
     },
 
-   closeInsert() {
+    closeInsert() {
       this.dialogInsert = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
