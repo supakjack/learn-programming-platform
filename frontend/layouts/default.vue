@@ -2,7 +2,7 @@
   <v-app>
     <div>
       <Topbar></Topbar>
-      <testSidebar></testSidebar>
+      <Sidebar></Sidebar>
       <v-main>
         <v-container>
           <Breadcrumb></Breadcrumb>
@@ -10,7 +10,6 @@
         </v-container>
       </v-main>
       <Footer></Footer>
-      <!-- <Sidebar></Sidebar> -->
     </div>
   </v-app>
 </template> 
@@ -20,7 +19,6 @@ import Sidebar from "./Modrens/Sidebar";
 import Topbar from "./Modrens/Topbar";
 import Footer from "./Modrens/Footer";
 import Breadcrumb from "./Modrens/Breadcrumb";
-import testSidebar from "./Modrens/testSidebar";
 
 export default {
   components: {
@@ -28,7 +26,6 @@ export default {
     Topbar,
     Footer,
     Breadcrumb,
-    testSidebar,
   },
 };
 </script>

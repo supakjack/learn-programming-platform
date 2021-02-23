@@ -1,107 +1,135 @@
 <template>
-  <v-navigation-drawer v-model="drawer" :mini-variant.sync="mini" fixed>
-    <v-list-item class="px-2">
-      <v-list-item-avatar>
-        <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
-      </v-list-item-avatar>
-
-      <v-list-item-title>John Leider</v-list-item-title>
-
-      <v-btn icon @click.stop="mini = !mini">
-        <v-icon>mdi-chevron-left</v-icon>
-      </v-btn>
-    </v-list-item>
-
-    <v-divider></v-divider>
-
-    <v-list>
-      <v-list-item v-for="item in menus" :key="item.title" :to="item.to">
-        <v-list-item-content>
-          <v-list-item-title v-text="item.title"></v-list-item-title>
-        </v-list-item-content>
-
-        <v-list-item
-          link
-          v-for="child in item.items"
-          :key="child.title"
-          :to="child.to"
-        >
-          <v-list-item-content>
-            <v-list-item-title v-text="child.title"></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-item>
-    </v-list>
-  </v-navigation-drawer>
+  <!-- <v-navigation-drawer v-model="drawer" :mini-variant.sync="mini" fixed> -->
+  <div id="demo">
+    <div class="demo">
+      <sidebar-menu
+        :menu="menu"
+        :theme="selectedTheme"
+        :show-one-child="true"
+      />
+    </div>
+  </div>
+  <!-- </v-navigation-drawer> -->
 </template>
 
 <script>
 export default {
+  name: "App",
   data() {
     return {
-      drawer: true,
-      selectedMenu: "",
-      // headMenus: [{ text: "หน้าแรก", icon: "mdi-home-variant" }],
-      menus: [
+      //   drawer: true,
+      //   mini: true,
+
+      menu: [
         //Teacher menu
         {
           header: true,
           title: "อาจารย์",
-          hiddenOnCollapse: false,
+          hiddenOnCollapse: true,
         },
         {
           action: "mdi-chart-bar",
           title: "หน้าหลัก",
-          to: "/home",
-          // items: [{ title: "หน้าหลัก", to: "/home" }],
+          href: "/home",
+          icon: "fa fa-download",
+
+          // child: [{ title: "หน้าหลัก", href: "/home" }],
         },
         {
           action: "mdi-calendar-check",
-          items: [
-            { title: "มอบหมาย", to: "/assignment" },
-            { title: "ผู้ใช้งาน", to: "/assignment/user" },
+          child: [
+            {
+              title: "มอบหมาย",
+              href: "/assignment?tab=assignment",
+              icon: "fa fa-download",
+            },
+            {
+              title: "ผู้ใช้งาน",
+              href: "/assignment?tab=user",
+              icon: "fa fa-download",
+            },
           ],
           title: "มอบหมายงาน",
+          icon: "mdi-book-open",
         },
         {
           action: "mdi-book-open",
           active: true,
           child: [
-            { title: "โจทย์ปัญหา", to: "/problem-tag/problems" },
-            { title: "แท็ก", to: "/problem-tag/tags" },
+            {
+              title: "โจทย์ปัญหา",
+              href: "/problem-tag/?tab=problems",
+              icon: "fa fa-download",
+            },
+            {
+              title: "แท็ก",
+              href: "/problem-tag/?tab=tag",
+              icon: "fa fa-download",
+            },
           ],
           title: "จัดการโจทย์ปัญหา",
+          icon: "fa fa-download",
         },
         {
           action: "mdi-code-braces",
           title: "IDE",
-          to: "/ide",
+          href: "/ide",
+          icon: "fa fa-download",
         },
         {
           action: "mdi-human-child",
           title: "Dashboard ",
+          icon: "fa fa-download",
+          href: "/error",
         },
 
         //Student menu
         {
+          header: true,
+          title: "นักเรียน",
+          hiddenOnCollapse: true,
+        },
+        {
           action: "mdi-human-child",
           title: "หน้าหลัก",
+          icon: "fa fa-download",
+          href: "/student/homestu",
         },
         {
           action: "mdi-calendar-check",
-          items: [
-            { title: "88824125", to: "/assignment" },
-            { title: "88824154", to: "/assignment/user" },
+          child: [
+            { title: "88824125", href: "/assignment", icon: "fa fa-download" },
+            {
+              title: "88824154",
+              href: "/student/homework",
+              icon: "fa fa-download",
+            },
           ],
           title: "การบ้าน",
+          icon: "fa fa-download",
         },
         {
           action: "mdi-human-child",
           title: "Dashboard",
+          icon: "fa fa-download",
+          href: "/error",
         },
       ],
-      mini: true,
+      themes: [
+        {
+          name: "Default theme",
+          input: "",
+        },
+        {
+          name: "White theme",
+          input: "white-theme",
+        },
+      ],
+      selectedTheme: "white-theme",
     };
   },
 };
 </script>
+
+<style lang="scss">
+</style>

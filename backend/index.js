@@ -7,6 +7,7 @@ require("dotenv").config();
 
 const userRoute = require("./routers/user.router");
 const assignmentRoute = require("./routers/assignment.router");
+const courseRoute = require("./routers/course.router");
 const tagRoute = require("./routers/tag.router");
 const ideRoute = require("./routers/ide.router");
 const problemRoute = require("./routers/problem.router");
@@ -26,6 +27,7 @@ app.use(fileupload());
 
 app.use("/user", userRoute);
 app.use("/assignment", assignmentRoute);
+app.use("/course", courseRoute);
 app.use("/tag", tagRoute);
 app.use("/ide", ideRoute);
 app.use("/problem", problemRoute);
