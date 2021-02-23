@@ -24,7 +24,6 @@ const accessLogStream = fs.createWriteStream(
   { flags: 'a' }
 )
 
-// app.use(upload.array());
 app.use(cors())
 app.use(morgan('combined', { stream: accessLogStream }))
 app.use(morgan('dev'))
