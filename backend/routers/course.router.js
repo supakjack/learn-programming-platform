@@ -9,6 +9,6 @@ router.post("/", courseController.create);
 router.patch("/", courseController.update);
 
 // Get tag by condition
-router.get("/", courseController.get);
+router.get("/year", courseController.getByYear);
 
 module.exports = router;
