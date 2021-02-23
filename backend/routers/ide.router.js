@@ -7,11 +7,6 @@ router.post("/run", ideController.run);
 
 // seperate compile by source or path
 
-// router.post("/seperate", multer().array("files"), function (req, res) {
-//   console.log("body: ", req.body.data.files);
-//   console.log("files:", req.files);
-//   return res.sendStatus(200);
-// });
 router.post("/seperate", ideController.seperate);
 
 // compile by source and path
