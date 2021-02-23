@@ -42,7 +42,7 @@ module.exports = {
     }
   },
 
-  get: async (req, res, next) => {
+  getByYear: async (req, res, next) => {
     try {
       const doesGetAll = await globalModel.select({
         name: "years",
