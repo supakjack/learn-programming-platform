@@ -11,4 +11,6 @@ router.patch("/", courseController.update);
 // Get tag by condition
 router.get("/year", courseController.getByYear);
 
+router.get("/", courseController.get);
+
 module.exports = router;
