@@ -157,7 +157,7 @@ export default {
     dialog: false,
     dialogDelete: false,
     search: "",
-    file: "",
+    file: null,
     headers: [
       {
         text: "รหัสนิสิต",
@@ -335,27 +335,29 @@ export default {
         }
       } else {
         console.log("userCreateBy -1");
-        // if (this.file != null) {
-        //   const [insertResult] = await this.inserFile(this.file);
+        if (this.file != null) {
+          console.log("file");
+          const [insertResult] = await this.insertFile(this.file);
 
-        //   if (typeof insertResult === "number") {
-        //     this.close();
-        //     this.SuccessTitle = "บันทึกสำเร็จ";
-        //     this.dialogSuccess = true;
-        //   }
-        // } else {
-        this.editedItem.userCreateBy = 1;
-        this.editedItem.userUpdateBy = this.editedItem.userCreateBy;
-        this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
-        this.editedItem.userLastnameEnglish = this.userLDAP.sn;
+          if (typeof insertResult === "number") {
+            this.close();
+            this.SuccessTitle = "บันทึกสำเร็จ";
+            this.dialogSuccess = true;
+          }
+        } else {
+          console.log("data");
+          this.editedItem.userCreateBy = 1;
+          this.editedItem.userUpdateBy = this.editedItem.userCreateBy;
+          this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
+          this.editedItem.userLastnameEnglish = this.userLDAP.sn;
 
-        const [insertResult] = await this.insertUser(this.editedItem);
+          const [insertResult] = await this.insertUser(this.editedItem);
 
-        if (typeof insertResult === "number") {
-          this.close();
-          this.SuccessTitle = "บันทึกสำเร็จ";
-          this.dialogSuccess = true;
-          // }
+          if (typeof insertResult === "number") {
+            this.close();
+            this.SuccessTitle = "บันทึกสำเร็จ";
+            this.dialogSuccess = true;
+          }
         }
       }
     },

@@ -13,123 +13,39 @@
 </template>
 
 <script>
+import studentMenu from "./student-menu";
+import teacherMenu from "./teacher-menu";
 export default {
   name: "App",
+  mounted() {
+    if (this.$store.state.user.permission.includes("teacher")) {
+      // console.log("is teacher");
+      this.menu = [...teacherMenu]
+    } else if(this.$store.state.user.permission.includes("student")) {
+      // console.log("is student");
+      this.menu = [...studentMenu]
+    }
+  },
   data() {
     return {
       //   drawer: true,
       //   mini: true,
 
-      menu: [
-        //Teacher menu
-        {
-          header: true,
-          title: "อาจารย์",
-          hiddenOnCollapse: true,
-        },
-        {
-          action: "mdi-chart-bar",
-          title: "หน้าหลัก",
-          href: "/home",
-          icon: "fa fa-download",
-
-          // child: [{ title: "หน้าหลัก", href: "/home" }],
-        },
-        {
-          action: "mdi-calendar-check",
-          child: [
-            {
-              title: "มอบหมาย",
-              href: "/assignment?tab=assignment",
-              icon: "fa fa-download",
-            },
-            {
-              title: "ผู้ใช้งาน",
-              href: "/assignment?tab=user",
-              icon: "fa fa-download",
-            },
-          ],
-          title: "มอบหมายงาน",
-          icon: "mdi-book-open",
-        },
-        {
-          action: "mdi-book-open",
-          active: true,
-          child: [
-            {
-              title: "โจทย์ปัญหา",
-              href: "/problem-tag/?tab=problems",
-              icon: "fa fa-download",
-            },
-            {
-              title: "แท็ก",
-              href: "/problem-tag/?tab=tag",
-              icon: "fa fa-download",
-            },
-          ],
-          title: "จัดการโจทย์ปัญหา",
-          icon: "fa fa-download",
-        },
-        {
-          action: "mdi-code-braces",
-          title: "IDE",
-          href: "/ide",
-          icon: "fa fa-download",
-        },
-        {
-          action: "mdi-human-child",
-          title: "Dashboard ",
-          icon: "fa fa-download",
-          href: "/error",
-        },
-
-        //Student menu
-        {
-          header: true,
-          title: "นักเรียน",
-          hiddenOnCollapse: true,
-        },
-        {
-          action: "mdi-human-child",
-          title: "หน้าหลัก",
-          icon: "fa fa-download",
-          href: "/student/homestu",
-        },
-        {
-          action: "mdi-calendar-check",
-          child: [
-            { title: "88824125", href: "/assignment", icon: "fa fa-download" },
-            {
-              title: "88824154",
-              href: "/student/homework",
-              icon: "fa fa-download",
-            },
-          ],
-          title: "การบ้าน",
-          icon: "fa fa-download",
-        },
-        {
-          action: "mdi-human-child",
-          title: "Dashboard",
-          icon: "fa fa-download",
-          href: "/error",
-        },
-      ],
+      menu: [],
       themes: [
         {
           name: "Default theme",
-          input: "",
+          input: ""
         },
         {
           name: "White theme",
-          input: "white-theme",
-        },
+          input: "white-theme"
+        }
       ],
-      selectedTheme: "white-theme",
+      selectedTheme: "white-theme"
     };
-  },
+  }
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

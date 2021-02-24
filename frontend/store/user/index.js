@@ -1,14 +1,16 @@
 module.exports = {
   state: () => ({
-    permission: [],
+    permission: ["teacher"],
     token: "",
-    username: ""
+    username: "",
+    id: "1"
   }),
   mutations: {
     setUser(state, { user }) {
       state.permission = user.permission;
       state.token = user.token;
       state.username = user.username;
+      state.id = user.id;
       console.log(user);
     }
   }
