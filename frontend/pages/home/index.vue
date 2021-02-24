@@ -107,65 +107,31 @@ export default {
   mixins: [homemixin],
   // middleware: "auth",
   mounted() {
-    console.log(this.$store.state.user);
+    // console.log(this.$store.state.user);
   },
   methods: {
     async initialize() {
-      const { doesGetSome } = await this.getHome(1);
-      doesGetSome.map(doesGetSome => {
+      const { doesGetSome } = await this.getHome(this.$store.state.user.id);
+      doesGetSome.map((doesGetSome) => {
         doesGetSome.courseUpdateDate = this.$moment(
           doesGetSome.courseUpdateDate
         ).format("Do MMM YY เวลา LT");
-        // if (doesGetSome.tagStatus == "active") {
-        //   doesGetSome.tagStatus = "ใช้งาน";
-        // } else {
-        //   doesGetSome.tagStatus = "ไม่ใช้งาน";
-        // }
       });
-      this.allCourses = doesGetSome;
-    }
+      this.allCourses = await doesGetSome;
+      this.$store.commit("course/setCourse", {
+        course: {
+          courses: this.allCourses,
+        },
+      });
+    },
   },
-  // when created call initialize to geting all tag data
   async created() {
     this.initialize();
   },
   data: () => ({
     sectionDialog: false,
-    allCourses: [
-      // {
-      //   id: "88151518",
-      //   name: "คิดเลขในใจ",
-      //   course: "1",
-      //   year: "2563",
-      //   date: "15/10/2021",
-      //   group: "1"
-      // },
-      // {
-      //   id: "88151518",
-      //   name: "คิดเลขในใจ",
-      //   course: "1",
-      //   year: "2563",
-      //   date: "15/10/2021",
-      //   group: "1"
-      // },
-      // {
-      //   id: "88151518",
-      //   name: "คิดเลขในใจ",
-      //   course: "1",
-      //   year: "2563",
-      //   date: "15/10/2021",
-      //   group: "1"
-      // },
-      // {
-      //   id: "88151518",
-      //   name: "คิดเลขในใจ",
-      //   course: "1",
-      //   year: "2563",
-      //   date: "15/10/2021",
-      //   group: "1"
-      // }
-    ]
-  })
+    allCourses: [],
+  }),
 };
 </script>
 

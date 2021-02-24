@@ -8,7 +8,7 @@ export default {
     // CreateBy: Niphitphon Thanatkulkit / CreateDate: 24/2/2021
     // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 24/2/2021
     async getHome(data) {
-      return this.$axios.$get(`home/?userId=${data}`);
+      return this.$axios.$get(`course/?userId=${data}`);
     },
 
     // function name: deleteTag
