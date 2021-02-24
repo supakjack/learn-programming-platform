@@ -1,21 +1,21 @@
 <template>
   <div>
     <v-card class="d-flex mb-4 flex flex-wrap" flat tile>
-      <div v-for="(item, i) in subjects" :key="i" class="ml-2 mb-5">
+      <div v-for="(item, i) in allCourses" :key="i" class="ml-2 mb-5">
         <v-card class="mx-auto" max-width="344" height="130" width="280">
           <v-divider color="blue"></v-divider>
           <v-list-item three-line>
             <v-list-item-content>
-              <v-list-item-title class="headline mb-1">
-                {{ item.id }} {{ item.name }}
+              <v-list-item-title class="headline mb-1 kanit-font">
+                {{ item.courseCode }} {{ item.courseName }}
               </v-list-item-title>
               <v-list-item-subtitle
-                >ภาคเรียน {{ item.course }}/{{
-                  item.year
+                >ภาคเรียน {{ item.yearId }}/{{
+                  item.yearName
                 }}</v-list-item-subtitle
               >
               <v-list-item-subtitle class="text-right">
-                กลุ่ม {{ item.group }}
+                กลุ่ม {{ item.sectionNumber }}
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -24,7 +24,7 @@
 
           <v-card-actions>
             <v-list-item-subtitle
-              >อัพเดทล่าสุดวันที่ {{ item.date }}</v-list-item-subtitle
+              >อัพเดทล่าสุดวันที่ {{ item.courseUpdateDate }}</v-list-item-subtitle
             >
           </v-card-actions>
         </v-card>
@@ -101,47 +101,79 @@
   </div>
 </template>
 <script>
+import homemixin from "@/components/home";
 export default {
+  mixins: [homemixin],
   // middleware: "auth",
   mounted() {
     console.log(this.$store.state.user);
   },
+  methods: {
+    async initialize() {
+      const { doesGetSome } = await this.getHome(1);
+      console.log(doesGetSome)
+      doesGetSome.map(doesGetSome => {
+        doesGetSome.courseUpdateDate = this.$moment(
+          doesGetSome.courseUpdateDate
+        ).format("Do MMM YY เวลา LT");
+        // if (doesGetSome.tagStatus == "active") {
+        //   doesGetSome.tagStatus = "ใช้งาน";
+        // } else {
+        //   doesGetSome.tagStatus = "ไม่ใช้งาน";
+        // }
+      });
+      this.allCourses = doesGetSome;
+    }
+  },
+  // when created call initialize to geting all tag data
+  async created() {
+    this.initialize();
+  },
   data: () => ({
     sectionDialog: false,
-    subjects: [
-      {
-        id: "88151518",
-        name: "คิดเลขในใจ",
-        course: "1",
-        year: "2563",
-        date: "15/10/2021",
-        group: "1"
-      },
-      {
-        id: "88151518",
-        name: "คิดเลขในใจ",
-        course: "1",
-        year: "2563",
-        date: "15/10/2021",
-        group: "1"
-      },
-      {
-        id: "88151518",
-        name: "คิดเลขในใจ",
-        course: "1",
-        year: "2563",
-        date: "15/10/2021",
-        group: "1"
-      },
-      {
-        id: "88151518",
-        name: "คิดเลขในใจ",
-        course: "1",
-        year: "2563",
-        date: "15/10/2021",
-        group: "1"
-      }
+    allCourses: [
+      // {
+      //   id: "88151518",
+      //   name: "คิดเลขในใจ",
+      //   course: "1",
+      //   year: "2563",
+      //   date: "15/10/2021",
+      //   group: "1"
+      // },
+      // {
+      //   id: "88151518",
+      //   name: "คิดเลขในใจ",
+      //   course: "1",
+      //   year: "2563",
+      //   date: "15/10/2021",
+      //   group: "1"
+      // },
+      // {
+      //   id: "88151518",
+      //   name: "คิดเลขในใจ",
+      //   course: "1",
+      //   year: "2563",
+      //   date: "15/10/2021",
+      //   group: "1"
+      // },
+      // {
+      //   id: "88151518",
+      //   name: "คิดเลขในใจ",
+      //   course: "1",
+      //   year: "2563",
+      //   date: "15/10/2021",
+      //   group: "1"
+      // }
     ]
   })
 };
 </script>
+
+<style>
+.roboto-font {
+  font-family: "Roboto", sans-serif;
+}
+.kanit-font {
+  font-family: "Kanit", sans-serif;
+}
+</style>
