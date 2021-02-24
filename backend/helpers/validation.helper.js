@@ -8,6 +8,9 @@ const authSchema = joi.object({
 const updateUserConditionSchema = joi.object({
   userId: joi.number().integer().max(99999999),
 });
+const UserusernameConditionSchema = joi.object({
+  userUsername: joi.string().max(255),
+});
 
 // update user schema
 const updateUserSchema = joi.object({
@@ -212,6 +215,11 @@ const updateProblemSchema = joi.object({
   problemStatus: joi.number().integer().max(3),
 });
 
+// get Course schema
+const getCourseSchema = joi.object({
+  userId: joi.number().max(99999999).min(1),
+});
+
 module.exports = {
   authSchema,
   userSchema,
@@ -219,6 +227,7 @@ module.exports = {
   FileuserSchema,
   updateUserSchema,
   updateUserConditionSchema,
+  UserusernameConditionSchema,
   createTagSchema,
   getTagSchema,
   updateTagConditionSchema,
@@ -238,4 +247,5 @@ module.exports = {
   createAssignmentSchema,
   updateAssignmentConditionSchema,
   updateAssignmentSchema,
+  getCourseSchema,
 };

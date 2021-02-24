@@ -1,146 +1,119 @@
-const createError = require('http-errors')
-const globalModel = require('../models/global.model')
+const createError = require("http-errors");
+const globalModel = require("../models/global.model");
 const {
   userSchema,
   updateUserConditionSchema,
   updateUserSchema,
   FileuserSchema,
-  createUserSchema
-} = require('./../helpers/validation.helper')
-const nanoid = require('nanoid')
-const readXlsxFile = require('read-excel-file/node')
+  createUserSchema,
+  UserusernameConditionSchema,
+} = require("./../helpers/validation.helper");
+const nanoid = require("nanoid");
+const readXlsxFile = require("read-excel-file/node");
 
 module.exports = {
-  findUser: async (req, res, next) => {
-    console.log(req.params)
+  findById: async (req, res, next) => {
+    const getUserData = await UserusernameConditionSchema.validateAsync(
+      req.params
+    );
+    // const username = req.query.username;
+    console.log(getUserData);
     try {
-      if (req.params) {
-        var accountName = req.params.username
-        // Find user by a sAMAccountName
-        ad.findUser(accountName, function (err, user) {
-          if (err) {
-            console.log('ERROR: ' + JSON.stringify(err))
-            return
-          }
+      const doesGet = await globalModel.select({
+        name: "users",
+        condition: [getUserData],
 
-          if (!user) {
-            console.log('User: ' + accountName + ' not found.')
-          } else {
-            // console.log("Firstname: ", user.givenName);
-            // console.log("Lastname: ", user.sn);
-            // console.log("Username: ", user.sAMAccountName);
-            // console.log("Email: ", user.mail);
-
-            // return res.json({ user });
-            res.status(201).send({ user })
-          }
-        })
-      }
+        // condition: [getUserData],
+      });
+      // console.log(doesGetAll);
+      res.status(201).send({ doesGet });
     } catch (error) {
-      if (error.isJoi === true)
-        return next(createError.BadRequest('Invalid Username'))
-      next(error)
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
     }
   },
   findAll: async (req, res, next) => {
     // const getUserData = await userSchema.validateAsync(req.query);
     try {
       const doesGetAll = await globalModel.select({
-        name: 'users'
+        name: "users",
         // condition: [getUserData],
-      })
+      });
       // console.log(doesGetAll);
-      res.status(201).send({ doesGetAll })
+      res.status(201).send({ doesGetAll });
     } catch (error) {
-      if (error.isJoi === true) return next(createError.InternalServerError())
-      next(error)
-    }
-  },
-  findById: async (req, res, next) => {
-    try {
-      const doesGet = await globalModel.select({
-        name: 'users'
-        // condition: [getUserData],
-      })
-      // console.log(doesGetAll);
-      res.status(201).send({ doesGetAll })
-    } catch (error) {
-      if (error.isJoi === true) return next(createError.InternalServerError())
-      next(error)
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
     }
   },
 
   create: async (req, res, next) => {
-    console.log(req.body)
-    // const addUserData = await createUserSchema.validateAsync(req.body);
-    // console.log(addUserData);
+    console.log(req.body);
     try {
       const doesCreate = await globalModel.insert({
-        name: 'users',
-        insertData: [req.body]
-      })
-      res.status(200).send({ doesCreate })
+        name: "users",
+        insertData: [req.body],
+      });
+      res.status(200).send({ doesCreate });
     } catch (error) {
-      if (error.isJoi === true) return next(createError.InternalServerError())
-      next(error)
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
     }
   },
   update: async (req, res, next) => {
-    console.log(req.query)
-    console.log(req.body)
+    // console.log(req.query);
+    // console.log(req.body);
     const updateCondition = await updateUserConditionSchema.validateAsync(
       req.query
-    )
-    // const updateUserData = await updateUserSchema.validateAsync(req.body);
+    );
     try {
       const doesUpdate = await globalModel.update({
-        name: 'users',
+        name: "users",
         condition: [updateCondition],
-        updateData: [req.body]
-      })
-      res.status(200).send({ doesUpdate })
+        updateData: [req.body],
+      });
+      res.status(200).send({ doesUpdate });
     } catch (error) {
-      if (error.isJoi === true) return next(createError.InternalServerError())
-      next(error)
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
     }
   },
   upload: async (req, res, next) => {
-    console.log('filesssssss')
-    console.log(req)
-    const singleFile = req.files ? req.files.file : null
-    const randomFileName = nanoid(10)
-    const splitFileName = singleFile.name.split('.')
-    singleFile.name = randomFileName + '.' + splitFileName[1]
-    const filePath = process.env.BASE_STORAGE_PATH + 'temp'
-    await singleFile.mv(filePath + '\\' + singleFile.name)
+    console.log("filesssssss");
+    console.log(req);
+    const singleFile = req.files ? req.files.file : null;
+    const randomFileName = nanoid(10);
+    const splitFileName = singleFile.name.split(".");
+    singleFile.name = randomFileName + "." + splitFileName[1];
+    const filePath = process.env.BASE_STORAGE_PATH + "temp";
+    await singleFile.mv(filePath + "\\" + singleFile.name);
 
-    let path = '..\\storages\\temp\\' + singleFile.name
-    // D:\Software Engineering Project\learn-programming-platform\storages\temp
+    let path = "..\\storages\\temp\\" + singleFile.name;
 
     readXlsxFile(path).then((rows) => {
-      // skip header
-      rows.shift()
-      let users = []
+      rows.shift();
+      let users = [];
       rows.forEach((row) => {
         let user = {
           userUsername: row[0],
           userPrefixThai: row[1],
           userFirstnameThai: row[2],
-          userLastnameThai: row[3]
-        }
-        users.push(user)
-      })
-      console.log(users)
+          userLastnameThai: row[3],
+        };
+        users.push(user);
+      });
+      console.log(users);
       try {
         const doesCreate = globalModel.insert({
-          name: 'users',
-          insertData: users
-        })
-        res.status(200).send({ doesCreate })
+          name: "users",
+          insertData: users,
+        });
+        res.status(200).send({ doesCreate });
       } catch (error) {
-        if (error.isJoi === true) return next(createError.InternalServerError())
-        next(error)
+        if (error.isJoi === true)
+          return next(createError.InternalServerError());
+        next(error);
       }
-    })
-  }
-}
+    });
+  },
+};
