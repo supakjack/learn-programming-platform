@@ -103,6 +103,9 @@
 <script>
 export default {
   // middleware: "auth",
+  mounted() {
+    console.log(this.$store.state.user);
+  },
   data: () => ({
     sectionDialog: false,
     subjects: [
@@ -112,7 +115,7 @@ export default {
         course: "1",
         year: "2563",
         date: "15/10/2021",
-        group: "1",
+        group: "1"
       },
       {
         id: "88151518",
@@ -120,7 +123,7 @@ export default {
         course: "1",
         year: "2563",
         date: "15/10/2021",
-        group: "1",
+        group: "1"
       },
       {
         id: "88151518",
@@ -128,7 +131,7 @@ export default {
         course: "1",
         year: "2563",
         date: "15/10/2021",
-        group: "1",
+        group: "1"
       },
       {
         id: "88151518",
@@ -136,9 +139,9 @@ export default {
         course: "1",
         year: "2563",
         date: "15/10/2021",
-        group: "1",
-      },
-    ],
-  }),
+        group: "1"
+      }
+    ]
+  })
 };
 </script>

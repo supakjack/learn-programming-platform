@@ -8,7 +8,9 @@
               <v-card-text>
                 <div class="layout column align-center">
                   <vuetify-logo />
-                  <h3 class="flex my-10 success--text">Learn Programming Platform</h3>
+                  <h3 class="flex my-10 success--text">
+                    Learn Programming Platform
+                  </h3>
                 </div>
                 <v-form>
                   <v-text-field
@@ -67,35 +69,42 @@ export default {
       showResult: false,
       result: "",
       rules: {
-        required: (value) => !!value || "Required.",
-      },
+        required: value => !!value || "Required."
+      }
     };
   },
   methods: {
     async handleLoginClicked() {
       const payload = {
         username: this.username,
-        password: this.password,
+        password: this.password
       };
       try {
         const response = await this.$auth.loginWith("local", {
-          data: payload,
+          data: payload
         });
         console.log(response);
         // this.$router.push('/home');
         if (response.data.token) {
+          this.$store.commit("user/setUser", {
+            user: {
+              permission: response.data.permission,
+              token: response.data.token,
+              username: response.data.user.username
+            }
+          });
           this.$router.replace({ name: "home" });
           this.$vs.notify({
             color: "danger",
             title: "Invalid Username and password",
-            text: "Please enter your username or password again.",
+            text: "Please enter your username or password again."
           });
         }
       } catch (err) {
         console.log(err);
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
