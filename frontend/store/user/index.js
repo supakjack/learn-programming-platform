@@ -1,9 +1,9 @@
 module.exports = {
   state: () => ({
-    permission: [],
+    permission: ["teacher"],
     token: "",
     username: "",
-    id: ""
+    id: "1"
   }),
   mutations: {
     setUser(state, { user }) {
