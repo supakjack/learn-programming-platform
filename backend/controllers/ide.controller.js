@@ -4,6 +4,7 @@ const { create } = require("./../helpers/createLog.helper");
 const globalModel = require("../models/global.model");
 const nanoid = require("nanoid");
 const mkdirp = require("mkdirp");
+const rmdir = require("rmdir");
 const path = require("path");
 const fs = require("fs-extra");
 
@@ -25,6 +26,7 @@ module.exports = {
       path = req.body.path,
       stdin = req.body.stdin;
     try {
+      console.log(source);
       const doesCompile = await comileLogic(
         language,
         compile,
@@ -51,38 +53,80 @@ module.exports = {
       stdin = req.body.stdin,
       singleFiles = req.files ? req.files.singleFile : null;
 
+    console.log(language);
     try {
-      console.log(source);
       let resultStdin = stdin.replace(/,/g, "\n");
+      let languageResult;
+      if (language == "C++") {
+        languageResult = "cpp";
+      } else if (language == "C") {
+        languageResult = "c";
+      }
       console.log(resultStdin);
+      // run with source code
       if (source) {
-        console.log("1");
         const doesCompile = await comileLogic(
-          "cpp",
+          languageResult,
           "source",
-          null,
-          source,
+          resultStdin,
+          source.toString(),
           null
         );
-      } else {
-        singleFiles.name = await nanoid(6);
-        console.log(singleFiles.name + ".cpp");
-        const filePath = process.env.BASE_STORAGE_PATH + "justRun";
-        await mkdirp(filePath);
-        await singleFiles.mv(filePath + "\\" + singleFiles.name + ".cpp");
-        const path = filePath + "\\" + singleFiles.name + ".cpp";
-        const doesCompile = await comileLogic(
-          "cpp",
-          "path",
-          resultStdin,
-          source,
-          path
-        );
-        let result = fs.unlinkSync(filePath + "\\" + singleFiles.name + ".cpp");
-        console.log("delete success");
         console.log(doesCompile);
-        // expected output: "Success!"
         res.status(200).send(doesCompile);
+        // run with file path
+      } else {
+        let folderNano = await nanoid(6);
+        console.log(folderNano);
+        const filePath =
+          process.env.BASE_STORAGE_PATH + "justRun" + "\\" + folderNano;
+        await mkdirp(filePath);
+        if (singleFiles.length) {
+          await singleFiles.map(async (single) => {
+            await single.mv(filePath + "\\" + single.name);
+          });
+          await singleFiles.map(async (single) => {
+            if (single.name == "main.cpp") {
+              const path = filePath + "\\" + single.name;
+              console.log(path);
+              console.log(resultStdin);
+              const doesCompile = await comileLogic(
+                languageResult,
+                "path",
+                resultStdin,
+                source,
+                path
+              );
+              let result = await rmdir(filePath, function (err, dirs, files) {
+                console.log(dirs);
+                console.log(files);
+                console.log("all files are removed");
+              });
+              console.log(doesCompile);
+              res.status(200).send(doesCompile);
+            }
+          });
+        } else {
+          await singleFiles.mv(filePath + "\\" + singleFiles.name);
+          const path = filePath + "\\" + singleFiles.name;
+          const doesCompile = await comileLogic(
+            languageResult,
+            "path",
+            resultStdin,
+            source,
+            path
+          );
+          let result = await rmdir(filePath, function (err, dirs, files) {
+            console.log(dirs);
+            console.log(files);
+            console.log("all files are removed");
+          });
+          // let result = fs.unlinkSync(filePath + "\\" + singleFiles.name + ".cpp");
+          console.log("delete success");
+          console.log(doesCompile);
+          // expected output: "Success!"
+          res.status(200).send(doesCompile);
+        }
       }
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
@@ -310,7 +354,6 @@ module.exports = {
   // CreateBy: Theo Seathan / CreateDate: 6/2/2021
   // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 24/2/2021
   create: async (req, res, next) => {
-
     // select taskScore by taskId from req.body
     var doesGetTaskAll = await globalModel.select({
       name: "tasks",
@@ -337,7 +380,7 @@ module.exports = {
     var maxTestset = testsetResult.length;
     var passedTestset = 0;
 
-    // loop some for check data 
+    // loop some for check data
     testsetResult.some((testset) => {
       if (testset.compilelogCompileStatus == "Passed") {
         passedTestset += 1;
