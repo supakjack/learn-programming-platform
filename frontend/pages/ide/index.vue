@@ -1,5 +1,20 @@
 <template v-slot:top>
   <v-container>
+    <v-card class="mx-auto" max-width="300" tile>
+      <v-list dense>
+        <v-subheader>REPORTS</v-subheader>
+        <v-list-item-group v-model="selectedItem" color="primary">
+          <v-list-item v-for="(item, i) in items" :key="i">
+            <v-list-item-icon>
+              <v-icon v-text="item.icon"></v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="item.text"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-card>
     <v-row>
       <v-col cols="12" sm="12" md="3">
         <v-card width="auto" height="500px" outlined>
@@ -9,32 +24,29 @@
             </v-col>
             <v-col>
               <v-card-actions class="float-right">
-                <!-- <input
-                  type="file"
-                  id="files"
-                  ref="files"
-                  multiple
-                  v-on:change="handleFilesUpload()"
-                /> -->
-                <v-file-input
-                  v-model="files"
-                  @change="filePicked"
-                  multiple
-                  truncate-length="14"
-                >
-                </v-file-input>
-                <input
-                  type="file"
-                  name="singleFile"
-                  multiple
-                  @change="filePicked"
-                />
+                <div class="button-wrap">
+                  <label class="new-button" for="upload"> Upload CV</label>
+                  <input
+                    id="upload"
+                    type="file"
+                    name="singleFile"
+                    multiple
+                    @change="filePicked"
+                  />
+                </div>
               </v-card-actions>
             </v-col>
           </v-row>
           <div v-for="(file, index) in files" :key="index">
             <v-card class="card-file" elevation="2">
               {{ file.name }}
+              <!-- <v-btn class="mx-2" fab dark small color="pink"> -->
+              <v-icon dark>
+                <span class="material-icons">
+                  delete
+                </span>
+              </v-icon>
+              <!-- </v-btn> -->
             </v-card>
           </div>
         </v-card>
@@ -64,18 +76,19 @@
         <v-row>
           <v-col>
             <v-textarea
+              style="margin-top:-20px"
               v-model="submit.source"
               autocomplete="coding"
               label="Coding"
               outlined
-              rows="7"
+              rows="10"
             ></v-textarea>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
-            <v-card outlined height="152px">
+            <v-card style="margin-top:-30px" outlined height="152px">
               <v-card-text>
                 <div>
                   <v-text-field
@@ -97,9 +110,6 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-btn dark @click="snackbar = true">
-      Open Snackbar
-    </v-btn>
     <v-snackbar v-model="snackbar">
       {{ textErr }}
 
@@ -120,9 +130,15 @@ import idemixin from "@/components/ide";
 export default {
   mixins: [idemixin],
   data: () => ({
+    selectedItem: 1,
+    items: [
+      { text: "Real-Time", icon: "fas fa-clock" },
+      { text: "Audience", icon: "mdi-account" },
+      { text: "Conversions", icon: "mdi-flag" }
+    ],
     snackbar: false,
     textErr: `Hello, I'm a snackbar`,
-    files: null,
+    files: {},
     items: ["C++", "JavaScript", "JAVA", "PYTTHON"],
     submit: {
       // use for run code
@@ -150,13 +166,16 @@ export default {
     run() {
       let formData = new FormData();
 
-      for (let file of this.files) {
-        formData.append("singleFile", file);
+      if (this.files) {
+        for (let file of this.files) {
+          formData.append("singleFile", file);
+        }
       }
       formData.append("language", this.submit.language);
       formData.append("source", this.submit.source);
       formData.append("stdin", this.submit.stdin);
 
+      console.log([...formData]);
       const result = this.seperate(formData);
       result.then(result => {
         console.log(result);
@@ -171,9 +190,22 @@ export default {
       });
     },
     filePicked(e) {
-      //   console.log(this.files);
       console.log(e.currentTarget.files);
+      console.log(this.files);
+      // let fileList = new FileList();
+
+      // if (fileList.length) {
+      //   console.log(1);
+      //   // for (let i = 0; i < e.currentTarget.files.length; i++) {
+      //   //   this.files.push(e.currentTarget.files[i]);
+      //   // }
+      //   fileList[1] = e.currentTarget.files;
+      //   // this.files.push(e.currentTarget.files);
+      // } else {
+      //   console.log(2);
+      //   fileList[0] = e.currentTarget.files;
       this.files = e.currentTarget.files;
+      // }
       console.log(this.files);
     },
     handleFilesUpload() {
@@ -192,6 +224,26 @@ export default {
 </script>
 
 <style>
+.new-button {
+  display: inline-block;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: #4eb7f8;
+  font-size: 16px;
+  color: #fff;
+}
+input[type="file"] {
+  position: absolute;
+  z-index: -1;
+  top: 6px;
+  left: 0;
+  font-size: 15px;
+  color: rgb(153, 153, 153);
+}
+.button-wrap {
+  position: relative;
+}
 .card-file {
   height: 30px;
   padding-top: 3px;
@@ -201,7 +253,6 @@ export default {
 }
 .card-file:hover {
   background-color: lightblue;
-  cursor: pointer;
 }
 .v-text-field {
   padding-top: 0px !important;
