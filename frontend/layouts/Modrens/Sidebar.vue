@@ -28,7 +28,6 @@ export default {
           hiddenOnCollapse: true,
         },
         {
-          action: "mdi-chart-bar",
           title: "หน้าหลัก",
           href: "/home",
           icon: "fa fa-download",
@@ -36,7 +35,6 @@ export default {
           // child: [{ title: "หน้าหลัก", href: "/home" }],
         },
         {
-          action: "mdi-calendar-check",
           child: [
             {
               title: "มอบหมาย",
@@ -53,7 +51,6 @@ export default {
           icon: "mdi-book-open",
         },
         {
-          action: "mdi-book-open",
           active: true,
           child: [
             {
@@ -71,13 +68,11 @@ export default {
           icon: "fa fa-download",
         },
         {
-          action: "mdi-code-braces",
           title: "IDE",
           href: "/ide",
           icon: "fa fa-download",
         },
         {
-          action: "mdi-human-child",
           title: "Dashboard ",
           icon: "fa fa-download",
           href: "/error",
@@ -90,13 +85,11 @@ export default {
           hiddenOnCollapse: true,
         },
         {
-          action: "mdi-human-child",
           title: "หน้าหลัก",
           icon: "fa fa-download",
           href: "/student/homestu",
         },
         {
-          action: "mdi-calendar-check",
           child: [
             { title: "88824125", href: "/assignment", icon: "fa fa-download" },
             {
@@ -109,7 +102,6 @@ export default {
           icon: "fa fa-download",
         },
         {
-          action: "mdi-human-child",
           title: "Dashboard",
           icon: "fa fa-download",
           href: "/error",
