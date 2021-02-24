@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user.controller");
 
-router.get("/", userController.findById);
+router.get("/username", userController.findById);
 
 // Retrieve all users
 router.get("/", userController.findAll);

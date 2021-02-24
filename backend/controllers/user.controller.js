@@ -6,13 +6,16 @@ const {
   updateUserSchema,
   FileuserSchema,
   createUserSchema,
+  UserusernameConditionSchema,
 } = require("./../helpers/validation.helper");
 const nanoid = require("nanoid");
 const readXlsxFile = require("read-excel-file/node");
 
 module.exports = {
   findById: async (req, res, next) => {
-    const getUserData = await updateUserConditionSchema.validateAsync(req.query);
+    const getUserData = await UserusernameConditionSchema.validateAsync(
+      req.params
+    );
     // const username = req.query.username;
     console.log(getUserData);
     try {
