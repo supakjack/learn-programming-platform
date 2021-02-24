@@ -308,72 +308,71 @@ module.exports = {
   // input:
   // output: text response
   // CreateBy: Theo Seathan / CreateDate: 6/2/2021
-  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 18/2/2021
+  // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 24/2/2021
   create: async (req, res, next) => {
     // passing data from body and valid by createTagSchema
 
+    // select taskScore by taskId from req.body
     var doesGetTaskAll = await globalModel.select({
       name: "tasks",
       condition: [{ taskId: req.body.compilelogTaskId }],
     });
 
+    // Parse to Array
     doesGetTaskAll = doesGetTaskAll[0];
-    // console.log(doesGetTaskAll);
 
+    // create const createCompileLogData from req.body
     const createCompileLogData = {
       compilelogTaskId: req.body.compilelogTaskId,
       compilelogSubmitNo: req.body.compilelogSubmitNo,
-      // compilelogTestResult,
-      // compilelogErrorMessage,
-      // compilelogCompileStatus,
-      // compilelogScore,
       compileloglanguage: req.body.compileloglanguage,
       compilelogFileId: req.body.compilelogFileId,
       compilelogCreateBy: req.body.compilelogCreateBy,
       compilelogUpdateBy: req.body.compilelogCreateBy,
     };
 
+    // declare variable for calculate data
     const testsetResult = req.body.testsetResult;
-    // console.log(testsetResult);
+    var compilelogErrorMessage = "";
     var sumScore = 0;
     var maxTestset = testsetResult.length;
     var passedTestset = 0;
-    testsetResult.every((testset) => {
+
+    // loop some for check data 
+    testsetResult.some((testset) => {
       if (testset.compilelogCompileStatus == "Passed") {
         passedTestset += 1;
         sumScore += doesGetTaskAll.taskScore / maxTestset;
       } else if (testset.compilelogCompileStatus == "Error") {
-        createCompileLogData.compilelogErrorMessage =
-          testset.compilelogErrorMessage;
-        // return false;
+        compilelogErrorMessage = testset.compilelogErrorMessage;
+        return true;
       } else {
-        console.log(passedTestset);
       }
     });
-    console.log(passedTestset);
+
+    // pass sumScore to compilelogScore
     createCompileLogData.compilelogScore = sumScore;
 
+    // check passedTestset and maxTestset is equal?
     if (passedTestset == maxTestset) {
       createCompileLogData.compilelogTestResult = "Accepted";
-      console.log(createCompileLogData.compilelogTestResult);
-    } else if (createCompileLogData.compilelogErrorMessage != "") {
+    } else if (compilelogErrorMessage != "") {
+      createCompileLogData.compilelogErrorMessage = compilelogErrorMessage;
       createCompileLogData.compilelogTestResult = "Compile Error";
     } else {
       createCompileLogData.compilelogTestResult = "Wrong Answer";
     }
-    console.log(maxTestset, passedTestset, sumScore);
 
-    res.status(200).send(createCompileLogData);
     // try call function createTag in global model then catch if error
-    // try {
-    //   const doesCreate = await globalModel.insert({
-    //     name: "compilelogs",
-    //     insertData: [createCompileLogData],
-    //   });
-    //   res.status(200).send({ doesCreate });
-    // } catch (error) {
-    //   if (error.isJoi === true) return next(createError.InternalServerError());
-    //   next(error);
-    // }
+    try {
+      const doesCreate = await globalModel.insert({
+        name: "compilelogs",
+        insertData: [createCompileLogData],
+      });
+      res.status(200).send({ doesCreate });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
   },
 };
