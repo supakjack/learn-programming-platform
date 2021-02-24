@@ -30,7 +30,7 @@ export default {
         {
           title: "หน้าหลัก",
           href: "/home",
-          icon: "fa fa-download",
+          icon: "fas fa-home",
 
           // child: [{ title: "หน้าหลัก", href: "/home" }],
         },
@@ -39,16 +39,16 @@ export default {
             {
               title: "มอบหมาย",
               href: "/assignment?tab=assignment",
-              icon: "fa fa-download",
+              icon: "fas fa-tasks",
             },
             {
               title: "ผู้ใช้งาน",
               href: "/assignment?tab=user",
-              icon: "fa fa-download",
+              icon: "fas fa-id-card",
             },
           ],
           title: "มอบหมายงาน",
-          icon: "fa fa-download",
+          icon: "fas fa-file-invoice",
         },
         {
           active: true,
@@ -61,7 +61,7 @@ export default {
             {
               title: "แท็ก",
               href: "/problem-tag/?tab=tag",
-              icon: "fa fa-download",
+              icon: "fas fa-tags",
             },
           ],
           title: "จัดการโจทย์ปัญหา",
@@ -70,7 +70,7 @@ export default {
         {
           title: "IDE",
           href: "/ide",
-          icon: "fa fa-download",
+          icon: "fas fa-code",
         },
         {
           title: "Dashboard ",
