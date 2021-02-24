@@ -1,5 +1,6 @@
 import todos from './todos/index'
 import user from './user/index'
+import course from './course/index'
 
 export const state = () => ({
   counter: 0
@@ -25,5 +26,6 @@ export const getters = {
 
 export const modules = {
   todos,
-  user
+  user,
+  course
 }
