@@ -9,6 +9,43 @@ const {
 } = require("./../helpers/validation.helper");
 
 module.exports = {
+  get: async (req, res, next) => {
+    try {
+      const doesGetAll = await globalModel.select({
+        name: "users",
+        leftJoin: [
+          {
+            joinTable: "enrolls",
+            leftTableName: "users",
+            leftKey: "userId",
+            joinKey: "enrollUserId",
+          },
+          {
+            joinTable: "sections",
+            leftTableName: "enrolls",
+            leftKey: "enrollSectionId",
+            joinKey: "sectionId",
+          },
+          {
+            joinTable: "courses",
+            leftTableName: "sections",
+            leftKey: "sectionCourseId",
+            joinKey: "courseId",
+          },
+          {
+            joinTable: "years",
+            leftTableName: "courses",
+            leftKey: "courseYearId",
+            joinKey: "yearId",
+          },
+        ],
+      });
+      res.status(201).send({ doesGetAll });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
   create: async (req, res, next) => {
     const createTagData = await createTagSchema.validateAsync(req.body);
 
@@ -41,7 +78,6 @@ module.exports = {
       next(error);
     }
   },
-
   getByYear: async (req, res, next) => {
     try {
       const doesGetAll = await globalModel.select({
