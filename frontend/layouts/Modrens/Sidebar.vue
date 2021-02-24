@@ -19,10 +19,10 @@ export default {
   name: "App",
   mounted() {
     if (this.$store.state.user.permission.includes("teacher")) {
-      console.log("is teacher");
+      // console.log("is teacher");
       this.menu = [...teacherMenu]
     } else if(this.$store.state.user.permission.includes("student")) {
-      console.log("is student");
+      // console.log("is student");
       this.menu = [...studentMenu]
     }
   },

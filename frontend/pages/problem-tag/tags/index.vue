@@ -302,7 +302,7 @@ export default {
     // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 6/2/2021
     async deleteItemConfirm() {
       const EditResult = await this.editTag(this.editedItem);
-            console.log(EditResult);
+      console.log(EditResult);
 
       if (typeof EditResult === "number") {
         this.closeDelete();

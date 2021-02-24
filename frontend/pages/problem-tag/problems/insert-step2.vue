@@ -3,17 +3,26 @@
     <v-container>
       <v-row>
         <v-col cols="12" sm="12" md="6">
-          <v-text-field label="หัวข้อ"></v-text-field>
-          <v-text-field label="ข้อมูลนำเข้า"></v-text-field>
+          <v-text-field label="หัวข้อ" v-model="testsetTitle"></v-text-field>
+          <v-text-field
+            label="ข้อมูลนำเข้า"
+            v-model="testsetInput"
+          ></v-text-field>
         </v-col>
 
         <v-col cols="12" sm="12" md="6">
-          <v-text-field label="คำอธิบาย"></v-text-field>
-          <v-text-field label="ข้อมูลส่งออก"></v-text-field>
+          <v-text-field
+            label="คำอธิบาย"
+            v-model="testsetDescription"
+          ></v-text-field>
+          <v-text-field
+            label="ข้อมูลส่งออก"
+            v-model="testsetOutput"
+          ></v-text-field>
         </v-col>
       </v-row>
       <v-row>
-        <v-btn color="success" block>
+        <v-btn color="success" block @click="addTable()">
           เพิ่ม
         </v-btn>
       </v-row>
@@ -36,22 +45,16 @@
                 ข้อมูลส่งออก
               </th>
               <th class="text-center" cols="2">
-                ตัวอย่าง
-              </th>
-              <th class="text-center" cols="2">
                 การจัดการ
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in desserts" :key="item.testsetId">
+            <tr v-for="item in items" :key="item.testsetId">
               <td class="text-center">{{ item.testsetId }}</td>
               <td>{{ item.testsetTitle }}</td>
               <td class="text-center">{{ item.testsetInput }}</td>
               <td class="text-center">{{ item.testsetOutput }}</td>
-              <td class="text-center" color="green">
-                {{ item.testsetIsExample }}
-              </td>
               <td></td>
             </tr>
           </tbody>
@@ -63,18 +66,37 @@
 
 <script>
 export default {
-  data() {
-    return {
-      desserts: [
-        {
-          testsetId: 1,
-          testsetTitle: "เลขจำนวนเต็ม",
-          testsetInput: "1,2",
-          testsetOutput: "100",
-          testsetIsExample: "ใช้งาน"
+  data: () => ({
+    items: [],
+    testsetId: "",
+    testsetTitle: "",
+    testsetDescription: "",
+    testsetInput: "",
+    testsetOutput: ""
+  }),
+
+  methods: {
+    addTable() {
+      let index = 0;
+      if (this.items.length == null) {
+        index = 1;
+      } else {
+        index = this.items.length + 1;
+      }
+      let obj = {
+        testsetId: index,
+        testsetTitle: this.testsetTitle,
+        testsetDescription: this.testsetDescription,
+        testsetInput: this.testsetInput,
+        testsetOutput: this.testsetOutput
+      };
+      this.items.push(obj);
+      this.$store.commit("problem/setProblem", {
+        problem: {
+          testset: this.items
         }
-      ]
-    };
+      });
+    }
   }
 };
 </script>
