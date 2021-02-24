@@ -35,6 +35,16 @@ export default {
       //   console.log(result); // "Some User token"
       // });
       return result;
+    },
+
+    async insertProblem(data) {
+      console.log(data);
+      //   return this.$axios
+      //     .$post("tag", InsertData)
+      //     .catch(error => {
+      //       console.error(error);
+      //     })
+      //     .then(response => response.doesCreate);
     }
   }
 };
