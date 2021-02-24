@@ -216,7 +216,35 @@ export default {
     },
 
     async save() {
+      let createHashtagData = [];
+      for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
+        const dataHashtag = {
+          hashtagTagId: this.$store.state.problem.tags[i],
+          hashtagProblemId: null,
+          hashtagCreateBy: 1,
+          hashtagUpdateBy: 1
+        };
+        createHashtagData.push(dataHashtag);
+      }
+      let createTestsetData = [];
+      for (let i = 0; i < this.$store.state.problem.testset.length; i++) {
+        const dataTestset = {
+          testsetTitle: this.$store.state.problem.testset[i].testsetTitle,
+          testsetDescription: this.$store.state.problem.testset[i]
+            .testsetDescription,
+          testsetInput: this.$store.state.problem.testset[i].testsetInput,
+          testsetOutput: this.$store.state.problem.testset[i].testsetOutput,
+          testsetProblemId: null,
+          testsetIsExample: null,
+          testsetCreateBy: 1,
+          testsetUpdateBy: 1
+        };
+        createTestsetData.push(dataTestset);
+      }
+      console.log(createTestsetData);
       let data = {
+        createHashtagData,
+        createTestsetData,
         createProblemData: {
           problemTitle: this.$store.state.problem.title,
           problemDiscription: this.$store.state.problem.description,
@@ -233,26 +261,11 @@ export default {
           pictureProblemId: null,
           pictureCreateBy: 1,
           pictureUpdateBy: 1
-        },
-        createHashtagData: {
-          hashtagTagId: this.$store.state.problem.tags,
-          hashtagProblemId: null,
-          hashtagCreateBy: 1,
-          hashtagUpdateBy: 1
-        },
-        createTestsetData: {
-          testsetTitle: null,
-          testsetDescription: null,
-          testsetInput: null,
-          testsetOutput: null,
-          testsetProblemId: null,
-          testsetIsExample: null,
-          testsetCreateBy: 1,
-          testsetUpdateBy: 1
         }
       };
 
       const insertResult = await this.insertProblem(data);
+      console.log(insertResult);
     },
 
     editItem(item) {

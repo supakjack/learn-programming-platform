@@ -31,28 +31,25 @@ module.exports = {
       });
       console.log(problemId);
       //set problemId to hashtag schema
-      req.body.createHashtagData.hashtagProblemId = problemId;
-      console.log(req.body);
-      const createHashtagData = await createHashtagSchema.validateAsync(
-        req.body.createHashtagData
-      );
-      console.log(createHashtagData);
+      req.body.createHashtagData.map((rowHashtag) => {
+        rowHashtag.hashtagProblemId = problemId;
+      });
+
       //insert problem
       const doesCreateHashtag = await globalModel.insert({
         name: "hashtags",
-        insertData: [createHashtagData],
+        insertData: [...req.body.createHashtagData],
       });
 
       //set problemId to testset schema
-      req.body.createTestsetData.testsetProblemId = problemId;
-      const createTestsetData = await createTestsetsSchema.validateAsync(
-        req.body.createTestsetData
-      );
+      req.body.createTestsetData.map((rowTestSet) => {
+        rowTestSet.testsetProblemId = problemId;
+      });
 
-      //insert Hashtag
+      //insert testset
       const doesCreateTestset = await globalModel.insert({
         name: "testsets",
-        insertData: [createTestsetData],
+        insertData: [...req.body.createTestsetData],
       });
 
       const createFilesData = await createFiles.validateAsync(
@@ -78,8 +75,9 @@ module.exports = {
         insertData: [createPicturesData],
       });
 
-      res.status(201).send(createHashtagData);
+      res.status(201).send({ doesCreatePicture });
     } catch (error) {
+      console.log(error);
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
     }

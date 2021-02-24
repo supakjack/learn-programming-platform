@@ -39,12 +39,12 @@ export default {
 
     async insertProblem(data) {
       console.log(data);
-      //   return this.$axios
-      //     .$post("tag", InsertData)
-      //     .catch(error => {
-      //       console.error(error);
-      //     })
-      //     .then(response => response.doesCreate);
+      return this.$axios
+        .$post("problem", data)
+        .catch(error => {
+          console.error(error);
+        })
+        .then(response => response.doesCreatePicture);
     }
   }
 };
