@@ -48,7 +48,7 @@ export default {
             },
           ],
           title: "มอบหมายงาน",
-          icon: "mdi-book-open",
+          icon: "fa fa-download",
         },
         {
           active: true,
