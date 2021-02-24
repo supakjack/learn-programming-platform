@@ -6,7 +6,7 @@ export default {
     },
 
     async getUserByUsername(data) {
-      return this.$axios.$get(`user/getUser/${data}`);
+      return this.$axios.$get(`auth/getUser/${data}`);
     },
 
     async deleteUser() {

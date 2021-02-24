@@ -4,24 +4,22 @@
       <v-row>
         <v-col cols="12" sm="12" md="6">
           <v-text-field label="หัวข้อ"></v-text-field>
+          <v-text-field label="ข้อมูลนำเข้า"></v-text-field>
         </v-col>
+
         <v-col cols="12" sm="12" md="6">
           <v-text-field label="คำอธิบาย"></v-text-field>
+          <v-text-field label="ข้อมูลส่งออก"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12" sm="12" md="4">
-          <v-text-field label="ข้อมูลนำเข้า"></v-text-field>
-        </v-col>
-        <v-col cols="12" sm="12" md="2"> </v-col>
-        <v-col cols="12" sm="12" md="4">
-          <v-text-field label="ข้อมูลส่งออก"></v-text-field>
-        </v-col>
-        <v-col cols="12" sm="12" md="2">
-          <v-btn class="ma-2">เพิ่มแท็ก</v-btn>
-        </v-col>
+        <v-btn color="success" block>
+          เพิ่ม
+        </v-btn>
       </v-row>
-      <v-simple-table fixed-header height="300px">
+    </v-container>
+    <v-container>
+      <v-simple-table fixed-header height="100px">
         <template v-slot:default>
           <thead>
             <tr cols="12">

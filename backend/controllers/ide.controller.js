@@ -46,26 +46,44 @@ module.exports = {
   // CreateBy: Supak Pukdam / CreateDate: 26/1/2021
   // UpdateBy: Supak Pukdam / UpdateDate: 26/1/2021
   seperate: async (req, res, next) => {
-    // const language = req.body.language,
-    //   source = req.body.source,
-    //   singleFiles = req.body.run.files,
-    //   stdin = req.body.stdin;
-    console.log(req.body);
-    // console.log(req.files);
+    const language = req.body.language,
+      source = req.body.source,
+      stdin = req.body.stdin,
+      singleFiles = req.files ? req.files.singleFile : null;
 
     try {
-      // const filePath = process.env.BASE_STORAGE_PATH + "justRun";
-      // await mkdirp(filePath);
-      // await singleFiles.mv(filePath + "\\" + singleFiles.name);
-      // const doesCompile = await comileLogic(
-      //   language,
-      //   compile,
-      //   stdin,
-      //   source,
-      //   path
-      // );
-
-      res.status(200).send(req.body);
+      console.log(source);
+      let resultStdin = stdin.replace(/,/g, "\n");
+      console.log(resultStdin);
+      if (source) {
+        console.log("1");
+        const doesCompile = await comileLogic(
+          "cpp",
+          "source",
+          null,
+          source,
+          null
+        );
+      } else {
+        singleFiles.name = await nanoid(6);
+        console.log(singleFiles.name + ".cpp");
+        const filePath = process.env.BASE_STORAGE_PATH + "justRun";
+        await mkdirp(filePath);
+        await singleFiles.mv(filePath + "\\" + singleFiles.name + ".cpp");
+        const path = filePath + "\\" + singleFiles.name + ".cpp";
+        const doesCompile = await comileLogic(
+          "cpp",
+          "path",
+          resultStdin,
+          source,
+          path
+        );
+        let result = fs.unlinkSync(filePath + "\\" + singleFiles.name + ".cpp");
+        console.log("delete success");
+        console.log(doesCompile);
+        // expected output: "Success!"
+        res.status(200).send(doesCompile);
+      }
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);

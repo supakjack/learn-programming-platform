@@ -17,12 +17,18 @@
                   v-on:change="handleFilesUpload()"
                 /> -->
                 <v-file-input
-                  v-model="submit.codeFiles"
-                  hide-input
+                  v-model="files"
+                  @change="filePicked"
                   multiple
                   truncate-length="14"
                 >
                 </v-file-input>
+                <input
+                  type="file"
+                  name="singleFile"
+                  multiple
+                  @change="filePicked"
+                />
               </v-card-actions>
             </v-col>
           </v-row>
@@ -79,8 +85,9 @@
                 </div>
                 <div>
                   <v-text-field
+                    v-model="stdout"
                     label="ข้อมูลส่งออก"
-                    value="Hello, World!"
+                    value=""
                     disabled
                   ></v-text-field>
                 </div>
@@ -90,6 +97,18 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-btn dark @click="snackbar = true">
+      Open Snackbar
+    </v-btn>
+    <v-snackbar v-model="snackbar">
+      {{ textErr }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -101,15 +120,17 @@ import idemixin from "@/components/ide";
 export default {
   mixins: [idemixin],
   data: () => ({
-    files: {},
+    snackbar: false,
+    textErr: `Hello, I'm a snackbar`,
+    files: null,
     items: ["C++", "JavaScript", "JAVA", "PYTTHON"],
     submit: {
       // use for run code
-      codeFiles: [],
       language: "",
       source: "",
       stdin: ""
-    }
+    },
+    stdout: ""
   }),
   computed: {
     tab: {
@@ -128,23 +149,32 @@ export default {
   methods: {
     run() {
       let formData = new FormData();
-      console.log(formData);
-      for (let file of this.submit.codeFiles) {
-        console.log(file.name);
-        formData.append("files", file, file.name);
+
+      for (let file of this.files) {
+        formData.append("singleFile", file);
       }
-      // for (var pair of formData.entries()) {
-      //   console.log(pair[0] + ", " + pair[1]);
-      // }
-      console.log("---------");
-      console.log([...formData]);
-      const result = this.seperate(this.submit.codeFiles);
-      // const EditResult = await this.editTag(this.editedItem);
-      // if (typeof EditResult === "number") {
-      //   this.dialog = false;
-      //   this.SuccessTitle = "แก้ไขสำเร็จ";
-      //   this.dialogSuccess = true;
-      // }
+      formData.append("language", this.submit.language);
+      formData.append("source", this.submit.source);
+      formData.append("stdin", this.submit.stdin);
+
+      const result = this.seperate(formData);
+      result.then(result => {
+        console.log(result);
+        if (result.stderr != "") {
+          console.log("err");
+          this.snackbar = true;
+          this.textErr = result.stderr;
+        } else {
+          console.log("no err");
+          this.stdout = result.stdout;
+        }
+      });
+    },
+    filePicked(e) {
+      //   console.log(this.files);
+      console.log(e.currentTarget.files);
+      this.files = e.currentTarget.files;
+      console.log(this.files);
     },
     handleFilesUpload() {
       let uploadedFiles = this.$refs.files.files;

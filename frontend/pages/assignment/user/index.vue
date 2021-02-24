@@ -146,11 +146,6 @@
         <v-btn color="primary" @click="initialize"> โหลดข้อมูลใหม่ </v-btn>
       </template>
     </v-data-table>
-    <div class="flex flex-wrap">
-      <div>1</div>
-      <div>2</div>
-      <div>3</div>
-    </div>
   </div>
 </template>
 
