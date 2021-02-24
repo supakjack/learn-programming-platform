@@ -310,7 +310,6 @@ module.exports = {
   // CreateBy: Theo Seathan / CreateDate: 6/2/2021
   // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 24/2/2021
   create: async (req, res, next) => {
-    // passing data from body and valid by createTagSchema
 
     // select taskScore by taskId from req.body
     var doesGetTaskAll = await globalModel.select({
@@ -363,7 +362,7 @@ module.exports = {
       createCompileLogData.compilelogTestResult = "Wrong Answer";
     }
 
-    // try call function createTag in global model then catch if error
+    // try call insert function in global model then catch if error
     try {
       const doesCreate = await globalModel.insert({
         name: "compilelogs",
