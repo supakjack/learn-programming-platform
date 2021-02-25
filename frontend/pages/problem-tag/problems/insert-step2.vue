@@ -3,27 +3,33 @@
     <v-container>
       <v-row>
         <v-col cols="12" sm="12" md="6">
-          <v-text-field label="หัวข้อ" v-model="testsetTitle"></v-text-field>
+          <v-text-field
+            label="หัวข้อ"
+            v-model="dataTestset.testsetTitle"
+          ></v-text-field>
           <v-text-field
             label="ข้อมูลนำเข้า"
-            v-model="testsetInput"
+            v-model="dataTestset.testsetInput"
           ></v-text-field>
         </v-col>
 
         <v-col cols="12" sm="12" md="6">
           <v-text-field
             label="คำอธิบาย"
-            v-model="testsetDescription"
+            v-model="dataTestset.testsetDescription"
           ></v-text-field>
           <v-text-field
             label="ข้อมูลส่งออก"
-            v-model="testsetOutput"
+            v-model="dataTestset.testsetOutput"
           ></v-text-field>
         </v-col>
       </v-row>
       <v-row>
-        <v-btn color="success" block @click="addTable">
+        <v-btn v-if="isAdd" color="success" block @click="addTable">
           เพิ่ม
+        </v-btn>
+        <v-btn v-else color="warning" block @click="editTable">
+          แก้ไข
         </v-btn>
       </v-row>
     </v-container>
@@ -56,10 +62,19 @@
               <td class="text-center">{{ item.testsetInput }}</td>
               <td class="text-center">{{ item.testsetOutput }}</td>
               <td class="text-center">
-                <v-icon small class="mr-2" @click="editItem(item)">
+                <v-icon
+                  small
+                  :disabled="isAdd == false"
+                  class="mr-2"
+                  @click="editItem(item, index)"
+                >
                   mdi-pencil
                 </v-icon>
-                <v-icon small @click="deleteItem(item)">
+                <v-icon
+                  small
+                  :disabled="isAdd == false"
+                  @click="deleteItem(index)"
+                >
                   mdi-delete
                 </v-icon>
               </td>
@@ -75,11 +90,15 @@
 export default {
   data: () => ({
     items: [],
-    testsetId: "",
-    testsetTitle: "",
-    testsetDescription: "",
-    testsetInput: "",
-    testsetOutput: ""
+
+    dataTestset: {
+      testsetTitle: "",
+      testsetDescription: "",
+      testsetInput: "",
+      testsetOutput: ""
+    },
+    isAdd: true,
+    indexForEdit: -1
   }),
 
   methods: {
@@ -87,10 +106,10 @@ export default {
       this.items = await [
         ...this.items,
         {
-          testsetTitle: this.testsetTitle,
-          testsetDescription: this.testsetDescription,
-          testsetInput: this.testsetInput,
-          testsetOutput: this.testsetOutput
+          testsetTitle: this.dataTestset.testsetTitle,
+          testsetDescription: this.dataTestset.testsetDescription,
+          testsetInput: this.dataTestset.testsetInput,
+          testsetOutput: this.dataTestset.testsetOutput
         }
       ];
 
@@ -99,6 +118,61 @@ export default {
           testset: this.items
         }
       });
+      this.clear();
+    },
+    async editTable() {
+      console.log(this.dataTestset);
+      const {
+        testsetTitle,
+        testsetDescription,
+        testsetInput,
+        testsetOutput
+      } = this.dataTestset;
+      this.items[this.indexForEdit].testsetTitle = testsetTitle;
+      this.items[this.indexForEdit].testsetDescription = testsetDescription;
+      this.items[this.indexForEdit].testsetInput = testsetInput;
+      this.items[this.indexForEdit].testsetOutput = testsetOutput;
+
+      console.log(this.items);
+
+      await this.$store.commit("problem/setProblem", {
+        problem: {
+          testset: this.items
+        }
+      });
+
+      this.dataTestset.testsetTitle = "";
+      this.dataTestset.testsetDescription = "";
+      this.dataTestset.testsetInput = "";
+      this.dataTestset.testsetOutput = "";
+      this.isAdd = true;
+    },
+    async clear() {
+      this.dataTestset.testsetTitle = "";
+      this.dataTestset.testsetDescription = "";
+      this.dataTestset.testsetInput = "";
+      this.dataTestset.testsetOutput = "";
+    },
+    async deleteItem(index) {
+      this.items = await this.items.filter((item, i) => i != index);
+      await this.$store.commit("problem/setProblem", {
+        problem: {
+          testset: this.items
+        }
+      });
+    },
+    editItem(item, index) {
+      this.indexForEdit = index;
+      this.dataTestset.testsetTitle = item.testsetTitle;
+      this.dataTestset.testsetDescription = item.testsetDescription;
+      this.dataTestset.testsetInput = item.testsetInput;
+      this.dataTestset.testsetOutput = item.testsetOutput;
+      console.log(this.dataTestset);
+      // this.testsetTitle = item.testsetTitle;
+      // this.testsetDescription = item.testsetDescription;
+      // this.testsetInput = item.testsetInput;
+      // this.testsetOutput = item.testsetOutput;
+      this.isAdd = false;
     }
   }
 };

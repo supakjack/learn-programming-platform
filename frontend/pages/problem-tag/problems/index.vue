@@ -216,6 +216,7 @@ export default {
     },
 
     async save() {
+      console.log(this.$store.state.problem);
       let createHashtagData = [];
       for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
         const dataHashtag = {
@@ -226,23 +227,22 @@ export default {
         };
         createHashtagData.push(dataHashtag);
       }
-      let createTestsetData = [];
-      for (let i = 0; i < this.$store.state.problem.testset.length; i++) {
-        const dataTestset = {
-          testsetTitle: this.$store.state.problem.testset[i].testsetTitle,
-          testsetDescription: this.$store.state.problem.testset[i]
-            .testsetDescription,
-          testsetInput: this.$store.state.problem.testset[i].testsetInput,
-          testsetOutput: this.$store.state.problem.testset[i].testsetOutput,
+      // let createTestsetData = [];
+      const userId = this.$store.state.user.id;
+      const createTestsetData = this.$store.state.problem.testset.map(item => {
+        return {
+          testsetTitle: item.testsetTitle,
+          testsetDescription: item.testsetDescription,
+          testsetInput: item.testsetInput,
+          testsetOutput: item.testsetOutput,
           testsetProblemId: null,
           testsetIsExample: null,
-          testsetCreateBy: 1,
-          testsetUpdateBy: 1
+          testsetCreateBy: userId,
+          testsetUpdateBy: userId
         };
-        createTestsetData.push(dataTestset);
-      }
-      console.log(createTestsetData);
-      let data = {
+      });
+
+      const request = {
         createHashtagData,
         createTestsetData,
         createProblemData: {
@@ -264,48 +264,49 @@ export default {
         }
       };
 
-      const insertResult = await this.insertProblem(data);
+      const insertResult = await this.insertProblem(request);
       console.log(insertResult);
     },
 
     editItem(item) {
-      let data = {
-        createProblemData: {
-          problemTitle: item.problemTitle,
-          problemDiscription: item.problemDiscription,
-          problemCreateBy: 1,
-          problemUpdateBy: 1
-        },
-        createFilesData: {
-          filePath: "0",
-          fileCreateBy: 1,
-          fileUpdateBy: 1
-        },
-        createPicturesData: {
-          pictureFileId: null,
-          pictureProblemId: null,
-          pictureCreateBy: 1,
-          pictureUpdateBy: 1
-        },
-        createHashtagData: {
-          hashtagTagId: null,
-          hashtagProblemId: null,
-          hashtagCreateBy: 1,
-          hashtagUpdateBy: 1
-        },
-        createTestsetData: {
-          testsetTitle: item.testsetTitle,
-          testsetDescription: item.testsetDescription,
-          testsetInput: item.testsetInput,
-          testsetOutput: item.testsetOutput,
-          testsetProblemId: null,
-          testsetIsExample: null,
-          testsetCreateBy: 1,
-          testsetUpdateBy: 1
-        }
-      };
+      console.log(item);
+      // let data = {
+      //   createProblemData: {
+      //     problemTitle: item.problemTitle,
+      //     problemDiscription: item.problemDiscription,
+      //     problemCreateBy: 1,
+      //     problemUpdateBy: 1
+      //   },
+      //   createFilesData: {
+      //     filePath: "0",
+      //     fileCreateBy: 1,
+      //     fileUpdateBy: 1
+      //   },
+      //   createPicturesData: {
+      //     pictureFileId: null,
+      //     pictureProblemId: null,
+      //     pictureCreateBy: 1,
+      //     pictureUpdateBy: 1
+      //   },
+      //   createHashtagData: {
+      //     hashtagTagId: null,
+      //     hashtagProblemId: null,
+      //     hashtagCreateBy: 1,
+      //     hashtagUpdateBy: 1
+      //   },
+      //   createTestsetData: {
+      //     testsetTitle: item.testsetTitle,
+      //     testsetDescription: item.testsetDescription,
+      //     testsetInput: item.testsetInput,
+      //     testsetOutput: item.testsetOutput,
+      //     testsetProblemId: null,
+      //     testsetIsExample: null,
+      //     testsetCreateBy: 1,
+      //     testsetUpdateBy: 1
+      //   }
+      // };
 
-      this.dialog = true;
+      // this.dialog = true;
     },
 
     deleteItem(item) {
