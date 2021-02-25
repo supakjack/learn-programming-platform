@@ -248,7 +248,8 @@ export default {
   async mounted() {
     // const { doseGetAll } = await this.getProblem();
     // this.allProblems = doseGetAll;
-    console.log(this.allProblems);
+    // console.log(this.allProblems);
+    console.log(this.$store.state.course)
   },
 
   computed: {
@@ -300,7 +301,7 @@ export default {
           doesGetAll.assignmentStatus = "ไม่ใช้งาน";
         }
       });
-      console.log(doesGetAll);
+      // console.log(doesGetAll);
       this.allAssignment = doesGetAll;
       // console.log(this.assignments);
     },

@@ -150,12 +150,12 @@ module.exports = {
     // compilelogUpdateBy = req.query.UpdateBy;
 
     const createCompileLogData = {
-      //   compilelogTaskId: taskId,
+        testsetId: testsetId,
       //   compilelogSubmitNo: SubmitNo,
       //   compilelogTestResult,
       // compilelogErrorMessage,
       // compilelogCompileStatus,
-      compileloglanguage: language,
+      // compileloglanguage: language,
       //   compilelogFileId: fileId,
       //   compilelogCreateBy: compilelogCreateBy,
       //   compilelogUpdateBy: compilelogUpdateBy,
@@ -394,7 +394,7 @@ module.exports = {
     });
 
     // pass sumScore to compilelogScore
-    createCompileLogData.compilelogScore = sumScore;
+    createCompileLogData.compilelogScore = Math.round(sumScore);
 
     // check passedTestset and maxTestset is equal?
     if (passedTestset == maxTestset) {
@@ -412,7 +412,7 @@ module.exports = {
         name: "compilelogs",
         insertData: [createCompileLogData],
       });
-      res.status(200).send({ doesCreate });
+      res.status(200).send({ createCompileLogData });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);

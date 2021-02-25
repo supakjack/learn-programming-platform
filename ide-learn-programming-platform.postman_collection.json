@@ -24,12 +24,7 @@
 							"value": "1",
 							"type": "text"
 						}
-					],
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+					]
 				},
 				"url": {
 					"raw": "http://localhost:3002/ide/run?compile=source&language=cpp",
@@ -85,12 +80,7 @@
 							"value": "1",
 							"type": "text"
 						}
-					],
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+					]
 				},
 				"url": {
 					"raw": "http://localhost:3002/ide/run?language=cpp&compile=path",
@@ -140,16 +130,21 @@
 							"key": "filePath",
 							"value": "D:\\Work\\Project\\learn-programming-platform\\storages\\test\\main.cpp",
 							"type": "text"
+						},
+						{
+							"key": "language",
+							"value": "cpp",
+							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "http://localhost:3002/ide/testset?testsetId=1",
+					"raw": "http://localhost:3001/ide/testset?testsetId=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3002",
+					"port": "3001",
 					"path": [
 						"ide",
 						"testset"
@@ -157,6 +152,42 @@
 					"query": [
 						{
 							"key": "testsetId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Compilelog",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n      \"compilelogTaskId\":  1,\r\n      \"compilelogSubmitNo\": 1,\r\n      \"compileloglanguage\": \"cpp\",\r\n      \"compilelogFileId\": 1,\r\n      \"compilelogCreateBy\": 1,\r\n      \"compilelogUpdateBy\": 1,\r\n      \"testsetResult\" : [\r\n        {\"testsetId\": 1,\"compilelogCompileStatus\":\"Passed\",\"compilelogErrorMessage\":\"\"},\r\n        {\"testsetId\": 2,\"compilelogCompileStatus\":\"Failed\",\"compilelogErrorMessage\":\"\"},\r\n        {\"testsetId\": 3,\"compilelogCompileStatus\":\"Passed\",\"compilelogErrorMessage\":\"\"},\r\n        {\"testsetId\": 4,\"compilelogCompileStatus\":\"Passed\",\"compilelogErrorMessage\":\"\"},\r\n        {\"testsetId\": 5,\"compilelogCompileStatus\":\"Passed\",\"compilelogErrorMessage\":\"\"},\r\n        {\"testsetId\": 6,\"compilelogCompileStatus\":\"Passed\",\"compilelogErrorMessage\":\"\"}\r\n      ]\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/ide/create/?taskId=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"ide",
+						"create",
+						""
+					],
+					"query": [
+						{
+							"key": "taskId",
 							"value": "1"
 						}
 					]

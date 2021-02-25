@@ -2,8 +2,8 @@
   <div>
     <v-card class="d-flex mb-4 flex flex-wrap" flat tile>
       <div v-for="(item, i) in allCourses" :key="i" class="ml-2 mb-5 p-2">
-        <router-link to="/assignment">
-          <v-card class="mx-auto" max-width="600" height="150" width="350">
+        <!-- <router-link to="/assignment"> -->
+          <v-card class="mx-auto" max-width="600" height="150" width="350" @click="clickCourse(item)">
             <v-divider color="blue"></v-divider>
             <v-list-item three-line>
               <v-list-item-content>
@@ -28,7 +28,7 @@
               >
             </v-card-actions>
           </v-card>
-        </router-link>
+        <!-- </router-link> -->
       </div>
 
       <v-row>
@@ -112,26 +112,33 @@ export default {
   methods: {
     async initialize() {
       const { doesGetSome } = await this.getHome(this.$store.state.user.id);
-      doesGetSome.map((doesGetSome) => {
+      doesGetSome.map(doesGetSome => {
         doesGetSome.courseUpdateDate = this.$moment(
           doesGetSome.courseUpdateDate
         ).format("Do MMM YY เวลา LT");
       });
       this.allCourses = await doesGetSome;
-      this.$store.commit("course/setCourse", {
-        course: {
-          courses: this.allCourses,
-        },
-      });
+      // this.$store.commit("course/setCourse", {
+      //   course: {
+      //     courses: this.allCourses
+      //   }
+      // });
     },
+
+    async clickCourse(item) {
+      this.$store.commit("course/setCourse", {
+        course: item
+      });
+      this.$router.push("/assignment");
+    }
   },
   async created() {
     this.initialize();
   },
   data: () => ({
     sectionDialog: false,
-    allCourses: [],
-  }),
+    allCourses: []
+  })
 };
 </script>
 
