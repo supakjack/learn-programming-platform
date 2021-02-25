@@ -7,6 +7,7 @@
           <v-tabs grow v-model="model">
             <v-tab>โจทย์ </v-tab>
             <v-tab>การส่ง</v-tab>
+            <v-tab>ไฟล์</v-tab>
           </v-tabs>
           <!-- </template> -->
 
@@ -36,37 +37,49 @@
                 </v-card-text>
               </v-card>
             </v-tab-item>
+            <v-tab-item>
+              <v-card flat>
+                <v-card-title>
+                  <v-row>
+                    <v-col>
+                      <v-card-text> แนบไฟล์ </v-card-text>
+                    </v-col>
+                    <v-col>
+                      <v-card-actions class="float-right">
+                        <!-- <div class="button-wrap">
+                          <label class="new-button" for="upload">อัพโหลด</label>
+                          <input
+                            id="upload"
+                            type="file"
+                            name="singleFile"
+                            multiple
+                          />
+                        </div> -->
+                        <v-file-input
+                          v-model="files"
+                          hide-input
+                          multiple
+                          truncate-length="14"
+                        >
+                        </v-file-input>
+                      </v-card-actions>
+                    </v-col>
+                  </v-row>
+                </v-card-title>
+                <v-card-text>
+                  <div v-for="(file, index) in files" :key="index">
+                    <v-card class="card-file" elevation="2">
+                      {{ file.name }}
+                    </v-card>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
           </v-tabs-items>
         </v-card>
       </v-col>
 
-      <v-col cols="12" sm="12" md="3">
-        <v-card width="auto" height="500px" outlined>
-          <v-row>
-            <v-col>
-              <v-card-text> ไฟล์ </v-card-text>
-            </v-col>
-            <v-col>
-              <v-card-actions class="float-right">
-                <v-file-input
-                  v-model="files"
-                  hide-input
-                  multiple
-                  truncate-length="14"
-                >
-                </v-file-input>
-              </v-card-actions>
-            </v-col>
-          </v-row>
-          <div v-for="(file, index) in files" :key="index">
-            <v-card class="card-file" elevation="2">
-              {{ file.name }}
-            </v-card>
-          </div>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" sm="12" md="5">
+      <v-col cols="12" sm="12" md="8">
         <v-row>
           <v-col cols="12" md="3">
             <v-card-text> main.cpp </v-card-text>
@@ -130,6 +143,26 @@ export default {
 </script>
 
 <style>
+.new-button {
+  display: inline-block;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: #4eb7f8;
+  font-size: 16px;
+  color: #fff;
+}
+input[type="file"] {
+  position: absolute;
+  z-index: -1;
+  top: 6px;
+  left: 0;
+  font-size: 15px;
+  color: rgb(153, 153, 153);
+}
+.button-wrap {
+  position: relative;
+}
 .card-file {
   height: 30px;
   padding-top: 3px;
@@ -139,7 +172,6 @@ export default {
 }
 .card-file:hover {
   background-color: lightblue;
-  cursor: pointer;
 }
 .v-text-field {
   padding-top: 0px !important;

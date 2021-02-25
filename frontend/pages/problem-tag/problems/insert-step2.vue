@@ -22,7 +22,7 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-btn color="success" block @click="addTable()">
+        <v-btn color="success" block @click="addTable">
           เพิ่ม
         </v-btn>
       </v-row>
@@ -50,12 +50,19 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in items" :key="item.testsetId">
-              <td class="text-center">{{ item.testsetId }}</td>
+            <tr v-for="(item, index) in items" :key="index">
+              <td class="text-center">{{ index + 1 }}</td>
               <td>{{ item.testsetTitle }}</td>
               <td class="text-center">{{ item.testsetInput }}</td>
               <td class="text-center">{{ item.testsetOutput }}</td>
-              <td></td>
+              <td class="text-center">
+                <v-icon small class="mr-2" @click="editItem(item)">
+                  mdi-pencil
+                </v-icon>
+                <v-icon small @click="deleteItem(item)">
+                  mdi-delete
+                </v-icon>
+              </td>
             </tr>
           </tbody>
         </template>
@@ -76,22 +83,18 @@ export default {
   }),
 
   methods: {
-    addTable() {
-      let index = 0;
-      if (this.items.length == null) {
-        index = 1;
-      } else {
-        index = this.items.length + 1;
-      }
-      let obj = {
-        testsetId: index,
-        testsetTitle: this.testsetTitle,
-        testsetDescription: this.testsetDescription,
-        testsetInput: this.testsetInput,
-        testsetOutput: this.testsetOutput
-      };
-      this.items.push(obj);
-      this.$store.commit("problem/setProblem", {
+    async addTable() {
+      this.items = await [
+        ...this.items,
+        {
+          testsetTitle: this.testsetTitle,
+          testsetDescription: this.testsetDescription,
+          testsetInput: this.testsetInput,
+          testsetOutput: this.testsetOutput
+        }
+      ];
+
+      await this.$store.commit("problem/setProblem", {
         problem: {
           testset: this.items
         }
