@@ -118,6 +118,8 @@ export default {
     insertStep2
   },
   data: () => ({
+    step1: "",
+    input: "",
     allProblems: [],
     dialog: false,
     dialogDelete: false,
@@ -166,10 +168,9 @@ export default {
       { text: "ไม่ใช้งาน", value: 2 }
     ]
   }),
-  async mounted() {
-    // const { doesGetAll } = await this.getProblem();
-    // this.allProblems = doesGetAll;
-    console.log(this.allProblems);
+
+  mounted() {
+    console.log(this.$store.state.problem);
   },
 
   computed: {
@@ -215,38 +216,94 @@ export default {
     },
 
     async save() {
-      if (this.editedIndex > -1) {
-        const EditResult = await this.editProblem(this.editedItem);
-        if (typeof EditResult === "number") {
-          this.dialog = false;
-          this.dialogInsert = true;
-        }
-      } else {
-        this.editedItem.problemCreateBy = 1;
-        this.editedItem.problemUpdateBy = this.editedItem.problemCreateBy;
-
-        const [insertResult] = await this.insertProblem(this.editedItem);
-
-        if (typeof insertResult === "number") {
-          this.close();
-          this.dialogInsert = true;
-        }
+      let createHashtagData = [];
+      for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
+        const dataHashtag = {
+          hashtagTagId: this.$store.state.problem.tags[i],
+          hashtagProblemId: null,
+          hashtagCreateBy: 1,
+          hashtagUpdateBy: 1
+        };
+        createHashtagData.push(dataHashtag);
       }
+      let createTestsetData = [];
+      for (let i = 0; i < this.$store.state.problem.testset.length; i++) {
+        const dataTestset = {
+          testsetTitle: this.$store.state.problem.testset[i].testsetTitle,
+          testsetDescription: this.$store.state.problem.testset[i]
+            .testsetDescription,
+          testsetInput: this.$store.state.problem.testset[i].testsetInput,
+          testsetOutput: this.$store.state.problem.testset[i].testsetOutput,
+          testsetProblemId: null,
+          testsetIsExample: null,
+          testsetCreateBy: 1,
+          testsetUpdateBy: 1
+        };
+        createTestsetData.push(dataTestset);
+      }
+      console.log(createTestsetData);
+      let data = {
+        createHashtagData,
+        createTestsetData,
+        createProblemData: {
+          problemTitle: this.$store.state.problem.title,
+          problemDiscription: this.$store.state.problem.description,
+          problemCreateBy: 1,
+          problemUpdateBy: 1
+        },
+        createFilesData: {
+          filePath: "0",
+          fileCreateBy: 1,
+          fileUpdateBy: 1
+        },
+        createPicturesData: {
+          pictureFileId: null,
+          pictureProblemId: null,
+          pictureCreateBy: 1,
+          pictureUpdateBy: 1
+        }
+      };
+
+      const insertResult = await this.insertProblem(data);
+      console.log(insertResult);
     },
 
     editItem(item) {
-      this.editedIndex = this.allProblems.indexOf(item);
-      this.editedItem.problemId = item.problemId;
-      this.editedItem.problemTitle = item.problemTitle;
-      this.editedItem.problemDiscription = item.problemDiscription;
-      // this.editedItem.problemPath = item.problemPath;
-      this.editedItem.problemStatus = item.problemStatus;
-      this.editedItem.taskScore = 0;
-      this.editedItem.problemCreateBy = 1;
-      this.editedItem.problemUpdateBy = this.editedItem.problemCreateBy;
-      this.editedItem.problemUpdateDate = this.$moment().format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
+      let data = {
+        createProblemData: {
+          problemTitle: item.problemTitle,
+          problemDiscription: item.problemDiscription,
+          problemCreateBy: 1,
+          problemUpdateBy: 1
+        },
+        createFilesData: {
+          filePath: "0",
+          fileCreateBy: 1,
+          fileUpdateBy: 1
+        },
+        createPicturesData: {
+          pictureFileId: null,
+          pictureProblemId: null,
+          pictureCreateBy: 1,
+          pictureUpdateBy: 1
+        },
+        createHashtagData: {
+          hashtagTagId: null,
+          hashtagProblemId: null,
+          hashtagCreateBy: 1,
+          hashtagUpdateBy: 1
+        },
+        createTestsetData: {
+          testsetTitle: item.testsetTitle,
+          testsetDescription: item.testsetDescription,
+          testsetInput: item.testsetInput,
+          testsetOutput: item.testsetOutput,
+          testsetProblemId: null,
+          testsetIsExample: null,
+          testsetCreateBy: 1,
+          testsetUpdateBy: 1
+        }
+      };
 
       this.dialog = true;
     },

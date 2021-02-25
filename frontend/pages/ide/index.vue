@@ -1,23 +1,8 @@
 <template v-slot:top>
   <v-container>
-    <v-card class="mx-auto" max-width="300" tile>
-      <v-list dense>
-        <v-subheader>REPORTS</v-subheader>
-        <v-list-item-group v-model="selectedItem" color="primary">
-          <v-list-item v-for="(item, i) in items" :key="i">
-            <v-list-item-icon>
-              <v-icon v-text="item.icon"></v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title v-text="item.text"></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </v-card>
     <v-row>
       <v-col cols="12" sm="12" md="3">
-        <v-card width="auto" height="500px" outlined>
+        <v-card width="auto" height="535px" outlined>
           <v-row>
             <v-col>
               <v-card-text> ไฟล์ </v-card-text>
@@ -25,7 +10,7 @@
             <v-col>
               <v-card-actions class="float-right">
                 <div class="button-wrap">
-                  <label class="new-button" for="upload"> Upload CV</label>
+                  <label class="new-button" for="upload">อัพโหลด</label>
                   <input
                     id="upload"
                     type="file"
@@ -40,23 +25,22 @@
           <div v-for="(file, index) in files" :key="index">
             <v-card class="card-file" elevation="2">
               {{ file.name }}
-              <!-- <v-btn class="mx-2" fab dark small color="pink"> -->
-              <v-icon dark>
-                <span class="material-icons">
-                  delete
-                </span>
-              </v-icon>
-              <!-- </v-btn> -->
             </v-card>
           </div>
+          <template>
+            <v-btn
+              @click="deleteFile"
+              block
+              style="position: absolute;bottom:0px; background-color:rgba(230, 131, 6, 0.5); color:white"
+            >
+              ล้างข้อมูล
+            </v-btn>
+          </template>
         </v-card>
       </v-col>
 
       <v-col cols="12" sm="12" md="9">
         <v-row>
-          <v-col cols="12" md="4">
-            <v-card-text> main.cpp </v-card-text>
-          </v-col>
           <v-col cols="12" md="4">
             <v-select
               v-model="submit.language"
@@ -66,8 +50,9 @@
               outlined
             ></v-select>
           </v-col>
+          <v-col cols="12" md="4"> </v-col>
           <v-col cols="12" md="4">
-            <v-btn depressed color="success" class="float-left" @click="run">
+            <v-btn depressed color="success" class="float-right" @click="run">
               RUN
             </v-btn>
           </v-col>
@@ -139,7 +124,7 @@ export default {
     snackbar: false,
     textErr: `Hello, I'm a snackbar`,
     files: {},
-    items: ["C++", "JavaScript", "JAVA", "PYTTHON"],
+    items: ["C++", "C"],
     submit: {
       // use for run code
       language: "",
@@ -163,7 +148,11 @@ export default {
     problems
   },
   methods: {
+    deleteFile(file) {
+      this.files = null;
+    },
     run() {
+      console.log(this.files);
       let formData = new FormData();
 
       if (this.files) {
