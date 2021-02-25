@@ -116,11 +116,6 @@ export default {
   mixins: [idemixin],
   data: () => ({
     selectedItem: 1,
-    items: [
-      { text: "Real-Time", icon: "fas fa-clock" },
-      { text: "Audience", icon: "mdi-account" },
-      { text: "Conversions", icon: "mdi-flag" }
-    ],
     snackbar: false,
     textErr: `Hello, I'm a snackbar`,
     files: {},

@@ -14,6 +14,13 @@ export default {
       console.log(result);
       console.log("----------");
       return result;
+    },
+
+    async submit(data) {
+      let result = this.$axios.$post("ide/submit", data).catch(error => {
+        console.error(error);
+      });
+      return result;
     }
   }
 };

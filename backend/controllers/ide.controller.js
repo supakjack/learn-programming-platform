@@ -224,123 +224,124 @@ module.exports = {
       //source code
       sourceCode = req.body.sourceCode;
 
+    console.log(req.body);
     console.log(req.files);
     try {
-      const doesSelect = await globalModel.select({
-        name: "files",
-        like: [
-          {
-            name: "filePath",
-            condition:
-              "%" +
-              yearName +
-              "_" +
-              courseCode +
-              "_sec-" +
-              sectionNumber +
-              "_" +
-              assignmentTitle +
-              "_" +
-              problemTitle +
-              "_" +
-              userUsername +
-              "%",
-          },
-        ],
-      });
+      // const doesSelect = await globalModel.select({
+      //   name: "files",
+      //   like: [
+      //     {
+      //       name: "filePath",
+      //       condition:
+      //         "%" +
+      //         yearName +
+      //         "_" +
+      //         courseCode +
+      //         "_sec-" +
+      //         sectionNumber +
+      //         "_" +
+      //         assignmentTitle +
+      //         "_" +
+      //         problemTitle +
+      //         "_" +
+      //         userUsername +
+      //         "%",
+      //     },
+      //   ],
+      // });
 
-      // console.log(doesSelect);
-      const number = doesSelect.map((rowFile) => {
-        const index = rowFile.filePath.search("no-");
-        const file = rowFile.filePath
-          .substr(index + 3, rowFile.length)
-          .split("\\");
-        return Number(file[0]);
-      });
-      const lastNumber = Math.max(...number);
+      // // console.log(doesSelect);
+      // const number = doesSelect.map((rowFile) => {
+      //   const index = rowFile.filePath.search("no-");
+      //   const file = rowFile.filePath
+      //     .substr(index + 3, rowFile.length)
+      //     .split("\\");
+      //   return Number(file[0]);
+      // });
+      // const lastNumber = Math.max(...number);
 
-      const no = lastNumber + 1;
+      // const no = lastNumber + 1;
 
-      const filePath =
-        process.env.BASE_STORAGE_PATH +
-        yearName +
-        "\\" +
-        courseCode +
-        "\\sec-" +
-        sectionNumber +
-        "\\" +
-        assignmentTitle +
-        "\\" +
-        problemTitle +
-        "\\" +
-        userUsername +
-        "\\no-" +
-        no;
-      await mkdirp(filePath);
+      // const filePath =
+      //   process.env.BASE_STORAGE_PATH +
+      //   yearName +
+      //   "\\" +
+      //   courseCode +
+      //   "\\sec-" +
+      //   sectionNumber +
+      //   "\\" +
+      //   assignmentTitle +
+      //   "\\" +
+      //   problemTitle +
+      //   "\\" +
+      //   userUsername +
+      //   "\\no-" +
+      //   no;
+      // await mkdirp(filePath);
 
-      if (sourceCode) {
-        await fs.writeFile(
-          filePath + "\\" + "main" + memeFile,
-          JSON.stringify(sourceCode)
-        );
+      // if (sourceCode) {
+      //   await fs.writeFile(
+      //     filePath + "\\" + "main" + memeFile,
+      //     JSON.stringify(sourceCode)
+      //   );
 
-        const fileName = await writeFileLogic(sourceCode, single, memeFile);
+      //   const fileName = await writeFileLogic(sourceCode, single, memeFile);
 
-        // schema files table
-        const createFilesData = await createFiles.validateAsync({
-          filePath: filePath + "\\" + fileName,
-          fileCreateBy,
-          fileUpdateBy,
-        });
+      //   // schema files table
+      //   const createFilesData = await createFiles.validateAsync({
+      //     filePath: filePath + "\\" + fileName,
+      //     fileCreateBy,
+      //     fileUpdateBy,
+      //   });
 
-        // insert to files table
-        const doesCreateLog = await globalModel.insert({
-          name: "files",
-          insertData: [createFilesData],
-        });
-      } else {
-        if (singleFile.length) {
-          await singleFile.map(async (single) => {
-            await single.mv(filePath + "\\" + single.name);
-            const fileName = await writeFileLogic(sourceCode, single, memeFile);
+      //   // insert to files table
+      //   const doesCreateLog = await globalModel.insert({
+      //     name: "files",
+      //     insertData: [createFilesData],
+      //   });
+      // } else {
+      //   if (singleFile.length) {
+      //     await singleFile.map(async (single) => {
+      //       await single.mv(filePath + "\\" + single.name);
+      //       const fileName = await writeFileLogic(sourceCode, single, memeFile);
 
-            // schema files table
-            const createFilesData = await createFiles.validateAsync({
-              filePath: filePath + "\\" + fileName,
-              fileCreateBy,
-              fileUpdateBy,
-            });
+      //       // schema files table
+      //       const createFilesData = await createFiles.validateAsync({
+      //         filePath: filePath + "\\" + fileName,
+      //         fileCreateBy,
+      //         fileUpdateBy,
+      //       });
 
-            // insert to files table
-            const doesCreateLog = await globalModel.insert({
-              name: "files",
-              insertData: [createFilesData],
-            });
-          });
-        } else {
-          await singleFile.mv(filePath + "\\" + singleFile.name);
+      //       // insert to files table
+      //       const doesCreateLog = await globalModel.insert({
+      //         name: "files",
+      //         insertData: [createFilesData],
+      //       });
+      //     });
+      //   } else {
+      //     await singleFile.mv(filePath + "\\" + singleFile.name);
 
-          const fileName = await writeFileLogic(
-            sourceCode,
-            singleFile,
-            memeFile
-          );
-          // schema files table
-          const createFilesData = await createFiles.validateAsync({
-            filePath: filePath + "\\" + fileName,
-            fileCreateBy,
-            fileUpdateBy,
-          });
+      //     const fileName = await writeFileLogic(
+      //       sourceCode,
+      //       singleFile,
+      //       memeFile
+      //     );
+      //     // schema files table
+      //     const createFilesData = await createFiles.validateAsync({
+      //       filePath: filePath + "\\" + fileName,
+      //       fileCreateBy,
+      //       fileUpdateBy,
+      //     });
 
-          // insert to files table
-          const doesCreateLog = await globalModel.insert({
-            name: "files",
-            insertData: [createFilesData],
-          });
-        }
-      }
+      //     // insert to files table
+      //     const doesCreateLog = await globalModel.insert({
+      //       name: "files",
+      //       insertData: [createFilesData],
+      //     });
+      //   }
+      // }
 
-      res.status(200).send(singleFile);
+      res.status(200).send(req.body);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
