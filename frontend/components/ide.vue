@@ -11,15 +11,29 @@ export default {
       let result = this.$axios.$post("ide/seperate", data).catch(error => {
         console.error(error);
       });
-      console.log(result);
-      console.log("----------");
+
       return result;
     },
 
-    async submit(data) {
+    async submitData(data) {
       let result = this.$axios.$post("ide/submit", data).catch(error => {
         console.error(error);
       });
+      return result;
+    },
+    async testsetSubmit(data) {
+      const testsetData = {};
+      testsetData.filePath = data.filePath;
+      testsetData.language = data.language;
+      const result = this.$axios
+        .$post(`ide/testset?testsetId=${data.testsetId}`, testsetData)
+        .catch(err => console.log(err));
+      return result;
+    },
+    async createCompile(data) {
+      const result = this.$axios
+        .$post(`ide/create/?taskId=${data.compilelogTaskId}`, data)
+        .catch(err => console.log(err));
       return result;
     }
   }

@@ -118,7 +118,7 @@ export default {
     selectedItem: 1,
     snackbar: false,
     textErr: `Hello, I'm a snackbar`,
-    files: {},
+    files: undefined,
     items: ["C++", "C"],
     submit: {
       // use for run code
@@ -176,20 +176,9 @@ export default {
     filePicked(e) {
       console.log(e.currentTarget.files);
       console.log(this.files);
-      // let fileList = new FileList();
 
-      // if (fileList.length) {
-      //   console.log(1);
-      //   // for (let i = 0; i < e.currentTarget.files.length; i++) {
-      //   //   this.files.push(e.currentTarget.files[i]);
-      //   // }
-      //   fileList[1] = e.currentTarget.files;
-      //   // this.files.push(e.currentTarget.files);
-      // } else {
-      //   console.log(2);
-      //   fileList[0] = e.currentTarget.files;
       this.files = e.currentTarget.files;
-      // }
+
       console.log(this.files);
     },
     handleFilesUpload() {

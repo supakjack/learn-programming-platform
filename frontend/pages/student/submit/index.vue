@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col cols="12" sm="12" md="4">
-        <v-card width="auto" height="500px" outlined>
+        <v-card width="auto" height="520px" outlined>
           <!-- <template v-slot:extension> -->
           <v-tabs grow v-model="model">
             <v-tab>โจทย์ </v-tab>
@@ -91,7 +91,12 @@
           </v-col>
           <v-col cols="12" md="4"> </v-col>
           <v-col cols="12" md="4">
-            <v-btn depressed color="info" class="float-right" @click="run">
+            <v-btn
+              depressed
+              color="info"
+              class="float-right"
+              @click="submitCode"
+            >
               Submit
             </v-btn>
             <v-btn
@@ -106,10 +111,9 @@
           </v-col>
         </v-row>
 
-        <v-row>
+        <v-row style="margin-top:-35px">
           <v-col>
             <v-textarea
-              style="margin-top:-20px"
               v-model="submit.source"
               autocomplete="coding"
               label="Coding"
@@ -119,25 +123,48 @@
           </v-col>
         </v-row>
 
-        <v-row>
+        <v-row style="margin-top:-45px">
           <v-col>
-            <v-card style="margin-top:-30px" outlined height="152px">
-              <v-card-text>
-                <div>
-                  <v-text-field
-                    v-model="submit.stdin"
-                    label="ข้อมูลนำเข้า"
-                  ></v-text-field>
-                </div>
-                <div>
-                  <v-text-field
-                    v-model="stdout"
-                    label="ข้อมูลส่งออก"
-                    value=""
-                    disabled
-                  ></v-text-field>
-                </div>
-              </v-card-text>
+            <v-card outlined height="152px">
+              <v-tabs grow v-model="resultTabs">
+                <v-tab>ผลจากการ RUN </v-tab>
+                <v-tab>ผลจากการ SUBMIT</v-tab>
+              </v-tabs>
+              <v-tabs-items v-model="resultTabs">
+                <v-tab-item>
+                  <v-card-text>
+                    <div>
+                      <v-text-field
+                        v-model="submit.stdin"
+                        label="ข้อมูลนำเข้า"
+                      ></v-text-field>
+                    </div>
+                    <div>
+                      <v-text-field
+                        v-model="stdout"
+                        label="ข้อมูลส่งออก"
+                        value=""
+                        disabled
+                      ></v-text-field>
+                    </div>
+                  </v-card-text>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-card flat>
+                    <v-card-title class="headline">
+                      An awesome title
+                    </v-card-title>
+                    <v-card-text>
+                      <p>
+                        Duis lobortis massa imperdiet quam. Donec vitae orci sed
+                        dolor rutrum auctor. Vestibulum facilisis, purus nec
+                        pulvinar iaculis, ligula mi congue nunc, vitae euismod
+                        ligula urna in dolor. Praesent congue erat at massa.
+                      </p>
+                    </v-card-text>
+                  </v-card>
+                </v-tab-item>
+              </v-tabs-items>
             </v-card>
           </v-col>
         </v-row>
@@ -157,13 +184,18 @@
 
 <script>
 import idemixin from "@/components/ide";
+import testsetmixin from "@/components/testset";
 export default {
-  mixins: [idemixin],
+  mixins: [idemixin, testsetmixin],
+
   data: () => ({
+    testsetResult: [],
+    compileResult: {},
+    dataTestset: [],
     snackbar: false,
     textErr: `Hello, I'm a snackbar`,
     items: ["C++", "C"],
-    files: {},
+    files: undefined,
     submit: {
       // use for run code
       language: "",
@@ -171,38 +203,81 @@ export default {
       stdin: ""
     },
     stdout: "",
-    model: "tab-2"
+    model: "tab-3",
+    resultTabs: "tab-2"
   }),
   methods: {
     deleteFile(file) {
       this.files = null;
     },
-    submit() {
-      console.log(this.files);
+    async submitCode() {
+      console.log(this.submit.source);
+      const userId = this.$store.state.user.id;
+
       let formData = new FormData();
 
+      formData.append("yearName", "2021");
+      formData.append("courseCode", "88889999");
+      formData.append("sectionNumber", "2");
+      formData.append("assignmentTitle", "Array4");
+      formData.append("problemTitle", "LoopArray");
+      formData.append("userUsername", userId);
+      formData.append("fileCreateBy", userId);
+      formData.append("fileUpdateBy", userId);
+      formData.append("sourceCode", this.submit.source);
+      formData.append("memeFile", this.submit.language);
+
+      console.log(this.files);
       if (this.files) {
         for (let file of this.files) {
           formData.append("singleFile", file);
         }
       }
-      formData.append("language", this.submit.language);
-      formData.append("source", this.submit.source);
-      formData.append("stdin", this.submit.stdin);
 
-      console.log([...formData]);
-      const result = this.seperate(formData);
-      result.then(result => {
-        console.log(result);
-        if (result.stderr != "") {
-          console.log("err");
-          this.snackbar = true;
-          this.textErr = result.stderr;
-        } else {
-          console.log("no err");
-          this.stdout = result.stdout;
-        }
+      // console.log([...formData]);
+      const submitResult = await this.submitData(formData);
+      console.log(submitResult);
+
+      const testsetProblem = {
+        testsetProblemId: 1
+      };
+      const testsetResult = await this.getTestset(testsetProblem);
+
+      this.dataTestset = await testsetResult.doesGetAll.map(async res => {
+        const data = {
+          filePath: submitResult.dataReturn.path,
+          language: submitResult.dataReturn.language,
+          testsetId: res.testsetId
+        };
+        const dataTestsetApi = await this.testsetSubmit(data);
+        // console.log(dataTestsetApi);
+        return dataTestsetApi;
       });
+
+      const compileData = {
+        compilelogTaskId: 1,
+        compilelogSubmitNo: submitResult.dataReturn.number,
+        compileloglanguage: submitResult.dataReturn.language,
+        compilelogFileId: submitResult.dataReturn.fileId,
+        compilelogCreateBy: userId,
+        compilelogUpdateBy: userId,
+        testsetResult: []
+      };
+
+      const data = await Promise.all(this.dataTestset).then(value => {
+        return value;
+      });
+      // console.log(this.testsetResult);
+      console.log(data);
+
+      compileData.testsetResult = data;
+
+      const createCompileLogData = this.createCompile(compileData);
+
+      const compileLogData = await createCompileLogData.then(res => {
+        return res;
+      });
+      console.log(compileLogData);
     },
     run() {
       console.log(this.files);
@@ -234,20 +309,9 @@ export default {
     filePicked(e) {
       console.log(e.currentTarget.files);
       console.log(this.files);
-      // let fileList = new FileList();
 
-      // if (fileList.length) {
-      //   console.log(1);
-      //   // for (let i = 0; i < e.currentTarget.files.length; i++) {
-      //   //   this.files.push(e.currentTarget.files[i]);
-      //   // }
-      //   fileList[1] = e.currentTarget.files;
-      //   // this.files.push(e.currentTarget.files);
-      // } else {
-      //   console.log(2);
-      //   fileList[0] = e.currentTarget.files;
       this.files = e.currentTarget.files;
-      // }
+
       console.log(this.files);
     },
     handleFilesUpload() {
