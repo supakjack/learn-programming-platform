@@ -115,13 +115,6 @@ module.exports = {
         name: "problems",
         condition: [getProblemData],
         whereNot: [{ problemStatus: "delete" }],
-        leftJoin: [
-          {
-            joinTable: "tasks",
-            leftKey: "problemId",
-            joinKey: "taskProblemId",
-          },
-        ],
       });
       res.status(201).send({ doesGetAll });
     } catch (error) {

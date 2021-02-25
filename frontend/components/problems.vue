@@ -38,7 +38,6 @@ export default {
     },
 
     async insertProblem(data) {
-      console.log(data);
       return this.$axios
         .$post("problem", data)
         .catch(error => {
