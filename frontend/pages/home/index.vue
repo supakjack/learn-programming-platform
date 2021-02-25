@@ -2,31 +2,33 @@
   <div>
     <v-card class="d-flex mb-4 flex flex-wrap" flat tile>
       <div v-for="(item, i) in allCourses" :key="i" class="ml-2 mb-5 p-2">
-        <v-card class="mx-auto" max-width="600" height="150" width="350">
-          <v-divider color="blue"></v-divider>
-          <v-list-item three-line>
-            <v-list-item-content>
-              <v-list-item-title class="mb-1 kanit-font">
-                {{ item.courseCode }} {{ item.courseName }}
-              </v-list-item-title>
-              <v-list-item-subtitle class="kanit-font"
-                >ภาคเรียน {{ item.yearId }}/{{
-                  item.yearName
-                }}</v-list-item-subtitle
+        <router-link to="/assignment">
+          <v-card class="mx-auto" max-width="600" height="150" width="350">
+            <v-divider color="blue"></v-divider>
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-title class="mb-1 kanit-font">
+                  {{ item.courseCode }} {{ item.courseName }}
+                </v-list-item-title>
+                <v-list-item-subtitle class="kanit-font"
+                  >ภาคเรียน {{ item.yearId }}/{{
+                    item.yearName
+                  }}</v-list-item-subtitle
+                >
+                <v-list-item-subtitle class="text-right kanit-font">
+                  กลุ่ม {{ item.sectionNumber }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-list-item-subtitle class="text-right kanit-font"
+                >อัพเดทล่าสุดวันที่
+                {{ item.courseUpdateDate }}</v-list-item-subtitle
               >
-              <v-list-item-subtitle class="text-right kanit-font">
-                กลุ่ม {{ item.sectionNumber }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-list-item-subtitle class="text-right kanit-font"
-              >อัพเดทล่าสุดวันที่
-              {{ item.courseUpdateDate }}</v-list-item-subtitle
-            >
-          </v-card-actions>
-        </v-card>
+            </v-card-actions>
+          </v-card>
+        </router-link>
       </div>
 
       <v-row>
@@ -43,7 +45,7 @@
             >
               <v-divider color="blue"></v-divider>
 
-              <v-card-text class="headline font-weight-bold text-center">
+              <v-card-text class="font-weight-bold text-center">
                 เพิ่มรายวิชา
               </v-card-text>
               <v-row justify="space-around">
@@ -53,7 +55,7 @@
           </template>
           <v-card>
             <v-card-title>
-              <span class="headline">เพิ่มรายวิชา</span>
+              <span class="">เพิ่มรายวิชา</span>
             </v-card-title>
             <v-card-text>
               <v-container>
