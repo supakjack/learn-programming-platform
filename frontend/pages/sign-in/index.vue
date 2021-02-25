@@ -91,7 +91,7 @@ export default {
               permission: response.data.permission,
               token: response.data.token,
               username: response.data.user.username,
-              id: response.data.user.userId
+              id: response.data.userId
             }
           });
           this.$router.replace({ name: "home" });
