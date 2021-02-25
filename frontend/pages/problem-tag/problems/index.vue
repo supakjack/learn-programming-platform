@@ -214,7 +214,6 @@ export default {
     },
 
     async save() {
-      console.log(this.$store.state.problem);
       let createHashtagData = [];
       for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
         const dataHashtag = {
@@ -234,7 +233,7 @@ export default {
           testsetInput: item.testsetInput,
           testsetOutput: item.testsetOutput,
           testsetProblemId: null,
-          testsetIsExample: null,
+          testsetIsExample: item.testsetIsExample,
           testsetCreateBy: userId,
           testsetUpdateBy: userId
         };
@@ -264,9 +263,11 @@ export default {
 
       const insertResult = await this.insertProblem(request);
       console.log(insertResult);
+      this.dialog = false;
     },
 
     editItem(item) {
+      this.dialog = true;
       console.log(item);
       // let data = {
       //   createProblemData: {

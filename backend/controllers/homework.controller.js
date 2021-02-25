@@ -77,14 +77,24 @@ module.exports = {
         name: "tasks",
         condition: [getCondition],
         filter: [
+          "taskId",
           "taskScore",
           "taskLimit",
           "problemId",
           "problemTitle",
           "problemDiscription",
           "tagName",
+          "compilelogScore",
+          "compilelogSubmitNo",
+          "compilelogTestResult",
         ],
         leftJoin: [
+          {
+            joinTable: "compilelogs",
+            leftTableName: "tasks",
+            leftKey: "taskId",
+            joinKey: "compilelogTaskId",
+          },
           {
             joinTable: "problems",
             leftTableName: "tasks",

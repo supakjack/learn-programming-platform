@@ -19,7 +19,6 @@ export default {
     // UpdateBy:
     async getProblem(taskAssignmentId) {
       const result = this.$axios.$get(`homework/${taskAssignmentId}`);
-      console.log(result);
       return result;
     }
   }

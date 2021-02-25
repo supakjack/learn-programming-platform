@@ -9,7 +9,6 @@
     :items="allHomeworks"
     :items-per-page="8"
     item-key="assignmentId"
-    :sort-by="['assignmentStatus', 'assignmentCreateDate']"
     :sort-desc="[false, true]"
     multi-sort
     :search="search"
@@ -74,10 +73,10 @@ export default {
         sortable: false
       },
       { text: "ชื่อบท", value: "assignmentTitle" }, // define column name and value
-      { text: "สถานะการใช้งาน", value: "assignmentStatus" },
-      { text: "สถานะการส่งงาน", value: "" },
+      { align: "center", text: "สถานะการใช้งาน", value: "assignmentStatus" },
+      { align: "center", text: "สถานะการส่งงาน", value: "result" },
       { text: "คะแนน", value: "sumCompilelogScore" },
-      { text: "ดำเนินการ", value: "actions", sortable: false }
+      { align: "center", text: "ดำเนินการ", value: "actions", sortable: false }
     ],
 
     //datas for show on dialog when click "more"
@@ -90,9 +89,9 @@ export default {
       { text: "ข้อ", value: "problemId" }, // define column name and value
       { text: "ชื่อ", value: "problemTitle" },
       { text: "คำอธิบาย", value: "problemDiscription" },
-      { text: "แท็ก", value: "tagName" },
-      { text: "จำนวนที่ส่ง", value: "" },
-      { text: "สถานะการส่งงาน", value: "" },
+      { align: "center", text: "แท็ก", value: "tagName" },
+      { text: "จำนวนที่ส่ง", value: "compilelogSubmitNo" },
+      { text: "สถานะการส่งงาน", value: "compilelogTestResult" },
       { text: "คะแนน", value: "taskScore" }
     ],
     editedIndex: -1, //  editedIndex default to -1
@@ -149,6 +148,16 @@ export default {
         if (doesGetAll.sumCompilelogScore == null) {
           doesGetAll.sumCompilelogScore = 0;
         }
+        if (doesGetAll.sumCompilelogScore == doesGetAll.sumTaskScore) {
+          doesGetAll.result = "ส่งแล้ว";
+        } else if (
+          doesGetAll.sumCompilelogScore > 0 &&
+          doesGetAll.sumCompilelogScore < doesGetAll.sumTaskScore
+        ) {
+          doesGetAll.result = "ยังไม่เสร็จ";
+        } else if (doesGetAll.sumCompilelogScore == 0) {
+          doesGetAll.result = "ยังไม่ส่ง";
+        }
         doesGetAll.sumCompilelogScore =
           doesGetAll.sumCompilelogScore + "/" + doesGetAll.sumTaskScore;
       });
@@ -157,8 +166,18 @@ export default {
 
     async openDialog(item) {
       const { doesGetProblem } = await this.getProblem(item.assignmentId);
+      doesGetProblem.map(doesGetProblem => {
+        if (doesGetProblem.compilelogTestResult == "Accepted") {
+          doesGetProblem.compilelogTestResult = "ผ่าน";
+        } else if (doesGetProblem.compilelogTestResult == null) {
+          doesGetProblem.compilelogTestResult = "ยังไม่ส่ง";
+        } else {
+          doesGetProblem.compilelogTestResult = "ไม่ผ่าน";
+        }
+        doesGetProblem.taskScore =
+          doesGetProblem.compilelogScore + "/" + doesGetProblem.taskScore;
+      });
       this.rowProblem = doesGetProblem;
-      console.log({ doesGetProblem });
       this.dialogDetail = true;
     }
   }

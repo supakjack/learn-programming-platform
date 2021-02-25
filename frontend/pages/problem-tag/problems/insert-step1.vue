@@ -1,7 +1,7 @@
 <template>
   <v-card-text class="kanit-font">
     <v-container>
-      <v-row>
+      <v-row style="margin-top:-30px">
         <v-col cols="12" sm="12" md="8">
           <v-text-field
             label="ชื่อโจทย์ปัญหา"
@@ -84,7 +84,6 @@ export default {
 
   watch: {
     problemTitle: function(newValue, oldValue) {
-      console.log(newValue, oldValue);
       this.$store.commit("problem/setProblem", {
         problem: {
           title: this.problemTitle
@@ -92,7 +91,6 @@ export default {
       });
     },
     problemStatus: function(newValue, oldValue) {
-      console.log(newValue, oldValue);
       this.$store.commit("problem/setProblem", {
         problem: {
           status: this.problemStatus
@@ -100,7 +98,6 @@ export default {
       });
     },
     taskScore: function(newValue, oldValue) {
-      console.log(newValue, oldValue);
       this.$store.commit("problem/setProblem", {
         problem: {
           score: this.taskScore
@@ -108,7 +105,6 @@ export default {
       });
     },
     problemDescription: function(newValue, oldValue) {
-      console.log(newValue, oldValue);
       this.$store.commit("problem/setProblem", {
         problem: {
           description: this.problemDescription
@@ -116,7 +112,6 @@ export default {
       });
     },
     tags: function(newValue, oldValue) {
-      console.log(newValue, oldValue);
       this.$store.commit("problem/setProblem", {
         problem: {
           tags: this.tags
