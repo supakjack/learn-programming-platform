@@ -2,11 +2,14 @@
   <v-card-text class="kanit-font">
     <v-container>
       <v-row>
-        <v-col cols="12" sm="12" md="6">
+        <v-col cols="12" sm="12" md="8">
           <v-text-field
             label="ชื่อโจทย์ปัญหา"
             v-model="problemTitle"
           ></v-text-field>
+        </v-col>
+
+        <v-col cols="12" sm="12" md="4">
           <v-select
             v-model="problemStatus"
             :items="problemStatusData"
@@ -16,20 +19,21 @@
             single-line
           ></v-select>
         </v-col>
-
-        <v-col cols="12" sm="12" md="6">
-          <v-text-field label="กำหนดคะแนน" v-model="taskScore"></v-text-field>
-          <p class="text-md-left">
-            ภาพประกอบโจทย์
-            <input type="file" />
-          </p>
-        </v-col>
       </v-row>
       <v-textarea
         label="คำอธิบาย"
         rows="3"
         v-model="problemDescription"
       ></v-textarea>
+      <v-row>
+        <v-col cols="12" sm="12" md="6">
+          <p class="text-md-left">
+            ภาพประกอบโจทย์
+            <input type="file" />
+          </p>
+        </v-col>
+        <v-col cols="12" sm="12" md="6"> </v-col>
+      </v-row>
 
       <v-row>
         <v-col cols="12" sm="12" md="12">

@@ -130,10 +130,8 @@ export default {
         sortable: false
         // value: "problemId"
       },
-      { text: "ข้อ", value: "problemId" },
       { text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
       { text: "วันที่สร้าง", value: "problemCreateDate" },
-      { text: "คะแนน", value: "taskScore" },
       { text: "สถานะ", value: "problemStatus" },
       { text: "ดำเนินการ", value: "actions", sortable: false }
     ],
