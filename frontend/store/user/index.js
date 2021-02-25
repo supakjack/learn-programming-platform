@@ -11,7 +11,7 @@ module.exports = {
       state.token = user.token;
       state.username = user.username;
       state.id = user.id;
-      // console.log(user);
+      console.log(user);
     }
   }
 };

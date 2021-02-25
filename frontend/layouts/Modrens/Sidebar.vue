@@ -20,17 +20,16 @@ export default {
   mounted() {
     if (this.$store.state.user.permission.includes("teacher")) {
       // console.log("is teacher");
-      this.menu = [...teacherMenu]
-    } else if(this.$store.state.user.permission.includes("student")) {
+      this.menu = [...teacherMenu];
+    } else if (this.$store.state.user.permission.includes("student")) {
       // console.log("is student");
-      this.menu = [...studentMenu]
+      this.menu = [...studentMenu];
     }
   },
   data() {
     return {
       //   drawer: true,
       //   mini: true,
-
       menu: [],
       themes: [
         {
