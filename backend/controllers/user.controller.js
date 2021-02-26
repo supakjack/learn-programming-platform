@@ -14,7 +14,7 @@ const readXlsxFile = require("read-excel-file/node");
 module.exports = {
   findById: async (req, res, next) => {
     const getUserData = await UserusernameConditionSchema.validateAsync(
-      req.params
+      req.query
     );
     // const username = req.query.username;
     console.log(getUserData);
