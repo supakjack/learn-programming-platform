@@ -3,32 +3,39 @@
     <v-card class="d-flex mb-4 flex flex-wrap" flat tile>
       <div v-for="(item, i) in allCourses" :key="i" class="ml-2 mb-5 p-2">
         <!-- <router-link to="/assignment"> -->
-          <v-card class="mx-auto" max-width="600" height="150" width="350" @click="clickCourse(item)">
-            <v-divider color="blue"></v-divider>
-            <v-list-item three-line>
-              <v-list-item-content>
-                <v-list-item-title class="mb-1 kanit-font">
-                  {{ item.courseCode }} {{ item.courseName }}
-                </v-list-item-title>
-                <v-list-item-subtitle class="kanit-font"
-                  >ภาคเรียน {{ item.yearId }}/{{
-                    item.yearName
-                  }}</v-list-item-subtitle
-                >
-                <v-list-item-subtitle class="text-right kanit-font">
-                  กลุ่ม {{ item.sectionNumber }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-divider></v-divider>
-            <v-card-actions>
+        <v-card
+          class="mx-auto"
+          max-width="600"
+          height="150"
+          width="350"
+          @click="clickCourse(item)"
+        >
+          <v-divider color="blue"></v-divider>
+          <v-list-item three-line>
+            <v-list-item-content>
+              <v-list-item-title class="mb-1 kanit-font">
+                {{ item.courseCode }} {{ item.courseName }}
+              </v-list-item-title>
+              <v-list-item-subtitle class="kanit-font"
+                >ภาคเรียน {{ item.yearId }}/{{
+                  item.yearName
+                }}</v-list-item-subtitle
+              >
+              <v-list-item-subtitle class="text-right kanit-font">
+                กลุ่ม {{ item.sectionNumber }}
+              </v-list-item-subtitle>
               <v-list-item-subtitle class="text-right kanit-font"
                 >อัพเดทล่าสุดวันที่
                 {{ item.courseUpdateDate }}</v-list-item-subtitle
               >
-            </v-card-actions>
-          </v-card>
-        <!-- </router-link> -->
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-card-actions class="kanit-font">
+            <v-btn color="warning" text>แก้ไข</v-btn>
+            <v-btn color="error" text>ลบ</v-btn>
+          </v-card-actions>
+        </v-card>
       </div>
 
       <v-row>
@@ -112,7 +119,7 @@ export default {
   methods: {
     async initialize() {
       const { doesGetSome } = await this.getHome(this.$store.state.user.id);
-      doesGetSome.map(doesGetSome => {
+      doesGetSome.map((doesGetSome) => {
         doesGetSome.courseUpdateDate = this.$moment(
           doesGetSome.courseUpdateDate
         ).format("Do MMM YY เวลา LT");
@@ -127,18 +134,18 @@ export default {
 
     async clickCourse(item) {
       this.$store.commit("course/setCourse", {
-        course: item
+        course: item,
       });
       this.$router.push("/assignment");
-    }
+    },
   },
   async created() {
     this.initialize();
   },
   data: () => ({
     sectionDialog: false,
-    allCourses: []
-  })
+    allCourses: [],
+  }),
 };
 </script>
 

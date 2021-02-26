@@ -1,9 +1,8 @@
 const createError = require("http-errors");
 const globalModel = require("../models/global.model");
+const problemsModel = require("../models/problems.model");
 
-const {
-  getCourseSchema,
-} = require("./../helpers/validation.helper");
+const { getCourseSchema } = require("./../helpers/validation.helper");
 
 module.exports = {
   get: async (req, res, next) => {
@@ -16,6 +15,7 @@ module.exports = {
         filter: [
           "userId",
           "userUsername",
+          "enrollId",
           "courseId",
           "courseName",
           "courseCode",
@@ -54,38 +54,6 @@ module.exports = {
         ],
       });
       res.status(201).send({ doesGetSome });
-    } catch (error) {
-      if (error.isJoi === true) return next(createError.InternalServerError());
-      next(error);
-    }
-  },
-  create: async (req, res, next) => {
-    const createTagData = await createTagSchema.validateAsync(req.body);
-
-    try {
-      const doesCreate = await globalModel.insert({
-        name: "tags",
-        insertData: [createTagData],
-      });
-      res.status(201).send({ doesCreate });
-    } catch (error) {
-      if (error.isJoi === true) return next(createError.InternalServerError());
-      next(error);
-    }
-  },
-
-  update: async (req, res, next) => {
-    const updateCondition = await updateTagConditionSchema.validateAsync(
-      req.query
-    );
-    const updateTagData = await updateTagSchema.validateAsync(req.body);
-    try {
-      const doesUpdate = await globalModel.update({
-        name: "tags",
-        condition: [updateCondition],
-        updateData: [updateTagData],
-      });
-      res.status(200).send({ doesUpdate });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
