@@ -84,7 +84,7 @@ module.exports = {
     }
   },
   findUser: async (req, res, next) => {
-    const ad = await ladp.config(req.body.username, req.body.password)
+    const ad = await ladp.config(req.query.username, req.query.password)
     console.log(req.params)
     try {
       if (req.params) {
