@@ -76,10 +76,12 @@
             <v-card style="margin-top:-30px" outlined height="152px">
               <v-card-text>
                 <div>
-                  <v-text-field
+                  <v-textarea
                     v-model="submit.stdin"
+                    autocomplete="email"
                     label="ข้อมูลนำเข้า"
-                  ></v-text-field>
+                    rows="2"
+                  ></v-textarea>
                 </div>
                 <div>
                   <v-text-field
