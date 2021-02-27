@@ -152,6 +152,11 @@ const getTestsetSchema = joi.object({
   testsetProblemId: joi.number().max(99999999).min(1),
 });
 
+// get assignment schema
+const getCompilelogSchema = joi.object({
+  compilelogTaskId: joi.number().max(99999999).min(1),
+});
+
 // create compile log schema
 const createFiles = joi.object({
   filePath: joi.string().max(255).required(),
@@ -254,4 +259,5 @@ module.exports = {
   updateAssignmentConditionSchema,
   updateAssignmentSchema,
   getCourseSchema,
+  getCompilelogSchema,
 };
