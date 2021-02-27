@@ -9,7 +9,7 @@ module.exports = {
   // UpdateBy: Supak Pukdam / UpdateDate: 26/1/2021
   writeFileLogic: async (sourceCode, singleFile, memefile) => {
     return sourceCode
-      ? "main" + memefile
+      ? "main" + "." + memefile
       : singleFile
       ? singleFile.name
       : createError.UnprocessableEntity("not found file name");

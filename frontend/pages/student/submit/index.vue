@@ -24,17 +24,43 @@
             </v-tab-item>
             <v-tab-item>
               <v-card flat>
-                <v-card-title class="headline">
-                  An awesome title
-                </v-card-title>
-                <v-card-text>
-                  <p>
-                    Duis lobortis massa imperdiet quam. Donec vitae orci sed
-                    dolor rutrum auctor. Vestibulum facilisis, purus nec
-                    pulvinar iaculis, ligula mi congue nunc, vitae euismod
-                    ligula urna in dolor. Praesent congue erat at massa.
-                  </p>
-                </v-card-text>
+                <v-simple-table fixed-header>
+                  <template v-slot:default>
+                    <thead>
+                      <tr cols="12">
+                        <th class="text-center" cols="1">
+                          ครั้งที่
+                        </th>
+                        <th class="text-center" cols="3">
+                          ผลลัพธ์
+                        </th>
+                        <th class="text-center" cols="2">
+                          คะแนน
+                        </th>
+                        <th class="text-center" cols="2">
+                          วันที่
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="(item, index) in allCompileResult.doesGetAll"
+                        :key="index"
+                      >
+                        <td class="text-center">
+                          {{ item.compilelogSubmitNo }}
+                        </td>
+                        <td style="color:green">
+                          {{ item.compilelogTestResult }}
+                        </td>
+                        <td class="text-center">{{ item.compilelogScore }}</td>
+                        <td class="text-center">
+                          {{ item.compilelogCreateDate }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
               </v-card>
             </v-tab-item>
             <v-tab-item>
@@ -125,42 +151,76 @@
 
         <v-row style="margin-top:-45px">
           <v-col>
-            <v-card outlined height="152px">
+            <v-card
+              style="max-height: 176px;
+    overflow: auto; height : 176px"
+              outlined
+              :loading="loading"
+            >
+              <template slot="progress">
+                <v-progress-linear
+                  color="deep-purple"
+                  height="10"
+                  indeterminate
+                ></v-progress-linear>
+              </template>
               <v-tabs grow v-model="resultTabs">
-                <v-tab>ผลจากการ RUN </v-tab>
-                <v-tab>ผลจากการ SUBMIT</v-tab>
+                <v-tab v-for="tab of tabs" :key="tab.index">
+                  {{ tab.name }}
+                </v-tab>
               </v-tabs>
               <v-tabs-items v-model="resultTabs">
                 <v-tab-item>
-                  <v-card-text>
-                    <div>
-                      <v-text-field
-                        v-model="submit.stdin"
-                        label="ข้อมูลนำเข้า"
-                      ></v-text-field>
-                    </div>
-                    <div>
-                      <v-text-field
-                        v-model="stdout"
-                        label="ข้อมูลส่งออก"
-                        value=""
-                        disabled
-                      ></v-text-field>
-                    </div>
-                  </v-card-text>
+                  <v-card flat>
+                    <v-card-text>
+                      <v-row>
+                        <v-text-field
+                          v-model="submit.stdin"
+                          label="ข้อมูลนำเข้า"
+                        ></v-text-field>
+                      </v-row>
+                      <v-row>
+                        <v-text-field
+                          v-model="stdout"
+                          label="ข้อมูลส่งออก"
+                          value=""
+                          disabled
+                        ></v-text-field>
+                      </v-row>
+                      <v-row> </v-row>
+                    </v-card-text>
+                  </v-card>
                 </v-tab-item>
                 <v-tab-item>
                   <v-card flat>
-                    <v-card-title class="headline">
-                      An awesome title
-                    </v-card-title>
                     <v-card-text>
-                      <p>
-                        Duis lobortis massa imperdiet quam. Donec vitae orci sed
-                        dolor rutrum auctor. Vestibulum facilisis, purus nec
-                        pulvinar iaculis, ligula mi congue nunc, vitae euismod
-                        ligula urna in dolor. Praesent congue erat at massa.
-                      </p>
+                      <div
+                        v-for="(testset, index) in testsetResult"
+                        :key="index"
+                      >
+                        <p
+                          v-if="
+                            testset.compilelogCompileStatus == 'Error' &&
+                              index + 1 == testsetResult.length
+                          "
+                          style="color:red"
+                        >
+                          {{ testset.compilelogErrorMessage }}
+                        </p>
+                        <p v-if="testset.compilelogCompileStatus != 'Error'">
+                          {{ index + 1 }} .
+                          <span
+                            v-if="testset.compilelogCompileStatus == 'Passed'"
+                            style="color:green"
+                            >{{ testset.compilelogCompileStatus }}
+                          </span>
+                          <span
+                            v-if="testset.compilelogCompileStatus == 'Failed'"
+                            style="color:orange"
+                            >{{ testset.compilelogCompileStatus }}
+                          </span>
+                        </p>
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-tab-item>
@@ -189,7 +249,13 @@ export default {
   mixins: [idemixin, testsetmixin],
 
   data: () => ({
+    tabs: [
+      { index: 0, name: "ผลจากการ RUN" },
+      { index: 1, name: "ผลจากการ SUBMIT" }
+    ],
+    loading: false,
     testsetResult: [],
+    allCompileResult: [],
     compileResult: {},
     dataTestset: [],
     snackbar: false,
@@ -204,13 +270,29 @@ export default {
     },
     stdout: "",
     model: "tab-3",
-    resultTabs: "tab-2"
+    resultTabs: 0
   }),
+  async created() {
+    this.initialize();
+  },
   methods: {
+    async initialize() {
+      const allCompile = this.getCompilelog(1);
+
+      this.allCompileResult = await allCompile.then(res => {
+        return res;
+      });
+      this.allCompileResult.doesGetAll.map(doesGetAll => {
+        doesGetAll.compilelogCreateDate = this.$moment(
+          doesGetAll.compilelogCreateDate
+        ).format("Do MMM YY เวลา LT");
+      });
+    },
     deleteFile(file) {
       this.files = null;
     },
     async submitCode() {
+      this.loading = true;
       console.log(this.submit.source);
       const userId = this.$store.state.user.id;
 
@@ -264,20 +346,36 @@ export default {
         testsetResult: []
       };
 
-      const data = await Promise.all(this.dataTestset).then(value => {
+      this.testsetResult = await Promise.all(this.dataTestset).then(value => {
         return value;
       });
       // console.log(this.testsetResult);
-      console.log(data);
-
-      compileData.testsetResult = data;
+      // this.testsetResult = dataTestset;
+      console.log(this.testsetResult);
+      compileData.testsetResult = this.testsetResult;
 
       const createCompileLogData = this.createCompile(compileData);
 
-      const compileLogData = await createCompileLogData.then(res => {
+      this.compileResult = await createCompileLogData.then(res => {
         return res;
       });
-      console.log(compileLogData);
+
+      const allCompile = this.getCompilelog(1);
+
+      this.allCompileResult = await allCompile.then(res => {
+        return res;
+      });
+
+      this.allCompileResult.doesGetAll.map(doesGetAll => {
+        doesGetAll.compilelogCreateDate = this.$moment(
+          doesGetAll.compilelogCreateDate
+        ).format("Do MMM YY เวลา LT");
+      });
+
+      console.log(this.allCompileResult);
+      console.log(this.compileResult);
+      this.resultTabs = 1;
+      this.loading = false;
     },
     run() {
       console.log(this.files);
