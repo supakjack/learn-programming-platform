@@ -91,6 +91,7 @@ export default {
               permission: response.data.permission,
               token: response.data.token,
               username: response.data.user.username,
+              password: this.password,
               id: response.data.userId
             }
           });

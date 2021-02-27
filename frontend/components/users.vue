@@ -2,11 +2,19 @@
 export default {
   methods: {
     async getUser() {
-      return this.$axios.$get("user");
+      const username = this.$store.state.user.username;
+      const password = this.$store.state.user.password;
+      return this.$axios.$get(
+        "user?username=" + username + "&password=" + password
+      );
     },
 
     async getUserByUsername(data) {
-      return this.$axios.$get(`auth/getUser/${data}`);
+      const username = this.$store.state.user.username;
+      const password = this.$store.state.user.password;
+      return this.$axios.$get(
+        `auth/getUser/${data}?username=` + username + "&password=" + password
+      );
     },
 
     async deleteUser() {
@@ -15,8 +23,8 @@ export default {
       deleteData.userUpdateDate = data.userUpdateDate;
       return this.$axios
         .$patch(`user/?userId=${data.userId}`, deleteData)
-        .catch((err) => console.log(err))
-        .then((response) => response.doesUpdate);
+        .catch(err => console.log(err))
+        .then(response => response.doesUpdate);
     },
 
     async editUser(data) {
@@ -37,8 +45,8 @@ export default {
       console.log(editData);
       const result = this.$axios
         .$patch(`user/?userId=${data.userId}`, editData)
-        .catch((err) => console.log(err))
-        .then((response) => response.doesUpdate);
+        .catch(err => console.log(err))
+        .then(response => response.doesUpdate);
       console.log(result);
       return result;
     },
@@ -60,10 +68,10 @@ export default {
       InsertData.userUpdateBy = data.userUpdateBy;
       return this.$axios
         .$post("user", InsertData)
-        .catch((error) => {
+        .catch(error => {
           console.error(error);
         })
-        .then((response) => response.doesCreate);
+        .then(response => response.doesCreate);
     },
     async insertFile(data) {
       console.log(data);
@@ -72,11 +80,11 @@ export default {
 
       return this.$axios
         .$post("user/upload", InsertFile)
-        .catch((error) => {
+        .catch(error => {
           console.error(error);
         })
-        .then((response) => response.doesCreate);
-    },
-  },
+        .then(response => response.doesCreate);
+    }
+  }
 };
 </script>

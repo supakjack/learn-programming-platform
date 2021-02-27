@@ -1,6 +1,5 @@
 const createError = require('http-errors')
 const globalModel = require('../models/global.model')
-const courseModel = require('../models/course.model')
 
 const {
   getCourseSchema,

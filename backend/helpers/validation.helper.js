@@ -180,7 +180,7 @@ const creteCompileLogSchema = joi.object({
 // create problem schema
 const createProblemSchema = joi.object({
   problemTitle: joi.string().max(255).required(),
-  // problemPath: joi.string().max(255).required(),
+  problemStatus: joi.number().max(99999999).min(1).required(),
   problemDiscription: joi.string().max(255).required(),
   problemCreateBy: joi.number().max(99999999).min(1).required(),
   problemUpdateBy: joi.number().max(99999999).min(1).required(),
@@ -220,9 +220,10 @@ const updateProblemConditionSchema = joi.object({
 
 const updateProblemSchema = joi.object({
   problemTitle: joi.string().max(255),
+  problemDiscription: joi.string().max(255),
+  problemStatus: joi.number().integer().max(3),
   problemUpdateBy: joi.number().max(99999999).min(1),
   problemUpdateDate: joi.date().raw(),
-  problemStatus: joi.number().integer().max(3),
 });
 
 // get Course schema
