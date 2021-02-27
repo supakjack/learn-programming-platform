@@ -110,6 +110,7 @@ const getProblemSchema = joi.object({
 
 // get assignment schema
 const getAssignmentSchema = joi.object({
+  assignmentSectionId: joi.number().max(99999999).min(1),
   assignmentId: joi.number().max(99999999).min(1),
   assignmentCreateBy: joi.number().integer().max(99999999).min(1),
   assignmentStatus: joi.number().integer().max(3),
