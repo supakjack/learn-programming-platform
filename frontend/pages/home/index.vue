@@ -8,10 +8,10 @@
           max-width="600"
           height="150"
           width="350"
-          @click="clickCourse(item)"
         >
           <v-divider color="blue"></v-divider>
-          <v-list-item three-line>
+          <v-list-item three-line
+           @click="clickCourse(item)">
             <v-list-item-content>
               <v-list-item-title class="mb-1 kanit-font">
                 {{ item.courseCode }} {{ item.courseName }}
