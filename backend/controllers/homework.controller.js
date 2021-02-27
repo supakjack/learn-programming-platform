@@ -8,15 +8,14 @@ const {
 
 module.exports = {
   // function name: get
-  // description: get problems data from condition by id
-  // input : query string : condition {problemId}
+  // description: get assignments data from condition by id
+  // input : query string : condition {assignmentId}
   // output :
-  // CreateBy: Yotsapat Phurahong / CreateDate:
-  // UpdateBy: Yotsapat Phurahong / UpdateDate:
+  // CreateBy: Yotsapat Phurahong
   get: async (req, res, next) => {
     // passing data from query string validate data from
 
-    // try call function getTagById in tags model then catch if error
+    // try call function getAssignmentsById in tags model then catch if error
     try {
       const doesGetAll = await globalModel.select({
         name: "assignments",
@@ -62,16 +61,14 @@ module.exports = {
   // description: get problems data from condition by id
   // input : query string : condition {problemId}
   // output :
-  // CreateBy: Yotsapat Phurahong / CreateDate:
-  // UpdateBy: Yotsapat Phurahong / UpdateDate:
+  // CreateBy: Yotsapat Phurahong
   getProblem: async (req, res, next) => {
     // passing data from query string validate data from
     // console.log("params : " + req.params.assignmentId);
     const getCondition = await getTaskAssignmentSchema.validateAsync(
       req.params
     );
-    console.log("asdasdasd" + getCondition);
-    // try call function getTagById in tags model then catch if error
+    // try call function getTaskById in tags model then catch if error
     try {
       const doesGetProblem = await globalModel.select({
         name: "tasks",
@@ -82,7 +79,7 @@ module.exports = {
           "taskLimit",
           "problemId",
           "problemTitle",
-          "problemDiscription",
+          "problemDescription",
           "tagName",
           "compilelogScore",
           "compilelogSubmitNo",

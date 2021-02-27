@@ -1,5 +1,6 @@
 module.exports = {
   state: () => ({
+    id: "",
     title: "",
     status: "",
     score: "",
@@ -9,6 +10,7 @@ module.exports = {
   }),
   mutations: {
     setProblem(state, { problem }) {
+      state.id = problem.id ? problem.id : state.id;
       state.title = problem.title ? problem.title : state.title;
       state.status = problem.status ? problem.status : state.status;
       state.score = problem.score ? problem.score : state.score;

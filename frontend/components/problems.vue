@@ -14,6 +14,27 @@ export default {
         .catch(err => console.log(err))
         .then(response => response.doesUpdate);
     },
+    async editHashtag(data) {
+      const editData = {};
+      editData.problemId = data;
+      const result = this.$axios
+        .$post("problem/edit/hashtag", editData)
+        .catch(err => console.log(err))
+        .then(response => response.doesGetAll);
+      console.log(result);
+      return result;
+    },
+
+    async editTestset(data) {
+      const editData = {};
+      editData.problemId = data;
+      const result = this.$axios
+        .$post("problem/edit/testset", editData)
+        .catch(err => console.log(err))
+        .then(response => response.doesGetAll);
+      console.log(result);
+      return result;
+    },
 
     async editProblem(data) {
       const editData = {};
@@ -30,10 +51,15 @@ export default {
         .$patch(`problem/?problemId=${data.problemId}`, editData)
         .catch(err => console.log(err))
         .then(response => response.doesUpdate);
-      console.log(result);
-      // result.then(function(result) {
-      //   console.log(result); // "Some User token"
-      // });
+      return result;
+    },
+    async updateProblem(data) {
+      console.log(data);
+
+      const result = this.$axios
+        .$patch(`problem/updateProblem/?problemId=${data.problemId}`, data)
+        .catch(err => console.log(err))
+        .then(response => response.doesUpdate);
       return result;
     },
 

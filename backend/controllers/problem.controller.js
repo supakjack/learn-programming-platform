@@ -113,8 +113,71 @@ module.exports = {
     try {
       const doesGetAll = await globalModel.select({
         name: "problems",
+        groupBy: [{ name: "problemId" }],
         condition: [getProblemData],
         whereNot: [{ problemStatus: "delete" }],
+        leftJoin: [
+          {
+            joinTable: "pictures",
+            leftTableName: "problems",
+            leftKey: "problemId",
+            joinKey: "pictureProblemId",
+          },
+          {
+            joinTable: "files",
+            leftTableName: "pictures",
+            leftKey: "pictureFileId",
+            joinKey: "fileId",
+          },
+        ],
+      });
+      res.status(201).send({ doesGetAll });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
+  editHashtag: async (req, res, next) => {
+    // passing data from query string validate data from
+    const getProblemData = await getProblemSchema.validateAsync(req.body);
+    // try call function getTagById in tags model then catch if error
+    try {
+      const doesGetAll = await globalModel.select({
+        name: "problems",
+        condition: [getProblemData],
+        whereNot: [{ hashtagStatus: "delete" }],
+        leftJoin: [
+          {
+            joinTable: "hashtags",
+            leftTableName: "problems",
+            leftKey: "problemId",
+            joinKey: "hashtagProblemId",
+          },
+        ],
+      });
+      res.status(201).send({ doesGetAll });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
+  editTestset: async (req, res, next) => {
+    // passing data from query string validate data from
+    const getProblemData = await getProblemSchema.validateAsync(req.body);
+    // try call function getTagById in tags model then catch if error
+    try {
+      const doesGetAll = await globalModel.select({
+        name: "problems",
+        condition: [getProblemData],
+        whereNot: [{ testsetStatus: "delete" }],
+        leftJoin: [
+          {
+            joinTable: "testsets",
+            leftTableName: "problems",
+            leftKey: "problemId",
+            joinKey: "testsetProblemId",
+          },
+        ],
       });
       res.status(201).send({ doesGetAll });
     } catch (error) {
@@ -135,6 +198,74 @@ module.exports = {
         condition: [updateCondition],
         updateData: [updateProblemData],
       });
+      res.status(200).send({ doesUpdate });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
+  updateAnother: async (req, res, next) => {
+    const updateCondition = await updateProblemConditionSchema.validateAsync(
+      req.query
+    );
+    const updateProblemData = await updateProblemSchema.validateAsync(req.body);
+    // try call function deleteProblem in global model then catch if error
+    try {
+      const doesUpdate = await globalModel.update({
+        name: "problems",
+        condition: [updateCondition],
+        updateData: [updateProblemData],
+      });
+      res.status(200).send({ doesUpdate });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
+  updateProblem: async (req, res, next) => {
+    const updateCondition = await updateProblemConditionSchema.validateAsync(
+      req.query
+    );
+    const updateProblemData = await updateProblemSchema.validateAsync(
+      req.body.updateProblemData
+    );
+
+    console.log(req.query);
+    console.log(req.body);
+    // try call function deleteProblem in global model then catch if error
+    try {
+      const doesUpdate = await globalModel.update({
+        name: "problems",
+        condition: [updateCondition],
+        updateData: [updateProblemData],
+      });
+
+      const doesCreateHashtag = await globalModel.insert({
+        name: "hashtags",
+        insertData: [...req.body.updateHashtagData],
+      });
+
+      const doesCreateTestset = await globalModel.insert({
+        name: "testsets",
+        insertData: [...req.body.updateTestsetData],
+      });
+
+      const fileId = await problemsModel.insertReturnId({
+        name: "files",
+        insertData: [req.body.updateFilesData],
+      });
+
+      req.body.updatePicturesData.pictureFileId = fileId;
+      const createPicturesData = await createPicturesScheme.validateAsync(
+        req.body.updatePicturesData
+      );
+
+      //insert picture
+      const doesCreatePicture = await problemsModel.insertReturnId({
+        name: "pictures",
+        insertData: [createPicturesData],
+      });
+
       res.status(200).send({ doesUpdate });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());

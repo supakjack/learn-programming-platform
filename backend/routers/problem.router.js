@@ -1,17 +1,26 @@
-const express = require('express')
-const router = express.Router()
-const problemController = require('../controllers/problem.controller')
+const express = require("express");
+const router = express.Router();
+const problemController = require("../controllers/problem.controller");
 
 // compile by source and path
-router.post('/assess', problemController.assess)
+router.post("/assess", problemController.assess);
 
 // Get problem by condition
 router.get("/", problemController.get);
 
-// update a problem by condition
+// Get problem by condition
+router.post("/edit/hashtag", problemController.editHashtag);
+
+// Get problem by condition
+router.post("/edit/testset", problemController.editTestset);
+
+// delete a problem by condition
 router.patch("/", problemController.update);
+
+// update a problem by condition
+router.patch("/updateProblem", problemController.updateProblem);
 
 // insert problem
 router.post("/", problemController.create);
 
-module.exports = router
+module.exports = router;
