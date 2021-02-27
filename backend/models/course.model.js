@@ -19,7 +19,6 @@ module.exports = {
             resolve(id)
           })
 
-        // console.log(id);
       } catch (error) {
         console.log(error.message)
         reject(createError.InternalServerError())

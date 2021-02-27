@@ -2,12 +2,14 @@ const createError = require('http-errors')
 const jwt = require('jsonwebtoken')
 const passport = require('passport')
 const isNumber = require('is-number')
-const ad = require('../configs/ldap.config')
+// const ad = require('../configs/ldap.config')
+const ladp = require('./../helpers/ldap.helper')
 const globalModel = require('./../models/global.model')
 
 module.exports = {
   login: async (req, res, next) => {
     // console.log(req.body);
+    const ad = await ladp.config(req.body.username, req.body.password)
     try {
       passport.authenticate(
         'local',
@@ -82,6 +84,7 @@ module.exports = {
     }
   },
   findUser: async (req, res, next) => {
+    const ad = await ladp.config(req.body.username, req.body.password)
     console.log(req.params)
     try {
       if (req.params) {
