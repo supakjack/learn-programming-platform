@@ -152,6 +152,11 @@ const getTestsetSchema = joi.object({
   testsetProblemId: joi.number().max(99999999).min(1),
 });
 
+// get assignment schema
+const getCompilelogSchema = joi.object({
+  compilelogTaskId: joi.number().max(99999999).min(1),
+});
+
 // create compile log schema
 const createFiles = joi.object({
   filePath: joi.string().max(255).required(),
@@ -225,6 +230,17 @@ const getCourseSchema = joi.object({
   userId: joi.number().max(99999999).min(1),
 });
 
+// insertCourse
+const insertCourseSchema = joi.object({
+  courseCode: joi.string().max(255),
+  courseName: joi.string().max(255),
+  courseYearId: joi.number().max(99999999).min(1),
+  courseCreateBy: joi.number().max(99999999).min(1),
+  courseUpdateBy: joi.number().max(99999999).min(1),
+  sectionCourseId: joi.number().max(99999999).min(1),
+  courseStatus: joi.number().integer().max(3),
+});
+
 module.exports = {
   authSchema,
   userSchema,
@@ -254,4 +270,6 @@ module.exports = {
   updateAssignmentConditionSchema,
   updateAssignmentSchema,
   getCourseSchema,
+  getCompilelogSchema,
+  insertCourseSchema,
 };

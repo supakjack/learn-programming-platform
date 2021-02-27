@@ -9,6 +9,14 @@ export default {
     // UpdateBy:
     async getTestset(data) {
       return this.$axios.$get("testset", data);
+    },
+    async getCompilelog(data) {
+      const testset = {
+        compilelogTaskId: data
+      };
+      console.log(testset);
+      const result = this.$axios.$get("testset/compilelog", testset);
+      return result;
     }
   }
 };
