@@ -18,7 +18,7 @@ module.exports = {
         ? problem.description
         : state.description;
       state.tags = problem.tags ? problem.tags : state.tags;
-      state.testset = problem.testset;
+      state.testset = problem.testset ? problem.testset : state.testset;
     }
   }
 };
