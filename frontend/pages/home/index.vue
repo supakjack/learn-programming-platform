@@ -67,24 +67,49 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field label="ปีการศึกษา*" required></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field label="ภาคเรียน*" required></v-text-field>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-select
+                      v-model="modalCourseYearId"
+                      :items="yearByCreate"
+                      item-text="text"
+                      item-value="yearId"
+                      label="ปีการศึกษา*"
+                      required
+                    ></v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="12">
-                    <v-text-field label="รหัสวิชา*" required></v-text-field>
+                    <v-text-field
+                      v-model="modalCourseCode"
+                      label="รหัสวิชา*"
+                      required
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="12">
-                    <v-text-field label="ชื่อรายวิชา*" required></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field label="กลุ่มเรียน*" required></v-text-field>
+                    <v-text-field
+                      v-model="modalCourseName"
+                      label="ชื่อรายวิชา*"
+                      required
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="6">
                     <v-select
-                      :items="['ใช้งาน', 'ปิดใช้งาน']"
+                      v-model="modalCourseSectionId"
+                      :items="sectionByCreate"
+                      item-text="text"
+                      item-value="sectionId"
+                      label="กลุ่มเรียน*"
+                      required
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <v-select
+                      v-model="modalCourseStatus"
+                      :items="[
+                        { text: 'ใช้งาน', val: 1 },
+                        { text: 'ปิดใช้งาน', val: 2 }
+                      ]"
+                      item-text="text"
+                      item-value="val"
                       label="สถานะ*"
                       required
                     ></v-select>
@@ -98,7 +123,7 @@
               <v-btn color="blue darken-1" text @click="sectionDialog = false">
                 ยกเลิก
               </v-btn>
-              <v-btn color="blue darken-1" text @click="sectionDialog = false">
+              <v-btn color="blue darken-1" text @click="openInsertCourse">
                 บันทึก
               </v-btn>
             </v-card-actions>
@@ -109,22 +134,40 @@
   </div>
 </template>
 <script>
-import homemixin from "@/components/home";
+import coursemixin from "@/components/course";
 export default {
-  mixins: [homemixin],
+  mixins: [coursemixin],
   // middleware: "auth",
   mounted() {
     // console.log(this.$store.state.user);
   },
   methods: {
     async initialize() {
-      const { doesGetSome } = await this.getHome(this.$store.state.user.id);
-      doesGetSome.map((doesGetSome) => {
+      const {
+        doesGetSome,
+        doesGetYearByCreate,
+        doesGetSectionByCreate
+      } = await this.getHome(this.$store.state.user.id);
+      console.log(doesGetSome, doesGetYearByCreate, doesGetSectionByCreate);
+      await doesGetSome.map(doesGetSome => {
         doesGetSome.courseUpdateDate = this.$moment(
           doesGetSome.courseUpdateDate
         ).format("Do MMM YY เวลา LT");
       });
-      this.allCourses = await doesGetSome;
+      await doesGetYearByCreate.map(doesGetYearByCreate => {
+        doesGetYearByCreate.text =
+          "ปีการศึกษา " +
+          doesGetYearByCreate.yearName +
+          " ภาคเรียนที่ " +
+          doesGetYearByCreate.yearSemester;
+      });
+      await doesGetSectionByCreate.map(doesGetSectionByCreate => {
+        doesGetSectionByCreate.text =
+          "กลุ่มเรียนที่ " + doesGetSectionByCreate.sectionNumber;
+      });
+      this.allCourses = doesGetSome;
+      this.yearByCreate = doesGetYearByCreate;
+      this.sectionByCreate = doesGetSectionByCreate;
       // this.$store.commit("course/setCourse", {
       //   course: {
       //     courses: this.allCourses
@@ -134,10 +177,29 @@ export default {
 
     async clickCourse(item) {
       this.$store.commit("course/setCourse", {
-        course: item,
+        course: item
       });
       this.$router.push("/assignment");
     },
+
+    async openInsertCourse() {
+      const inserData = {
+        courseCode: this.modalCourseCode,
+        courseName: this.modalCourseName,
+        courseYearId: this.modalCourseYearId,
+        courseCreateBy: this.$store.state.user.id,
+        courseUpdateBy: this.$store.state.user.id,
+        sectionCourseId: this.modalCourseSectionId,
+        courseStatus: this.modalCourseStatus
+      };
+      this.insertCourse(inserData);
+      this.modalCourseCode = "";
+      this.modalCourseName = "";
+      this.modalCourseYearId = "";
+      this.modalCourseStatus = "";
+      this.modalCourseSectionId = "";
+      this.sectionDialog = false;
+    }
   },
   async created() {
     this.initialize();
@@ -145,7 +207,14 @@ export default {
   data: () => ({
     sectionDialog: false,
     allCourses: [],
-  }),
+    yearByCreate: [],
+    sectionByCreate: [],
+    modalCourseCode: "",
+    modalCourseName: "",
+    modalCourseYearId: "",
+    modalCourseSectionId: "",
+    modalCourseStatus: ""
+  })
 };
 </script>
 
