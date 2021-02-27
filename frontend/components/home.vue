@@ -9,7 +9,7 @@ export default {
     // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 24/2/2021
     async getHome(data) {
       return this.$axios.$get(`course/?userId=${data}`);
-    },
+    }, 
 
     // function name: deleteTag
     // description: for geting data from backend using api

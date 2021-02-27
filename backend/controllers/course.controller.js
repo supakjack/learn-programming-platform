@@ -1,94 +1,86 @@
-const createError = require("http-errors");
-const globalModel = require("../models/global.model");
+const createError = require('http-errors')
+const globalModel = require('../models/global.model')
+const courseModel = require('../models/course.model')
 
 const {
   getCourseSchema,
-} = require("./../helpers/validation.helper");
+  insertCourseSchema
+} = require('./../helpers/validation.helper')
 
 module.exports = {
   get: async (req, res, next) => {
-    const getCondition = await getCourseSchema.validateAsync(req.query);
-    console.log(getCondition);
+    const getCondition = await getCourseSchema.validateAsync(req.query)
+    console.log(getCondition)
     try {
       const doesGetSome = await globalModel.select({
-        name: "users",
+        name: 'users',
         condition: [getCondition],
         filter: [
-          "userId",
-          "userUsername",
-          "courseId",
-          "courseName",
-          "courseCode",
-          "courseUpdateDate",
-          "sectionId",
-          "sectionNumber",
-          "yearId",
-          "yearName",
-          "yearSemester",
+          'userId',
+          'userUsername',
+          'enrollId',
+          'courseId',
+          'courseName',
+          'courseCode',
+          'courseUpdateDate',
+          'sectionId',
+          'sectionNumber',
+          'yearId',
+          'yearName',
+          'yearSemester'
         ],
         leftJoin: [
           {
-            joinTable: "enrolls",
-            leftTableName: "users",
-            leftKey: "userId",
-            joinKey: "enrollUserId",
+            joinTable: 'enrolls',
+            leftTableName: 'users',
+            leftKey: 'userId',
+            joinKey: 'enrollUserId'
           },
           {
-            joinTable: "sections",
-            leftTableName: "enrolls",
-            leftKey: "enrollSectionId",
-            joinKey: "sectionId",
+            joinTable: 'sections',
+            leftTableName: 'enrolls',
+            leftKey: 'enrollSectionId',
+            joinKey: 'sectionId'
           },
           {
-            joinTable: "courses",
-            leftTableName: "sections",
-            leftKey: "sectionCourseId",
-            joinKey: "courseId",
+            joinTable: 'courses',
+            leftTableName: 'sections',
+            leftKey: 'sectionCourseId',
+            joinKey: 'courseId'
           },
           {
-            joinTable: "years",
-            leftTableName: "courses",
-            leftKey: "courseYearId",
-            joinKey: "yearId",
-          },
-        ],
-      });
-      res.status(201).send({ doesGetSome });
+            joinTable: 'years',
+            leftTableName: 'courses',
+            leftKey: 'courseYearId',
+            joinKey: 'yearId'
+          }
+        ]
+      })
+      const doesGetYearByCreate = await globalModel.select({
+        name: 'years',
+        condition: [{ yearCreateBy: getCondition.userId }]
+      })
+      const doesGetSectionByCreate = await globalModel.select({
+        name: 'sections',
+        condition: [{ sectionCreateBy: getCondition.userId }]
+      })
+      res
+        .status(200)
+        .send({ doesGetSome, doesGetYearByCreate, doesGetSectionByCreate })
     } catch (error) {
-      if (error.isJoi === true) return next(createError.InternalServerError());
-      next(error);
+      if (error.isJoi === true) return next(createError.InternalServerError())
+      next(error)
     }
   },
   create: async (req, res, next) => {
-    const createTagData = await createTagSchema.validateAsync(req.body);
-
+    const insertCourseData = await insertCourseSchema.validateAsync(req.body)
     try {
-      const doesCreate = await globalModel.insert({
-        name: "tags",
-        insertData: [createTagData],
-      });
-      res.status(201).send({ doesCreate });
+      console.log(insertCourseData)
+      const doesCreate = insertCourseData
+      res.status(201).send({ doesCreate })
     } catch (error) {
-      if (error.isJoi === true) return next(createError.InternalServerError());
-      next(error);
+      if (error.isJoi === true) return next(createError.InternalServerError())
+      next(error)
     }
-  },
-
-  update: async (req, res, next) => {
-    const updateCondition = await updateTagConditionSchema.validateAsync(
-      req.query
-    );
-    const updateTagData = await updateTagSchema.validateAsync(req.body);
-    try {
-      const doesUpdate = await globalModel.update({
-        name: "tags",
-        condition: [updateCondition],
-        updateData: [updateTagData],
-      });
-      res.status(200).send({ doesUpdate });
-    } catch (error) {
-      if (error.isJoi === true) return next(createError.InternalServerError());
-      next(error);
-    }
-  },
-};
+  }
+}

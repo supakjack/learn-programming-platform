@@ -15,7 +15,6 @@ const courseRoute = require("./routers/course.router");
 const tagRoute = require("./routers/tag.router");
 const ideRoute = require("./routers/ide.router");
 const problemRoute = require("./routers/problem.router");
-const homeRoute = require("./routers/home.router");
 const homeworkRoute = require("./routers/homework.router");
 const authRoute = require("./routers/auth.router");
 
@@ -42,7 +41,6 @@ app.use("/tag", tagRoute);
 app.use("/ide", ideRoute);
 app.use("/problem", problemRoute);
 app.use("/homework", homeworkRoute);
-app.use("/home", homeRoute);
 
 app.use(async (req, res, next) => {
   next(createError.NotFound());

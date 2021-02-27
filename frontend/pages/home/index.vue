@@ -3,32 +3,39 @@
     <v-card class="d-flex mb-4 flex flex-wrap" flat tile>
       <div v-for="(item, i) in allCourses" :key="i" class="ml-2 mb-5 p-2">
         <!-- <router-link to="/assignment"> -->
-          <v-card class="mx-auto" max-width="600" height="150" width="350" @click="clickCourse(item)">
-            <v-divider color="blue"></v-divider>
-            <v-list-item three-line>
-              <v-list-item-content>
-                <v-list-item-title class="mb-1 kanit-font">
-                  {{ item.courseCode }} {{ item.courseName }}
-                </v-list-item-title>
-                <v-list-item-subtitle class="kanit-font"
-                  >ภาคเรียน {{ item.yearId }}/{{
-                    item.yearName
-                  }}</v-list-item-subtitle
-                >
-                <v-list-item-subtitle class="text-right kanit-font">
-                  กลุ่ม {{ item.sectionNumber }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-divider></v-divider>
-            <v-card-actions>
+        <v-card
+          class="mx-auto"
+          max-width="600"
+          height="150"
+          width="350"
+          @click="clickCourse(item)"
+        >
+          <v-divider color="blue"></v-divider>
+          <v-list-item three-line>
+            <v-list-item-content>
+              <v-list-item-title class="mb-1 kanit-font">
+                {{ item.courseCode }} {{ item.courseName }}
+              </v-list-item-title>
+              <v-list-item-subtitle class="kanit-font"
+                >ภาคเรียน {{ item.yearId }}/{{
+                  item.yearName
+                }}</v-list-item-subtitle
+              >
+              <v-list-item-subtitle class="text-right kanit-font">
+                กลุ่ม {{ item.sectionNumber }}
+              </v-list-item-subtitle>
               <v-list-item-subtitle class="text-right kanit-font"
                 >อัพเดทล่าสุดวันที่
                 {{ item.courseUpdateDate }}</v-list-item-subtitle
               >
-            </v-card-actions>
-          </v-card>
-        <!-- </router-link> -->
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-card-actions class="kanit-font">
+            <v-btn color="warning" text>แก้ไข</v-btn>
+            <v-btn color="error" text>ลบ</v-btn>
+          </v-card-actions>
+        </v-card>
       </div>
 
       <v-row>
@@ -60,24 +67,49 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field label="ปีการศึกษา*" required></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field label="ภาคเรียน*" required></v-text-field>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-select
+                      v-model="modalCourseYearId"
+                      :items="yearByCreate"
+                      item-text="text"
+                      item-value="yearId"
+                      label="ปีการศึกษา*"
+                      required
+                    ></v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="12">
-                    <v-text-field label="รหัสวิชา*" required></v-text-field>
+                    <v-text-field
+                      v-model="modalCourseCode"
+                      label="รหัสวิชา*"
+                      required
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="12">
-                    <v-text-field label="ชื่อรายวิชา*" required></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field label="กลุ่มเรียน*" required></v-text-field>
+                    <v-text-field
+                      v-model="modalCourseName"
+                      label="ชื่อรายวิชา*"
+                      required
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="6">
                     <v-select
-                      :items="['ใช้งาน', 'ปิดใช้งาน']"
+                      v-model="modalCourseSectionId"
+                      :items="sectionByCreate"
+                      item-text="text"
+                      item-value="sectionId"
+                      label="กลุ่มเรียน*"
+                      required
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <v-select
+                      v-model="modalCourseStatus"
+                      :items="[
+                        { text: 'ใช้งาน', val: 1 },
+                        { text: 'ปิดใช้งาน', val: 2 }
+                      ]"
+                      item-text="text"
+                      item-value="val"
                       label="สถานะ*"
                       required
                     ></v-select>
@@ -91,7 +123,7 @@
               <v-btn color="blue darken-1" text @click="sectionDialog = false">
                 ยกเลิก
               </v-btn>
-              <v-btn color="blue darken-1" text @click="sectionDialog = false">
+              <v-btn color="blue darken-1" text @click="openInsertCourse">
                 บันทึก
               </v-btn>
             </v-card-actions>
@@ -102,22 +134,40 @@
   </div>
 </template>
 <script>
-import homemixin from "@/components/home";
+import coursemixin from "@/components/course";
 export default {
-  mixins: [homemixin],
+  mixins: [coursemixin],
   // middleware: "auth",
   mounted() {
     // console.log(this.$store.state.user);
   },
   methods: {
     async initialize() {
-      const { doesGetSome } = await this.getHome(this.$store.state.user.id);
-      doesGetSome.map(doesGetSome => {
+      const {
+        doesGetSome,
+        doesGetYearByCreate,
+        doesGetSectionByCreate
+      } = await this.getHome(this.$store.state.user.id);
+      console.log(doesGetSome, doesGetYearByCreate, doesGetSectionByCreate);
+      await doesGetSome.map(doesGetSome => {
         doesGetSome.courseUpdateDate = this.$moment(
           doesGetSome.courseUpdateDate
         ).format("Do MMM YY เวลา LT");
       });
-      this.allCourses = await doesGetSome;
+      await doesGetYearByCreate.map(doesGetYearByCreate => {
+        doesGetYearByCreate.text =
+          "ปีการศึกษา " +
+          doesGetYearByCreate.yearName +
+          " ภาคเรียนที่ " +
+          doesGetYearByCreate.yearSemester;
+      });
+      await doesGetSectionByCreate.map(doesGetSectionByCreate => {
+        doesGetSectionByCreate.text =
+          "กลุ่มเรียนที่ " + doesGetSectionByCreate.sectionNumber;
+      });
+      this.allCourses = doesGetSome;
+      this.yearByCreate = doesGetYearByCreate;
+      this.sectionByCreate = doesGetSectionByCreate;
       // this.$store.commit("course/setCourse", {
       //   course: {
       //     courses: this.allCourses
@@ -130,6 +180,25 @@ export default {
         course: item
       });
       this.$router.push("/assignment");
+    },
+
+    async openInsertCourse() {
+      const inserData = {
+        courseCode: this.modalCourseCode,
+        courseName: this.modalCourseName,
+        courseYearId: this.modalCourseYearId,
+        courseCreateBy: this.$store.state.user.id,
+        courseUpdateBy: this.$store.state.user.id,
+        sectionCourseId: this.modalCourseSectionId,
+        courseStatus: this.modalCourseStatus
+      };
+      this.insertCourse(inserData);
+      this.modalCourseCode = "";
+      this.modalCourseName = "";
+      this.modalCourseYearId = "";
+      this.modalCourseStatus = "";
+      this.modalCourseSectionId = "";
+      this.sectionDialog = false;
     }
   },
   async created() {
@@ -137,7 +206,14 @@ export default {
   },
   data: () => ({
     sectionDialog: false,
-    allCourses: []
+    allCourses: [],
+    yearByCreate: [],
+    sectionByCreate: [],
+    modalCourseCode: "",
+    modalCourseName: "",
+    modalCourseYearId: "",
+    modalCourseSectionId: "",
+    modalCourseStatus: ""
   })
 };
 </script>
