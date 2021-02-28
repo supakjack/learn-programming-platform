@@ -95,7 +95,7 @@ export default {
               id: response.data.userId
             }
           });
-          if (this.$store.state.permission.indexOf("teacher")) {
+          if (response.data.permission.indexOf("teacher") != -1) {
             console.log(response.data);
             this.$router.push("/home");
           } else {
