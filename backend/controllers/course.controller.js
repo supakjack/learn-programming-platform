@@ -62,5 +62,23 @@ module.exports = {
       if (error.isJoi === true) return next(createError.InternalServerError())
       next(error)
     }
+  },
+  update: async (req, res, next) => {
+    const updateCondition = await updateTagConditionSchema.validateAsync(
+      req.query
+    )
+    const updateTagData = await updateTagSchema.validateAsync(req.body)
+    // try call function deleteTag in global model then catch if error
+    try {
+      const doesUpdate = await globalModel.update({
+        name: 'tags',
+        condition: [updateCondition],
+        updateData: [updateTagData]
+      })
+      res.status(200).send({ doesUpdate })
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError())
+      next(error)
+    }
   }
 }

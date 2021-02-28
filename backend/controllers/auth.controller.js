@@ -2,14 +2,14 @@ const createError = require('http-errors')
 const jwt = require('jsonwebtoken')
 const passport = require('passport')
 const isNumber = require('is-number')
-// const ad = require('../configs/ldap.config')
 const ladp = require('./../helpers/ldap.helper')
 const globalModel = require('./../models/global.model')
+const passportHelper = require('./../helpers/passport.helper')
 
 module.exports = {
   login: async (req, res, next) => {
-    // console.log(req.body);
     const ad = await ladp.config(req.body.username, req.body.password)
+    passportHelper.config(passport, ad)
     try {
       passport.authenticate(
         'local',
@@ -51,11 +51,11 @@ module.exports = {
                   })
                   if (isNumber(userUsername)) {
                     const permission = ['student']
-                    const token = jwt.sign(user, 'your_jwt_secret')
+                    const token = jwt.sign(user, process.env.JWT_SECRET)
                     return res.json({ user, token, permission, userId })
                   } else {
                     const permission = ['student', 'teacher']
-                    const token = jwt.sign(user, 'your_jwt_secret')
+                    const token = jwt.sign(user, process.env.JWT_SECRET)
                     return res.json({ user, token, permission, userId })
                   }
                 }
@@ -64,11 +64,11 @@ module.exports = {
               const userId = doesSelect[0].userId
               if (isNumber(user.username)) {
                 const permission = ['student']
-                const token = jwt.sign(user, 'your_jwt_secret')
+                const token = jwt.sign(user, process.env.JWT_SECRET)
                 return res.json({ user, token, permission, userId })
               } else {
                 const permission = ['student', 'teacher']
-                const token = jwt.sign(user, 'your_jwt_secret')
+                const token = jwt.sign(user, process.env.JWT_SECRET)
                 return res.json({ user, token, permission, userId })
               }
             }
@@ -85,6 +85,7 @@ module.exports = {
   },
   findUser: async (req, res, next) => {
     const ad = await ladp.config(req.query.username, req.query.password)
+    passportHelper.config(passport, ad)
     console.log(req.params)
     try {
       if (req.params) {
