@@ -3,7 +3,8 @@ const globalModel = require('../models/global.model')
 
 const {
   getCourseSchema,
-  insertCourseSchema
+  insertCourseSchema,
+  updateCourseSchema
 } = require('./../helpers/validation.helper')
 
 module.exports = {
@@ -64,16 +65,13 @@ module.exports = {
     }
   },
   update: async (req, res, next) => {
-    const updateCondition = await updateTagConditionSchema.validateAsync(
-      req.query
-    )
-    const updateTagData = await updateTagSchema.validateAsync(req.body)
-    // try call function deleteTag in global model then catch if error
+    const updateCourseData = await updateCourseSchema.validateAsync(req.body)
+    const { courseId } = updateCourseData
     try {
       const doesUpdate = await globalModel.update({
-        name: 'tags',
-        condition: [updateCondition],
-        updateData: [updateTagData]
+        name: 'courses',
+        condition: [{ courseId }],
+        updateData: [updateCourseData]
       })
       res.status(200).send({ doesUpdate })
     } catch (error) {

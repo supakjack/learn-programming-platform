@@ -20,7 +20,6 @@ export default {
         .then(response => response.doesCreate);
     },
     async updateCourse(data) {
-      console.log(data);
       return this.$axios
         .$put("course", data)
         .catch(error => {

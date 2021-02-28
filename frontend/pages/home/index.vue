@@ -210,6 +210,7 @@ export default {
     },
 
     async clickOpenEditCourse(course) {
+      this.modalCourseId = course.courseId;
       this.modalCourseCode = course.courseCode;
       this.modalCourseName = course.courseName;
       this.modalCourseYearId = course.yearId;
@@ -236,6 +237,7 @@ export default {
     },
     async clickUpdateCourse() {
       const updateData = {
+        courseId: this.modalCourseId,
         courseCode: this.modalCourseCode,
         courseName: this.modalCourseName,
         courseYearId: this.modalCourseYearId,
@@ -243,7 +245,8 @@ export default {
         courseUpdateBy: this.$store.state.user.id,
         courseStatus: this.modalCourseStatus
       };
-      this.updateCourse(updateData);
+      await this.updateCourse(updateData);
+      this.modalCourseId = "";
       this.modalCourseCode = "";
       this.modalCourseName = "";
       this.modalCourseYearId = "";
@@ -260,6 +263,7 @@ export default {
     updateCourseDialog: false,
     allCourses: [],
     yearByCreate: [],
+    modalCourseId: "",
     modalCourseCode: "",
     modalCourseName: "",
     modalCourseYearId: "",
