@@ -4,12 +4,21 @@ import problem from "./problem/index";
 import course from "./course/index";
 
 export const state = () => ({
-  counter: 0
+  counter: 0,
+  crumbs: [
+    {
+      title: "",
+      url: ""
+    }
+  ]
 });
 
 export const mutations = {
   setCounter(state, counter) {
     state.counter = counter;
+  },
+  setCrumbs(state, crumbs) {
+    state.crumbs = crumbs;
   }
 };
 

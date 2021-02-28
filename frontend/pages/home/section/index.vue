@@ -64,7 +64,15 @@ export default {
   },
   data: () => ({
     allCourses: []
-  })
+  }),
+  mounted() {
+    this.$store.commit("setCrumbs", [
+      {
+        title: "home/section",
+        url: "home/section"
+      }
+    ]);
+  }
 };
 </script>
 
