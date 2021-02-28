@@ -21,9 +21,6 @@
                   item.yearName
                 }}</v-list-item-subtitle
               >
-              <v-list-item-subtitle class="text-right kanit-font">
-                กลุ่ม {{ item.sectionNumber }}
-              </v-list-item-subtitle>
               <v-list-item-subtitle class="text-right kanit-font"
                 >อัพเดทล่าสุดวันที่
                 {{ item.courseUpdateDate }}</v-list-item-subtitle
@@ -67,7 +64,7 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="12" md="12">
+                  <v-col cols="12" sm="12" md="8">
                     <v-select
                       v-model="modalCourseYearId"
                       :items="yearByCreate"
@@ -77,31 +74,21 @@
                       required
                     ></v-select>
                   </v-col>
-                  <v-col cols="12" sm="6" md="12">
+                  <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="modalCourseCode"
                       label="รหัสวิชา*"
                       required
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="12">
+                  <v-col cols="12" sm="6" md="8">
                     <v-text-field
                       v-model="modalCourseName"
                       label="ชื่อรายวิชา*"
                       required
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-select
-                      v-model="modalCourseSectionId"
-                      :items="sectionByCreate"
-                      item-text="text"
-                      item-value="sectionId"
-                      label="กลุ่มเรียน*"
-                      required
-                    ></v-select>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6">
+                  <v-col cols="12" sm="6" md="4">
                     <v-select
                       v-model="modalCourseStatus"
                       :items="[
