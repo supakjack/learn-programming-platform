@@ -40,6 +40,21 @@ export default {
   mixins: [coursemixin],
   methods: {
     async initialize() {
+      const corseSection =
+        this.$store.state.course.courseName +
+        " " +
+        this.$store.state.course.courseCode;
+      console.log();
+      this.$store.commit("breadcrumb/setBreadcrumb", [
+        {
+          text: "หน้าหลัก",
+          href: "/home"
+        },
+        {
+          text: corseSection,
+          href: "/home/section"
+        }
+      ]);
       const { doesGet } = await this.getCourseSection({
         courseId: this.$store.state.course.courseId,
         userId: this.$store.state.user.id
@@ -50,7 +65,7 @@ export default {
         ).format("Do MMM YY เวลา LT");
       });
       this.allCourses = doesGet;
-      console.log(this.allCourses);
+      // console.log(this.allCourses);
     },
     async clickOpenUserSection(course) {
       this.$store.commit("course/setCourse", {
@@ -59,12 +74,20 @@ export default {
       this.$router.push("/assignment");
     }
   },
-  async created() {
+  created() {
     this.initialize();
   },
   data: () => ({
     allCourses: []
-  })
+  }),
+  mounted() {
+    this.$store.commit("setCrumbs", [
+      {
+        title: "home/section",
+        url: "home/section"
+      }
+    ]);
+  }
 };
 </script>
 

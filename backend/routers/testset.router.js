@@ -2,10 +2,11 @@ const express = require("express");
 const router = express.Router();
 const testsetController = require("../controllers/testset.controller");
 
-// Get homework
-router.get("/", testsetController.get);
-
+// Get testset
+router.post("/", testsetController.get);
+// Get testsetExample
+router.post("/example", testsetController.getExample);
 // Get compilelog
-router.get("/compilelog", testsetController.getCompilelog);
+router.post("/compilelog", testsetController.getCompilelog);
 
 module.exports = router;

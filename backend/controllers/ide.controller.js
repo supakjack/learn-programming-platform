@@ -175,6 +175,8 @@ module.exports = {
         filePath
       );
 
+      console.log(doesCompile.stdout);
+      console.log(doesGetTestset[0].testsetOutput);
       if (
         doesCompile.stdout == doesGetTestset[0].testsetOutput &&
         doesCompile.stderr == ""

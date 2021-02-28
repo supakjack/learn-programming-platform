@@ -1,32 +1,25 @@
 <template>
-  <v-breadcrumbs :items="items">
+  <v-breadcrumbs :items="$store.state.breadcrumb.list">
     <template v-slot:item="{ item }">
-      <v-breadcrumbs-item :href="item.href" :disabled="item.disabled">
-        {{ item.text.toUpperCase() }}
+      <v-breadcrumbs-item class="kanit-font">
+        <nuxt-link :to="{ path: item.href }">{{ item.text }}</nuxt-link>
       </v-breadcrumbs-item>
     </template>
   </v-breadcrumbs>
 </template>
 <script>
 export default {
-  data: () => ({
-    items: [
-      {
-        text: "Dashboard",
-        disabled: false,
-        href: "breadcrumbs_dashboard"
-      },
-      {
-        text: "Link 1",
-        disabled: false,
-        href: "breadcrumbs_link_1"
-      },
-      {
-        text: "Link 2",
-        disabled: true,
-        href: "breadcrumbs_link_2"
-      }
-    ]
-  })
+  mounted() {
+    console.log(this.$store.state.breadcrumb.list);
+  }
 };
 </script>
+
+<style>
+.roboto-font {
+  font-family: "Roboto", sans-serif;
+}
+.kanit-font {
+  font-family: "Kanit", sans-serif;
+}
+</style>

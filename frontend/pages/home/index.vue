@@ -4,8 +4,7 @@
       <div v-for="(item, i) in allCourses" :key="i" class="ml-2 mb-5 p-2">
         <v-card class="mx-auto" max-width="600" height="150" width="350">
           <v-divider color="blue"></v-divider>
-          <v-list-item three-line
-           @click="clickOpenCourseSection(item)">
+          <v-list-item three-line @click="clickOpenCourseSection(item)">
             <v-list-item-content>
               <v-list-item-title class="mb-1 kanit-font">
                 {{ item.courseCode }} {{ item.courseName }}
@@ -253,6 +252,12 @@ export default {
   mixins: [coursemixin],
   methods: {
     async initialize() {
+      this.$store.commit("breadcrumb/setBreadcrumb", [
+        {
+          text: "หน้าหลัก",
+          href: "/home"
+        }
+      ]);
       const { doesGetSome, doesGetYearByCreate } = await this.getHome(
         this.$store.state.user.id
       );
@@ -275,8 +280,7 @@ export default {
       this.$store.commit("course/setCourse", {
         course
       });
-      this.$router.push('/home/section')
-      console.log(this.$store.state.course);
+      this.$router.push("/home/section");
     },
     async clickOpenEditCourse(course) {
       this.modalCourseId = course.courseId;
