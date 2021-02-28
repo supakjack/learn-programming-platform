@@ -22,6 +22,9 @@
           </v-list-item>
           <v-divider></v-divider>
           <v-card-actions class="kanit-font">
+            <v-btn color="primary" @click="clickOpenCourseSection(item)" text
+              >ดูกลุ่มเรียน</v-btn
+            >
             <v-btn color="warning" @click="clickOpenEditCourse(item)" text
               >แก้ไข</v-btn
             >
@@ -267,7 +270,9 @@ export default {
       this.allCourses = doesGetSome;
       this.yearByCreate = doesGetYearByCreate;
     },
-
+    async clickOpenCourseSection(course) {
+      console.log(course);
+    },
     async clickOpenEditCourse(course) {
       this.modalCourseId = course.courseId;
       this.modalCourseCode = course.courseCode;
