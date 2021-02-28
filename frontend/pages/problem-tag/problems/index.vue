@@ -263,7 +263,7 @@ export default {
     async save() {
       const userId = this.$store.state.user.id;
       if (this.editProblemId == -1) {
-        console.log(this.$store.state.problem.status);
+        console.log(this.$store.state.problem);
         let createHashtagData = [];
         for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
           const dataHashtag = {

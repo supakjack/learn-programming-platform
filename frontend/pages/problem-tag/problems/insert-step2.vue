@@ -139,7 +139,7 @@ export default {
         this.items = e.val;
       }
     });
-    this.$store.commit("problem/setProblem", {
+    this.$store.commit("problem/setTestset", {
       problem: {
         testset: this.items
       }
@@ -154,7 +154,7 @@ export default {
           this.items = e.val;
         }
       });
-      this.$store.commit("problem/setProblem", {
+      this.$store.commit("problem/setTestset", {
         problem: {
           testset: this.items
         }
@@ -175,7 +175,7 @@ export default {
         }
       ];
 
-      await this.$store.commit("problem/setProblem", {
+      await this.$store.commit("problem/setTestset", {
         problem: {
           testset: this.items
         }
@@ -197,7 +197,7 @@ export default {
       this.items[this.indexForEdit].testsetOutput = testsetOutput;
       this.items[this.indexForEdit].testsetIsExample = testsetIsExample;
 
-      await this.$store.commit("problem/setProblem", {
+      await this.$store.commit("problem/setTestset", {
         problem: {
           testset: this.items
         }
@@ -219,7 +219,7 @@ export default {
     },
     async deleteItem(index) {
       this.items = await this.items.filter((item, i) => i != index);
-      await this.$store.commit("problem/setProblem", {
+      await this.$store.commit("problem/setTestset", {
         problem: {
           testset: this.items
         }

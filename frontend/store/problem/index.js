@@ -14,6 +14,8 @@ module.exports = {
       state.status = problem.status ? problem.status : "";
       state.description = problem.description ? problem.description : "";
       state.tags = problem.tags ? problem.tags : state.tags;
+    },
+    setTestset(state, { problem }) {
       state.testset = problem.testset ? problem.testset : state.testset;
     }
   }
