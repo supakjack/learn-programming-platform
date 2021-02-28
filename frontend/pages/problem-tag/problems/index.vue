@@ -20,7 +20,15 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="1000px">
+        <!-- <v-btn color="success" dark class="mb-2" @click="openDialog()">
+          สร้างโจทย์ปัญหา
+        </v-btn> -->
+        <v-dialog
+          v-model="dialog"
+          fullscreen
+          hide-overlay
+          transition="dialog-bottom-transition"
+        >
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="success" dark class="mb-2" v-bind="attrs" v-on="on">
               สร้างโจทย์ปัญหา
@@ -34,13 +42,13 @@
             <v-stepper non-linear>
               <v-stepper-header>
                 <v-stepper-step editable step="1">
-                  step 1
+                  โจทย์ปัญหา
                 </v-stepper-step>
 
                 <v-divider></v-divider>
 
                 <v-stepper-step editable step="2">
-                  step 2
+                  ชุดข้อมูลการทดสอบ
                 </v-stepper-step>
               </v-stepper-header>
 
@@ -89,19 +97,56 @@
       </v-toolbar>
     </template>
 
+    <!-- management -->
     <template v-slot:[`item.actions`]="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)">
-        mdi-pencil
-      </v-icon>
-      <v-icon small @click="deleteItem(item)">
-        mdi-delete
-      </v-icon>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon
+            color="primary"
+            v-bind="attrs"
+            v-on="on"
+            small
+            class="mr-2"
+            @click="openDialog(item)"
+          >
+            mdi-information
+          </v-icon>
+        </template>
+        <span>เพิ่มเติม</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon
+            color="orange"
+            v-bind="attrs"
+            v-on="on"
+            small
+            class="mr-2"
+            @click="editItem(item)"
+          >
+            mdi-pencil
+          </v-icon>
+        </template>
+        <span>แก้ไข</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon
+            color="red"
+            v-bind="attrs"
+            v-on="on"
+            small
+            @click="deleteItem(item)"
+          >
+            mdi-delete
+          </v-icon>
+        </template>
+        <span>ลบ</span>
+      </v-tooltip>
     </template>
 
     <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">
-        โหลดข้อมูลใหม่
-      </v-btn>
+      <v-btn color="primary" @click="initialize"> โหลดข้อมูลใหม่ </v-btn>
     </template>
   </v-data-table>
 </template>
@@ -118,12 +163,13 @@ export default {
     insertStep2
   },
   data: () => ({
+    // formTitle: "สร้างโจทย์ปัญหา",
     editProblemId: -1,
     watchArray: [],
     input: "",
     allProblems: [],
     dialog: false,
-    dialogDelete: false,
+    dialogDelete: false, // if true show delete modal
     search: "",
     headers: [
       {
@@ -178,9 +224,9 @@ export default {
   },
 
   watch: {
-    dialog(val) {
-      val || this.close();
-    },
+    // dialog(val) {
+    //   val || this.close();
+    // },
     dialogDelete(val) {
       val || this.closeDelete();
     }
@@ -225,7 +271,6 @@ export default {
           };
           createHashtagData.push(dataHashtag);
         }
-
         const createTestsetData = this.$store.state.problem.testset.map(
           item => {
             return {
@@ -240,7 +285,6 @@ export default {
             };
           }
         );
-
         const request = {
           createHashtagData,
           createTestsetData,
@@ -263,9 +307,28 @@ export default {
             pictureUpdateBy: userId
           }
         };
-
         const insertResult = await this.insertProblem(request);
       } else {
+        //process delete
+        console.log(this.hashtagResult);
+        console.log(this.testsetResult);
+        const hashtagId = this.hashtagResult.map(res => {
+          return res.hashtagId;
+        });
+        const testsetId = this.testsetResult.map(res => {
+          return res.testsetId;
+        });
+        this.editAllItem;
+        const dataCondition = {
+          hashtagId,
+          testsetId,
+          fileId: this.editAllItem.fileId,
+          pictureId: this.editAllItem.pictureId
+        };
+        console.log(dataCondition);
+        const resultDelete = await this.deleteProblem(dataCondition);
+        console.log(resultDelete);
+        //process edit and insert
         console.log(this.$store.state.problem);
         let updateHashtagData = [];
         for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
@@ -291,7 +354,6 @@ export default {
             };
           }
         );
-
         const request = {
           problemId: this.editProblemId,
           updateHashtagData,
@@ -315,6 +377,7 @@ export default {
             pictureUpdateBy: userId
           }
         };
+        console.log(request);
         const updateResult = await this.updateProblem(request);
       }
       this.close();
@@ -403,9 +466,11 @@ export default {
 
     // for close dialog
     async close() {
-      console.log(this.$store.state.problem);
       this.dialog = false;
+
       await this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editProblemId = -1;
         this.$store.commit("problem/setProblem", {
           problem: {
             id: "",
@@ -416,9 +481,17 @@ export default {
             testset: []
           }
         });
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editProblemId = -1;
+        this.watchArray = [
+          { name: "id", val: this.$store.state.problem.id },
+          { name: "title", val: this.$store.state.problem.title },
+          { name: "description", val: this.$store.state.problem.title },
+          { name: "status", val: status },
+          { name: "tags", val: this.$store.state.problem.tags },
+          { name: "testset", val: this.$store.state.problem.testset }
+        ];
+        console.log(this.watchArray);
       });
+      console.log(this.$store.state.problem);
       await this.initialize();
     },
 

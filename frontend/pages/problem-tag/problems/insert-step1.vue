@@ -15,8 +15,6 @@
             :items="problemStatusData"
             menu-props="auto"
             label="สถานะ"
-            hide-details
-            single-line
           ></v-select>
         </v-col>
       </v-row>
@@ -28,7 +26,7 @@
       <v-row>
         <v-col cols="12" sm="12" md="6">
           <p class="text-md-left">
-            ภาพประกอบโจทย์
+            ภาพประกอบ
             <input type="file" />
           </p>
         </v-col>
@@ -104,6 +102,7 @@ export default {
         this.testset = e.val;
       }
     });
+    console.log(this.watchArray);
   },
   computed: {},
 

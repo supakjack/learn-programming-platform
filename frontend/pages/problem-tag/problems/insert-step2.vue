@@ -4,7 +4,7 @@
       <v-row style="margin-top:-30px">
         <v-col cols="12" sm="12" md="5">
           <v-text-field
-            label="หัวข้อ"
+            label="ชื่อชุดการทดสอบ"
             v-model="dataTestset.testsetTitle"
           ></v-text-field>
         </v-col>
@@ -18,18 +18,20 @@
       </v-row>
       <v-row>
         <v-col cols="12" sm="12" md="5">
-          <v-text-field
+          <v-textarea
             label="ข้อมูลนำเข้า"
             v-model="dataTestset.testsetInput"
             style="margin-top:-30px; "
-          ></v-text-field>
+            rows="4"
+          ></v-textarea>
         </v-col>
         <v-col cols="12" sm="12" md="5">
-          <v-text-field
+          <v-textarea
             label="ข้อมูลส่งออก"
             v-model="dataTestset.testsetOutput"
             style="margin-top:-30px;"
-          ></v-text-field>
+            rows="4"
+          ></v-textarea>
         </v-col>
         <v-col cols="12" sm="12" md="2">
           <v-checkbox
@@ -81,9 +83,9 @@
               <td class="text-center">{{ item.testsetInput }}</td>
               <td class="text-center">{{ item.testsetOutput }}</td>
               <td class="text-center" v-if="item.testsetIsExample == 1">
-                ใช้งาน
+                ใช้
               </td>
-              <td class="text-center" v-else>ไม่ใช้งาน</td>
+              <td class="text-center" v-else>ไม่ใช้</td>
               <td class="text-center">
                 <v-icon
                   small
