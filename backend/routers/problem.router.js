@@ -23,4 +23,6 @@ router.patch("/updateProblem", problemController.updateProblem);
 // insert problem
 router.post("/", problemController.create);
 
+// delete problem
+router.post("/delete", problemController.deleteAnother);
 module.exports = router;

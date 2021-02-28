@@ -118,6 +118,10 @@ export default {
     insertStep2
   },
   data: () => ({
+    editAllItem: [],
+    hashtagResult: [],
+    testsetResult: [],
+    arrayHashtag: [],
     editProblemId: -1,
     watchArray: [],
     input: "",
@@ -266,6 +270,28 @@ export default {
 
         const insertResult = await this.insertProblem(request);
       } else {
+        //process delete
+        console.log(this.hashtagResult);
+        console.log(this.testsetResult);
+        const hashtagId = this.hashtagResult.map(res => {
+          return res.hashtagId;
+        });
+        const testsetId = this.testsetResult.map(res => {
+          return res.testsetId;
+        });
+        this.editAllItem;
+        const dataCondition = {
+          hashtagId,
+          testsetId,
+          fileId: this.editAllItem.fileId,
+          pictureId: this.editAllItem.pictureId
+        };
+
+        console.log(dataCondition);
+        const resultDelete = await this.deleteProblem(dataCondition);
+        console.log(resultDelete);
+
+        //process edit and insert
         console.log(this.$store.state.problem);
         let updateHashtagData = [];
         for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
@@ -315,6 +341,7 @@ export default {
             pictureUpdateBy: userId
           }
         };
+        console.log(request);
         const updateResult = await this.updateProblem(request);
       }
       this.close();
@@ -322,23 +349,29 @@ export default {
 
     //edit problem-data by problemId
     async editItem(item) {
+      this.editAllItem = item;
       console.log(this.$store.state.problem);
       const hashtag = this.editHashtag(item.problemId);
       const testset = this.editTestset(item.problemId);
 
-      const hashtagResult = await hashtag.then(res => {
+      this.hashtagResult = await hashtag.then(res => {
         return res;
       });
-      const testsetResult = await testset.then(res => {
+      this.testsetResult = await testset.then(res => {
         return res;
       });
 
-      const arrayHashtag = hashtagResult.map(res => {
+      this.arrayHashtag = this.hashtagResult.map(res => {
         return res.hashtagTagId;
       });
 
+      console.log(item);
+      console.log(this.hashtagResult);
+      console.log(this.testsetResult);
+      console.log(this.arrayHashtag);
+
       let arrayTestset = [];
-      testsetResult.map(res => {
+      this.testsetResult.map(res => {
         const data = {
           testsetTitle: res.testsetTitle,
           testsetDescription: res.testsetDescription,
@@ -349,20 +382,21 @@ export default {
         arrayTestset.push(data);
       });
 
+      let status = 1;
+      if (this.$store.state.problem.status == "ไม่ใช้งาน") {
+        status = 2;
+      }
       this.$store.commit("problem/setProblem", {
         problem: {
           id: item.problemId,
           title: item.problemTitle,
           description: item.problemDiscription,
-          status: item.problemStatus,
-          tags: arrayHashtag,
+          status: status,
+          tags: this.arrayHashtag,
           testset: arrayTestset
         }
       });
-      let status = 1;
-      if (this.$store.state.problem.status == "ไม่ใช้งาน") {
-        status = 2;
-      }
+
       this.watchArray = [
         { name: "id", val: this.$store.state.problem.id },
         { name: "title", val: this.$store.state.problem.title },
