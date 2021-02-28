@@ -86,7 +86,7 @@ export default {
         console.log(response);
         // this.$router.push('/home');
         if (response.data.token) {
-          this.$store.commit("user/setUser", {
+          await this.$store.commit("user/setUser", {
             user: {
               permission: response.data.permission,
               token: response.data.token,
@@ -95,7 +95,12 @@ export default {
               id: response.data.userId
             }
           });
-          this.$router.replace({ name: "home" });
+          if (this.$store.state.permission.indexOf("teacher")) {
+            console.log(response.data);
+            this.$router.push("/home");
+          } else {
+            this.$router.push("/student/home");
+          }
           this.$vs.notify({
             color: "danger",
             title: "Invalid Username and password",
