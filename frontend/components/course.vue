@@ -18,6 +18,15 @@ export default {
           console.error(error);
         })
         .then(response => response.doesCreate);
+    },
+    async updateCourse(data) {
+      console.log(data);
+      return this.$axios
+        .$put("course", data)
+        .catch(error => {
+          console.error(error);
+        })
+        .then(response => response.doesUpdate);
     }
   }
 };

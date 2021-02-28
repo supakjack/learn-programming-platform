@@ -2,14 +2,7 @@
   <div>
     <v-card class="d-flex mb-4 flex flex-wrap" flat tile>
       <div v-for="(item, i) in allCourses" :key="i" class="ml-2 mb-5 p-2">
-        <!-- <router-link to="/assignment"> -->
-        <v-card
-          class="mx-auto"
-          max-width="600"
-          height="150"
-          width="350"
-          @click="clickCourse(item)"
-        >
+        <v-card class="mx-auto" max-width="600" height="150" width="350">
           <v-divider color="blue"></v-divider>
           <v-list-item three-line>
             <v-list-item-content>
@@ -29,14 +22,16 @@
           </v-list-item>
           <v-divider></v-divider>
           <v-card-actions class="kanit-font">
-            <v-btn color="warning" text>แก้ไข</v-btn>
+            <v-btn color="warning" @click="clickOpenEditCourse(item)" text
+              >แก้ไข</v-btn
+            >
             <v-btn color="error" text>ลบ</v-btn>
           </v-card-actions>
         </v-card>
       </div>
-
       <v-row>
-        <v-dialog v-model="sectionDialog" persistent max-width="600px">
+        <!-- insert dialog -->
+        <v-dialog v-model="insertCourseDialog" persistent max-width="600px">
           <template v-slot:activator="{ on, attrs }">
             <v-card
               class="ml-7 mt-5"
@@ -107,7 +102,11 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="sectionDialog = false">
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="insertCourseDialog = false"
+              >
                 ยกเลิก
               </v-btn>
               <v-btn color="blue darken-1" text @click="clickInsertCourse">
@@ -117,6 +116,71 @@
           </v-card>
         </v-dialog>
       </v-row>
+      <!-- update dialog -->
+      <v-dialog v-model="updateCourseDialog" persistent max-width="600px">
+        <v-card>
+          <v-card-title>
+            <span class="">แก้ไขรายวิชา</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12" sm="12" md="8">
+                  <v-select
+                    v-model="modalCourseYearId"
+                    :items="yearByCreate"
+                    item-text="text"
+                    item-value="yearId"
+                    label="ปีการศึกษา*"
+                    required
+                  ></v-select>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                  <v-text-field
+                    v-model="modalCourseCode"
+                    label="รหัสวิชา*"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="8">
+                  <v-text-field
+                    v-model="modalCourseName"
+                    label="ชื่อรายวิชา*"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                  <v-select
+                    v-model="modalCourseStatus"
+                    :items="[
+                      { text: 'ใช้งาน', val: 1 },
+                      { text: 'ปิดใช้งาน', val: 2 }
+                    ]"
+                    item-text="text"
+                    item-value="val"
+                    label="สถานะ*"
+                    required
+                  ></v-select>
+                </v-col>
+              </v-row>
+            </v-container>
+            <small>*โปรดระบุข้อมูลที่ต้องการ</small>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="blue darken-1"
+              text
+              @click="updateCourseDialog = false"
+            >
+              ยกเลิก
+            </v-btn>
+            <v-btn color="blue darken-1" text @click="clickUpdateCourse">
+              บันทึก
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-card>
   </div>
 </template>
@@ -145,11 +209,12 @@ export default {
       this.yearByCreate = doesGetYearByCreate;
     },
 
-    async clickCourse(item) {
-      this.$store.commit("course/setCourse", {
-        course: item
-      });
-      this.$router.push("/assignment");
+    async clickOpenEditCourse(course) {
+      this.modalCourseCode = course.courseCode;
+      this.modalCourseName = course.courseName;
+      this.modalCourseYearId = course.yearId;
+      this.modalCourseStatus = course.courseStatus == "active" ? 1 : 2;
+      this.updateCourseDialog = true;
     },
 
     async clickInsertCourse() {
@@ -166,7 +231,24 @@ export default {
       this.modalCourseName = "";
       this.modalCourseYearId = "";
       this.modalCourseStatus = "";
-      this.sectionDialog = false;
+      this.insertCourseDialog = false;
+      await this.initialize();
+    },
+    async clickUpdateCourse() {
+      const updateData = {
+        courseCode: this.modalCourseCode,
+        courseName: this.modalCourseName,
+        courseYearId: this.modalCourseYearId,
+        courseCreateBy: this.$store.state.user.id,
+        courseUpdateBy: this.$store.state.user.id,
+        courseStatus: this.modalCourseStatus
+      };
+      this.updateCourse(updateData);
+      this.modalCourseCode = "";
+      this.modalCourseName = "";
+      this.modalCourseYearId = "";
+      this.modalCourseStatus = "";
+      this.updateCourseDialog = false;
       await this.initialize();
     }
   },
@@ -174,7 +256,8 @@ export default {
     this.initialize();
   },
   data: () => ({
-    sectionDialog: false,
+    insertCourseDialog: false,
+    updateCourseDialog: false,
     allCourses: [],
     yearByCreate: [],
     modalCourseCode: "",

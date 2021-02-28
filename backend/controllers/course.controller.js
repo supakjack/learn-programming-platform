@@ -19,6 +19,7 @@ module.exports = {
           'courseId',
           'courseName',
           'courseCode',
+          'courseStatus',
           'courseUpdateDate',
           'yearId',
           'yearName',
