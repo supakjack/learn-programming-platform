@@ -4,7 +4,8 @@
       <div v-for="(item, i) in allCourses" :key="i" class="ml-2 mb-5 p-2">
         <v-card class="mx-auto" max-width="600" height="150" width="350">
           <v-divider color="blue"></v-divider>
-          <v-list-item three-line>
+          <v-list-item three-line
+           @click="clickCourse(item)">
             <v-list-item-content>
               <v-list-item-title class="mb-1 kanit-font">
                 {{ item.courseCode }} {{ item.courseName }}
