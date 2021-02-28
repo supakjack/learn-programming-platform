@@ -9,24 +9,6 @@ export default [
     title: "หน้าหลัก",
     href: "/home",
     icon: "fas fa-home"
-
-    // child: [{ title: "หน้าหลัก", href: "/home" }],
-  },
-  {
-    child: [
-      {
-        title: "มอบหมาย",
-        href: "/assignment?tab=assignment",
-        icon: "fas fa-tasks"
-      },
-      {
-        title: "ผู้ใช้งาน",
-        href: "/assignment?tab=user",
-        icon: "fas fa-id-card"
-      }
-    ],
-    title: "มอบหมายงาน",
-    icon: "fas fa-file-invoice"
   },
   {
     active: true,
@@ -53,6 +35,28 @@ export default [
   {
     title: "Dashboard ",
     icon: "fa fa-download",
-    href: "/error"
+    href: "/teacher-dashboard"
+  },
+  {
+    header: true,
+    title: "นักเรียน",
+    hiddenOnCollapse: true
+  },
+  {
+    child: [
+      { title: "88824125", href: "/assignment", icon: "fa fa-download" },
+      {
+        title: "88824154",
+        href: "/student/homework",
+        icon: "fa fa-download"
+      }
+    ],
+    title: "การบ้าน",
+    icon: "fa fa-download"
+  },
+  {
+    title: "Dashboard",
+    icon: "fa fa-download",
+    href: "/student-dashboard"
   }
 ];
