@@ -8,7 +8,7 @@ export default [
   {
     title: "หน้าหลัก",
     icon: "fa fa-download",
-    href: "/student/homestu"
+    href: "/student/home"
   },
   {
     child: [

@@ -80,7 +80,7 @@ module.exports = {
           "taskLimit",
           "problemId",
           "problemTitle",
-          "problemDiscription",
+          "problemDescription",
           "tagName",
           "compilelogScore",
           "compilelogSubmitNo",

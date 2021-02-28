@@ -182,7 +182,7 @@ const creteCompileLogSchema = joi.object({
 const createProblemSchema = joi.object({
   problemTitle: joi.string().max(255).required(),
   problemStatus: joi.number().max(99999999).min(1).required(),
-  problemDiscription: joi.string().max(255).required(),
+  problemDescription: joi.string().max(255).required(),
   problemCreateBy: joi.number().max(99999999).min(1).required(),
   problemUpdateBy: joi.number().max(99999999).min(1).required()
 })
@@ -221,7 +221,7 @@ const updateProblemConditionSchema = joi.object({
 
 const updateProblemSchema = joi.object({
   problemTitle: joi.string().max(255),
-  problemDiscription: joi.string().max(255),
+  problemDescription: joi.string().max(255),
   problemStatus: joi.number().integer().max(3),
   problemUpdateBy: joi.number().max(99999999).min(1),
   problemUpdateDate: joi.date().raw()
