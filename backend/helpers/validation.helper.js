@@ -239,7 +239,6 @@ const insertCourseSchema = joi.object({
   courseYearId: joi.number().max(99999999).min(1),
   courseCreateBy: joi.number().max(99999999).min(1),
   courseUpdateBy: joi.number().max(99999999).min(1),
-  sectionCourseId: joi.number().max(99999999).min(1),
   courseStatus: joi.number().integer().max(3),
 });
 

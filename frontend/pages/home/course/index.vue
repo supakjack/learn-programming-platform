@@ -110,7 +110,7 @@
               <v-btn color="blue darken-1" text @click="sectionDialog = false">
                 ยกเลิก
               </v-btn>
-              <v-btn color="blue darken-1" text @click="openInsertCourse">
+              <v-btn color="blue darken-1" text @click="clickInsertCourse">
                 บันทึก
               </v-btn>
             </v-card-actions>
@@ -124,17 +124,11 @@
 import coursemixin from "@/components/course";
 export default {
   mixins: [coursemixin],
-  // middleware: "auth",
-  mounted() {
-    // console.log(this.$store.state.user);
-  },
   methods: {
     async initialize() {
-      const {
-        doesGetSome,
-        doesGetYearByCreate,
-      } = await this.getHome(this.$store.state.user.id);
-      console.log(doesGetSome, doesGetYearByCreate);
+      const { doesGetSome, doesGetYearByCreate } = await this.getHome(
+        this.$store.state.user.id
+      );
       await doesGetSome.map(doesGetSome => {
         doesGetSome.courseUpdateDate = this.$moment(
           doesGetSome.courseUpdateDate
@@ -149,11 +143,6 @@ export default {
       });
       this.allCourses = doesGetSome;
       this.yearByCreate = doesGetYearByCreate;
-      // this.$store.commit("course/setCourse", {
-      //   course: {
-      //     courses: this.allCourses
-      //   }
-      // });
     },
 
     async clickCourse(item) {
@@ -163,14 +152,13 @@ export default {
       this.$router.push("/assignment");
     },
 
-    async openInsertCourse() {
+    async clickInsertCourse() {
       const inserData = {
         courseCode: this.modalCourseCode,
         courseName: this.modalCourseName,
         courseYearId: this.modalCourseYearId,
         courseCreateBy: this.$store.state.user.id,
         courseUpdateBy: this.$store.state.user.id,
-        sectionCourseId: this.modalCourseSectionId,
         courseStatus: this.modalCourseStatus
       };
       this.insertCourse(inserData);
@@ -178,8 +166,8 @@ export default {
       this.modalCourseName = "";
       this.modalCourseYearId = "";
       this.modalCourseStatus = "";
-      this.modalCourseSectionId = "";
       this.sectionDialog = false;
+      await this.initialize();
     }
   },
   async created() {

@@ -9,7 +9,6 @@ const {
 module.exports = {
   get: async (req, res, next) => {
     const getCondition = await getCourseSchema.validateAsync(req.query)
-    console.log(getCondition)
     try {
       const doesGetSome = await globalModel.select({
         name: 'users',
@@ -46,7 +45,6 @@ module.exports = {
       })
       res.status(200).send({ doesGetSome, doesGetYearByCreate })
     } catch (error) {
-      console.log(error);
       if (error.isJoi === true) return next(createError.InternalServerError())
       next(error)
     }
@@ -54,8 +52,10 @@ module.exports = {
   create: async (req, res, next) => {
     const insertCourseData = await insertCourseSchema.validateAsync(req.body)
     try {
-      console.log(insertCourseData)
-      const doesCreate = insertCourseData
+      const doesCreate = await globalModel.insert({
+        name: 'courses',
+        insertData: [insertCourseData]
+      })
       res.status(201).send({ doesCreate })
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError())

@@ -12,7 +12,6 @@ export default {
     },
 
     async insertCourse(data) {
-      console.log(data);
       return this.$axios
         .$post("course", data)
         .catch(error => {
