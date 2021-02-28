@@ -11,6 +11,12 @@ export default {
       return this.$axios.$get(`course/?userId=${data}`);
     },
 
+    async getCourseSection(data) {
+      return this.$axios.$get(
+        `course/section/${data.courseId}?userId=${data.userId}`
+      );
+    },
+
     async insertCourse(data) {
       return this.$axios
         .$post("course", data)

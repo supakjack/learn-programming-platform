@@ -79,5 +79,38 @@ module.exports = {
       if (error.isJoi === true) return next(createError.InternalServerError())
       next(error)
     }
+  },
+  getSection: async (req, res, next) => {
+    const getCondition = {
+      sectionCourseId: req.params.id,
+      sectionCreateBy: req.query.userId
+    }
+    console.log(getCondition);
+    try {
+      const doesGet = await globalModel.select({
+        name: 'sections',
+        condition: [getCondition],
+        whereNot: [{ sectionStatus: 'delete' }],
+        leftJoin: [
+          {
+            joinTable: 'courses',
+            leftTableName: 'sections',
+            leftKey: 'sectionCourseId',
+            joinKey: 'courseId'
+          },
+          {
+            joinTable: 'years',
+            leftTableName: 'courses',
+            leftKey: 'courseYearId',
+            joinKey: 'yearId'
+          }
+        ]
+      })
+
+      res.status(200).send({ doesGet })
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError())
+      next(error)
+    }
   }
 }
