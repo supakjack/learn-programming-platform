@@ -16,7 +16,7 @@ export default [
       {
         title: "โจทย์ปัญหา",
         href: "/problem-tag/?tab=problems",
-        icon: "fa fa-download"
+        icon: "fa fa-tasks"
       },
       {
         title: "แท็ก",
@@ -25,7 +25,7 @@ export default [
       }
     ],
     title: "จัดการโจทย์ปัญหา",
-    icon: "fa fa-download"
+    icon: "fa fa-tasks"
   },
   {
     title: "IDE",
