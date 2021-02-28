@@ -3,7 +3,6 @@ module.exports = {
     id: "",
     title: "",
     status: "",
-    score: "",
     description: "",
     tags: [],
     testset: []
@@ -13,7 +12,6 @@ module.exports = {
       state.id = problem.id ? problem.id : state.id;
       state.title = problem.title ? problem.title : state.title;
       state.status = problem.status ? problem.status : state.status;
-      state.score = problem.score ? problem.score : state.score;
       state.description = problem.description
         ? problem.description
         : state.description;

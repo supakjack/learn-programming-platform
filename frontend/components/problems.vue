@@ -21,7 +21,6 @@ export default {
         .$post("problem/edit/hashtag", editData)
         .catch(err => console.log(err))
         .then(response => response.doesGetAll);
-      console.log(result);
       return result;
     },
 
@@ -32,7 +31,6 @@ export default {
         .$post("problem/edit/testset", editData)
         .catch(err => console.log(err))
         .then(response => response.doesGetAll);
-      console.log(result);
       return result;
     },
 
@@ -45,8 +43,6 @@ export default {
       // editData.problemCreateBy = data.problemCreateBy;
       editData.problemUpdateBy = data.problemUpdateBy;
       editData.problemUpdateDate = data.problemUpdateDate;
-      console.log(editData);
-
       const result = this.$axios
         .$patch(`problem/?problemId=${data.problemId}`, editData)
         .catch(err => console.log(err))
@@ -54,8 +50,6 @@ export default {
       return result;
     },
     async updateProblem(data) {
-      console.log(data);
-
       const result = this.$axios
         .$patch(`problem/updateProblem/?problemId=${data.problemId}`, data)
         .catch(err => console.log(err))

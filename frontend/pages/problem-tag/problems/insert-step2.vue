@@ -137,13 +137,11 @@ export default {
         this.items = e.val;
       }
     });
-    console.log(this.items);
     this.$store.commit("problem/setProblem", {
       problem: {
         testset: this.items
       }
     });
-    console.log(this.$store.state.problem);
   },
   computed: {},
 

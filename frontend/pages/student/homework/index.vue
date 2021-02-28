@@ -35,7 +35,20 @@
               :items="rowProblem"
               :items-per-page="5"
               class="elevation-1"
-            ></v-data-table>
+            >
+              <template v-slot:[`item.actionsDialog`]="{ item }">
+                <!-- <router-link to="/student/submit"> -->
+                <v-btn
+                  small
+                  class="mr-2"
+                  @click="openIde(item)"
+                  to="/student/submit"
+                >
+                  ทำโจทย์
+                </v-btn>
+                <!-- </router-link> -->
+              </template>
+            </v-data-table>
           </v-card>
         </v-dialog>
       </v-toolbar>
@@ -46,6 +59,7 @@
         เพิ่มเติม
       </v-btn>
     </template>
+
     <template v-slot:no-data>
       <v-btn color="primary" @click="initialize">
         โหลดข้อมูลใหม่
@@ -53,9 +67,9 @@
     </template>
   </v-data-table>
 </template>
-
 <script>
 import homeworkmixin from "@/components/homework";
+
 export default {
   mixins: [homeworkmixin],
   // declare variable and data in this component
@@ -86,13 +100,13 @@ export default {
         align: "center",
         sortable: false
       },
-      { text: "ข้อ", value: "problemId" }, // define column name and value
+      // { text: "ข้อ", value: "problemId" }, // define column name and value
       { text: "ชื่อ", value: "problemTitle" },
       { text: "คำอธิบาย", value: "problemDiscription" },
-      { align: "center", text: "แท็ก", value: "tagName" },
       { text: "จำนวนที่ส่ง", value: "compilelogSubmitNo" },
       { text: "สถานะการส่งงาน", value: "compilelogTestResult" },
-      { text: "คะแนน", value: "taskScore" }
+      { text: "คะแนน", value: "taskScore" },
+      { text: "ดำเนินการ", value: "actionsDialog", sortable: false }
     ],
     editedIndex: -1, //  editedIndex default to -1
 
@@ -179,11 +193,18 @@ export default {
       });
       this.rowProblem = doesGetProblem;
       this.dialogDetail = true;
+    },
+    openIde(item) {
+      this.$store.commit("problem/setProblem", {
+        problem: {
+          id: item.problemId
+        }
+      });
+      console.log(this.$store.state.problem.id);
     }
   }
 };
 </script>
-
 <style>
 .roboto-font {
   font-family: "Roboto", sans-serif;

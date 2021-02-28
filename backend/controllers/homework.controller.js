@@ -73,13 +73,14 @@ module.exports = {
       const doesGetProblem = await globalModel.select({
         name: "tasks",
         condition: [getCondition],
+        groupBy: [{ name: "taskId" }],
         filter: [
           "taskId",
           "taskScore",
           "taskLimit",
           "problemId",
           "problemTitle",
-          "problemDescription",
+          "problemDiscription",
           "tagName",
           "compilelogScore",
           "compilelogSubmitNo",

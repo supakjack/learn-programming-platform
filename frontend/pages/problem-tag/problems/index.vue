@@ -59,10 +59,10 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">
+              <v-btn color="blue darken-1" text @click="close()">
                 ยกเลิก
               </v-btn>
-              <v-btn color="blue darken-1" text @click="save">
+              <v-btn color="blue darken-1" text @click="save()">
                 บันทึก
               </v-btn>
             </v-card-actions>
@@ -76,7 +76,7 @@
             </v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete">
+              <v-btn color="blue darken-1" text @click="closeDelete()">
                 ไม่
               </v-btn>
               <v-btn color="blue darken-1" text @click="deleteItemConfirm">
@@ -118,7 +118,7 @@ export default {
     insertStep2
   },
   data: () => ({
-    editProblemId: null,
+    editProblemId: -1,
     watchArray: [],
     input: "",
     allProblems: [],
@@ -213,7 +213,7 @@ export default {
     // add and save problem-data to database
     async save() {
       const userId = this.$store.state.user.id;
-      if (this.editProblemId == null) {
+      if (this.editProblemId == -1) {
         console.log(this.$store.state.problem.status);
         let createHashtagData = [];
         for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
@@ -317,11 +317,12 @@ export default {
         };
         const updateResult = await this.updateProblem(request);
       }
-      this.dialog = false;
+      this.close();
     },
 
     //edit problem-data by problemId
     async editItem(item) {
+      console.log(this.$store.state.problem);
       const hashtag = this.editHashtag(item.problemId);
       const testset = this.editTestset(item.problemId);
 
@@ -372,16 +373,12 @@ export default {
       ];
       this.editProblemId = item.problemId;
       this.dialog = true;
-
-      console.log(this.$store.state.problem.tags);
-      console.log(this.watchArray);
     },
 
     // change status problem-data from enable or disable to delete
     deleteItem(item) {
       const userId = this.$store.state.user.id;
       this.editedIndex = this.allProblems.indexOf(item);
-      console.log(this.editedIndex);
       this.editedItem.problemId = item.problemId;
       this.editedItem.problemTitle = item.problemTitle;
       this.editedItem.problemDiscription = item.problemDiscription;
@@ -399,21 +396,30 @@ export default {
     // confirm change status problem-data
     async deleteItemConfirm() {
       const EditResult = await this.editProblem(this.editedItem);
-
-      console.log(EditResult);
       if (typeof EditResult === "number") {
         this.closeDelete();
       }
     },
 
     // for close dialog
-    close() {
+    async close() {
+      console.log(this.$store.state.problem);
       this.dialog = false;
-      this.$nextTick(() => {
+      await this.$nextTick(() => {
+        this.$store.commit("problem/setProblem", {
+          problem: {
+            id: "",
+            title: "",
+            description: "",
+            status: "",
+            tags: [],
+            testset: []
+          }
+        });
         this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
+        this.editProblemId = -1;
       });
-      this.initialize();
+      await this.initialize();
     },
 
     // for close delete-dialog
@@ -421,7 +427,7 @@ export default {
       this.dialogDelete = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
+        this.editProblemId = -1;
       });
       this.initialize();
     },
@@ -431,7 +437,7 @@ export default {
       this.dialogInsert = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
+        this.editProblemId = -1;
       });
     }
   }

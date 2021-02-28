@@ -114,6 +114,9 @@ import problems from "./../problem-tag/problems/index";
 import idemixin from "@/components/ide";
 export default {
   mixins: [idemixin],
+  mounted() {
+    console.log(this.$store.state.problem.id);
+  },
   data: () => ({
     selectedItem: 1,
     snackbar: false,

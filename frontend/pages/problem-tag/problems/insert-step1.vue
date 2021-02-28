@@ -109,7 +109,6 @@ export default {
 
   watch: {
     watchArray: function(newValue, oldValue) {
-      console.log("testttttttttttt");
       this.watchArray.map((e, i) => {
         if (e.name == "title") {
           this.problemTitle = e.val;
