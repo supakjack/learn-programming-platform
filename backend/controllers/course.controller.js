@@ -14,6 +14,7 @@ module.exports = {
       const doesGetSome = await globalModel.select({
         name: 'users',
         condition: [getCondition],
+        whereNot: [{ courseStatus: 'delete' }],
         filter: [
           'userId',
           'userUsername',

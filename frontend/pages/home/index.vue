@@ -25,7 +25,9 @@
             <v-btn color="warning" @click="clickOpenEditCourse(item)" text
               >แก้ไข</v-btn
             >
-            <v-btn color="error" text>ลบ</v-btn>
+            <v-btn color="error" @click="clickOpenDeleteCourse(item)" text
+              >ลบ</v-btn
+            >
           </v-card-actions>
         </v-card>
       </div>
@@ -102,11 +104,7 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="insertCourseDialog = false"
-              >
+              <v-btn color="blue darken-1" text @click="cancelModal">
                 ยกเลิก
               </v-btn>
               <v-btn color="blue darken-1" text @click="clickInsertCourse">
@@ -168,15 +166,76 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              color="blue darken-1"
-              text
-              @click="updateCourseDialog = false"
-            >
+            <v-btn color="blue darken-1" text @click="cancelModal">
               ยกเลิก
             </v-btn>
             <v-btn color="blue darken-1" text @click="clickUpdateCourse">
               บันทึก
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!-- delete dialog -->
+      <v-dialog v-model="deleteCourseDialog" persistent max-width="600px">
+        <v-card>
+          <v-card-title>
+            <span class="">ลบรายวิชา</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12" sm="12" md="8">
+                  <v-select
+                    readonly
+                    v-model="modalCourseYearId"
+                    :items="yearByCreate"
+                    item-text="text"
+                    item-value="yearId"
+                    label="ปีการศึกษา"
+                    required
+                  ></v-select>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                  <v-text-field
+                    readonly
+                    v-model="modalCourseCode"
+                    label="รหัสวิชา"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="8">
+                  <v-text-field
+                    readonly
+                    v-model="modalCourseName"
+                    label="ชื่อรายวิชา"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                  <v-select
+                    readonly
+                    v-model="modalCourseStatus"
+                    :items="[
+                      { text: 'ใช้งาน', val: 1 },
+                      { text: 'ปิดใช้งาน', val: 2 }
+                    ]"
+                    item-text="text"
+                    item-value="val"
+                    label="สถานะ"
+                    required
+                  ></v-select>
+                </v-col>
+              </v-row>
+            </v-container>
+            <small>*คุณกำลังจะลบรายวิชา</small>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="cancelModal">
+              ยกเลิก
+            </v-btn>
+            <v-btn color="blue darken-1" text @click="clickUpdateCourse(3)">
+              ลบ
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -217,6 +276,14 @@ export default {
       this.modalCourseStatus = course.courseStatus == "active" ? 1 : 2;
       this.updateCourseDialog = true;
     },
+    async clickOpenDeleteCourse(course) {
+      this.modalCourseId = course.courseId;
+      this.modalCourseCode = course.courseCode;
+      this.modalCourseName = course.courseName;
+      this.modalCourseYearId = course.yearId;
+      this.modalCourseStatus = course.courseStatus == "active" ? 1 : 2;
+      this.deleteCourseDialog = true;
+    },
 
     async clickInsertCourse() {
       const inserData = {
@@ -227,7 +294,7 @@ export default {
         courseUpdateBy: this.$store.state.user.id,
         courseStatus: this.modalCourseStatus
       };
-      this.insertCourse(inserData);
+      await this.insertCourse(inserData);
       this.modalCourseCode = "";
       this.modalCourseName = "";
       this.modalCourseYearId = "";
@@ -235,7 +302,7 @@ export default {
       this.insertCourseDialog = false;
       await this.initialize();
     },
-    async clickUpdateCourse() {
+    async clickUpdateCourse(status) {
       const updateData = {
         courseId: this.modalCourseId,
         courseCode: this.modalCourseCode,
@@ -243,7 +310,7 @@ export default {
         courseYearId: this.modalCourseYearId,
         courseCreateBy: this.$store.state.user.id,
         courseUpdateBy: this.$store.state.user.id,
-        courseStatus: this.modalCourseStatus
+        courseStatus: status ? status : this.modalCourseStatus
       };
       await this.updateCourse(updateData);
       this.modalCourseId = "";
@@ -251,14 +318,29 @@ export default {
       this.modalCourseName = "";
       this.modalCourseYearId = "";
       this.modalCourseStatus = "";
-      this.updateCourseDialog = false;
+      if (updateData.courseStatus == 3) {
+        this.deleteCourseDialog = false;
+      } else {
+        this.updateCourseDialog = false;
+      }
       await this.initialize();
+    },
+    async cancelModal() {
+      this.modalCourseId = "";
+      this.modalCourseCode = "";
+      this.modalCourseName = "";
+      this.modalCourseYearId = "";
+      this.modalCourseStatus = "";
+      this.insertCourseDialog = false;
+      this.updateCourseDialog = false;
+      this.deleteCourseDialog = false;
     }
   },
   async created() {
     this.initialize();
   },
   data: () => ({
+    deleteCourseDialog: false,
     insertCourseDialog: false,
     updateCourseDialog: false,
     allCourses: [],
