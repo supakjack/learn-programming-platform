@@ -50,7 +50,7 @@ export default {
         ).format("Do MMM YY เวลา LT");
       });
       this.allCourses = doesGet;
-      console.log(this.allCourses);
+      // console.log(this.allCourses);
     },
     async clickOpenUserSection(course) {
       this.$store.commit("course/setCourse", {
@@ -59,8 +59,24 @@ export default {
       this.$router.push("/assignment");
     }
   },
-  async created() {
+  created() {
     this.initialize();
+  },
+  async mounted() {
+    this.$store.commit("breadcrumb/setBreadcrumb", [
+      {
+        text: "หน้าหลัก",
+        href: "/home"
+      },
+      {
+        text:
+          this.$store.state.course.courseCode +
+          " " +
+          this.$store.state.course.courseName,
+        href: "/home/section"
+      }
+    ]);
+    console.log("mounted");
   },
   data: () => ({
     allCourses: []
