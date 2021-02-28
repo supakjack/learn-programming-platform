@@ -274,6 +274,7 @@ export default {
       this.$store.commit("course/setCourse", {
         course
       });
+      this.$router.push('/home/section')
       console.log(this.$store.state.course);
     },
     async clickOpenEditCourse(course) {
