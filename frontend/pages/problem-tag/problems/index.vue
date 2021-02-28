@@ -141,7 +141,7 @@ export default {
       // use to add, edit and delete item
       problemId: 0,
       problemTitle: "",
-      problemDiscription: "",
+      problemDescription: "",
       // problemPath: "",
       problemStatus: 0,
       problemCreateBy: 0,
@@ -153,7 +153,7 @@ export default {
       // default of item value
       problemId: 0,
       problemTitle: "",
-      problemDiscription: "",
+      problemDescription: "",
       // problemPath: "",
       problemStatus: 0,
       problemCreateBy: 0,
@@ -246,7 +246,7 @@ export default {
           createTestsetData,
           createProblemData: {
             problemTitle: this.$store.state.problem.title,
-            problemDiscription: this.$store.state.problem.description,
+            problemDescription: this.$store.state.problem.description,
             problemStatus: this.$store.state.problem.status,
             problemCreateBy: userId,
             problemUpdateBy: userId
@@ -298,7 +298,7 @@ export default {
           updateTestsetData,
           updateProblemData: {
             problemTitle: this.$store.state.problem.title,
-            problemDiscription: this.$store.state.problem.description,
+            problemDescription: this.$store.state.problem.description,
             problemStatus: this.$store.state.problem.status,
             problemUpdateBy: userId,
             problemUpdateDate: this.$moment().format("YYYY-MM-DD HH:mm:ss")
@@ -353,7 +353,7 @@ export default {
         problem: {
           id: item.problemId,
           title: item.problemTitle,
-          description: item.problemDiscription,
+          description: item.problemDescription,
           status: item.problemStatus,
           tags: arrayHashtag,
           testset: arrayTestset
@@ -381,7 +381,7 @@ export default {
       this.editedIndex = this.allProblems.indexOf(item);
       this.editedItem.problemId = item.problemId;
       this.editedItem.problemTitle = item.problemTitle;
-      this.editedItem.problemDiscription = item.problemDiscription;
+      this.editedItem.problemDescription = item.problemDescription;
       // this.editedItem.problemPath = item.problemPath;s
       this.editedItem.problemStatus = 3;
       this.editedItem.taskScore = item.taskScore;

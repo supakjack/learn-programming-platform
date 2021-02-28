@@ -37,7 +37,7 @@ export default {
     async editProblem(data) {
       const editData = {};
       editData.problemTitle = data.problemTitle;
-      // editData.problemDiscription = data.problemDiscription;
+      // editData.problemDescription = data.problemDescription;
       editData.problemStatus = data.problemStatus;
       // editData.taskScore = data.taskScore;
       // editData.problemCreateBy = data.problemCreateBy;
