@@ -40,6 +40,21 @@ export default {
   mixins: [coursemixin],
   methods: {
     async initialize() {
+      const corseSection =
+        this.$store.state.course.courseName +
+        " " +
+        this.$store.state.course.courseCode;
+      console.log();
+      this.$store.commit("breadcrumb/setBreadcrumb", [
+        {
+          text: "หน้าหลัก",
+          href: "/home"
+        },
+        {
+          text: corseSection,
+          href: "/home/section"
+        }
+      ]);
       const { doesGet } = await this.getCourseSection({
         courseId: this.$store.state.course.courseId,
         userId: this.$store.state.user.id
@@ -61,22 +76,6 @@ export default {
   },
   created() {
     this.initialize();
-  },
-  async mounted() {
-    this.$store.commit("breadcrumb/setBreadcrumb", [
-      {
-        text: "หน้าหลัก",
-        href: "/home"
-      },
-      {
-        text:
-          this.$store.state.course.courseCode +
-          " " +
-          this.$store.state.course.courseName,
-        href: "/home/section"
-      }
-    ]);
-    console.log("mounted");
   },
   data: () => ({
     allCourses: []

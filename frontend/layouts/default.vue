@@ -5,7 +5,7 @@
       <Sidebar></Sidebar>
       <v-main>
         <v-container>
-          <Tcrumb></Tcrumb>
+          <Breadcrumb></Breadcrumb>
           <nuxt />
         </v-container>
       </v-main>
@@ -18,16 +18,16 @@
 import Sidebar from "./Modrens/Sidebar";
 import Topbar from "./Modrens/Topbar";
 import Footer from "./Modrens/Footer";
-// import Breadcrumb from "./Modrens/Breadcrumb";
-import Tcrumb from "./Modrens/Tcrumb";
+import Breadcrumb from "./Modrens/Breadcrumb";
+// import Tcrumb from "./Modrens/Tcrumb";
 
 export default {
   components: {
     Sidebar,
     Topbar,
     Footer,
-    // Breadcrumb,
-    Tcrumb
+    Breadcrumb
+    // Tcrumb
   },
   mounted() {
     this.$store.commit("setCrumbs", [

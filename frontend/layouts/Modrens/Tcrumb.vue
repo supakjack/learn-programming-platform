@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>{{ $store.state.crumbs }}</p>
+    <p>asdsadas</p>
   </div>
 </template>
 

@@ -353,14 +353,6 @@ export default {
   async created() {
     this.initialize();
   },
-  mounted() {
-    this.$store.commit("setCrumbs", [
-      {
-        title: "home",
-        url: "home"
-      }
-    ]);
-  },
   data: () => ({
     deleteCourseDialog: false,
     insertCourseDialog: false,
