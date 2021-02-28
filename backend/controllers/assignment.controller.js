@@ -49,11 +49,10 @@ module.exports = {
   // input: query string : condition {assingmetTitle, assingmentDescription, assingmentStartDate, assingmentEndDate ,assingmentStatus}
   // output: {assingmetTitle, assingmentDescription, assingmentStartDate, assingmentEndDate ,assingmentStatus}
   // CreateBy: Atikom Wongwan / CreateDate: 19/2/2021
-  // UpdateBy: Atikom Wongwan / UpdateDate: 19/2/2021
+  // UpdateBy: Niphitphon Thantkulkit / UpdateDate: 28/2/2021
 
   get: async (req, res, next) => {
     // passing data from query string validate data from
-    // const getAssignmentData = await getAssignmentSchema.validateAsync(req.query);
     const getAssignmentData = await getAssignmentSchema.validateAsync(
       req.query
     );
@@ -63,7 +62,7 @@ module.exports = {
         name: "assignments",
         condition: [getAssignmentData],
         whereNot: [{ assignmentStatus: "delete" }],
-        // condition: [req.query],
+        condition: [getAssignmentData],
         filter: [
           "assignmentTitle",
           "assignmentDescription",

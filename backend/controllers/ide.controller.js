@@ -56,20 +56,18 @@ module.exports = {
 
     console.log(language);
     try {
-      let resultStdin = stdin.replace(/,/g, "\n");
       let languageResult;
       if (language == "C++") {
         languageResult = "cpp";
       } else if (language == "C") {
         languageResult = "c";
       }
-      console.log(resultStdin);
       // run with source code
       if (source) {
         const doesCompile = await comileLogic(
           languageResult,
           "source",
-          resultStdin,
+          stdin,
           source.toString(),
           null
         );
@@ -94,7 +92,7 @@ module.exports = {
               const doesCompile = await comileLogic(
                 languageResult,
                 "path",
-                resultStdin,
+                stdin,
                 source,
                 path
               );
@@ -113,7 +111,7 @@ module.exports = {
           const doesCompile = await comileLogic(
             languageResult,
             "path",
-            resultStdin,
+            stdin,
             source,
             path
           );
@@ -294,7 +292,7 @@ module.exports = {
       if (sourceCode) {
         await fs.writeFile(
           filePath + "\\" + "main." + languageResult,
-          JSON.stringify(sourceCode)
+          sourceCode
         );
         const fileName = await writeFileLogic(sourceCode, null, languageResult);
 

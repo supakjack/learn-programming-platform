@@ -195,6 +195,7 @@ import assignmentmixin from "../../../components/assignment";
 export default {
   mixins: [assignmentmixin],
   data: () => ({
+    courseData: [],
     // status: ["ใช้งาน", "ไม่ใช้งาน"],
     date: new Date().toISOString().substr(0, 10),
     menu: false,
@@ -249,7 +250,7 @@ export default {
     // const { doseGetAll } = await this.getProblem();
     // this.allProblems = doseGetAll;
     // console.log(this.allProblems);
-    console.log(this.$store.state.course)
+    console.log(this.$store.state.course);
   },
 
   computed: {
@@ -287,7 +288,10 @@ export default {
     // UpdateBy: Atikom Wongwan / UpdateDate: 19/2/2021
 
     async initialize() {
-      const { doesGetAll } = await this.getAssignment();
+      // console.log(this.$store.state.course.sectionId);
+      this.courseData = this.$store.state.course;
+      // console.log("hello", this.courseData);
+      const { doesGetAll } = await this.getAssignment(this.courseData.sectionId);
       doesGetAll.map(doesGetAll => {
         doesGetAll.assignmentStartDate = this.$moment(
           doesGetAll.assignmentStartDate

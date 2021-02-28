@@ -153,7 +153,7 @@
           <v-col>
             <v-card
               style="max-height: 176px;
-    overflow: auto; height : 176px"
+              overflow: auto; height : 176px"
               outlined
               :loading="loading"
             >
@@ -174,10 +174,12 @@
                   <v-card flat>
                     <v-card-text>
                       <v-row>
-                        <v-text-field
+                        <v-textarea
                           v-model="submit.stdin"
+                          autocomplete="email"
                           label="ข้อมูลนำเข้า"
-                        ></v-text-field>
+                          rows="2"
+                        ></v-textarea>
                       </v-row>
                       <v-row>
                         <v-text-field
@@ -378,7 +380,7 @@ export default {
       this.loading = false;
     },
     run() {
-      console.log(this.files);
+      console.log(this.submit.stdin);
       let formData = new FormData();
 
       if (this.files) {
