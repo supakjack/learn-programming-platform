@@ -17,35 +17,20 @@ module.exports = {
         filter: [
           'userId',
           'userUsername',
-          'enrollId',
           'courseId',
           'courseName',
           'courseCode',
           'courseUpdateDate',
-          'sectionId',
-          'sectionNumber',
           'yearId',
           'yearName',
           'yearSemester'
         ],
         leftJoin: [
           {
-            joinTable: 'enrolls',
+            joinTable: 'courses',
             leftTableName: 'users',
             leftKey: 'userId',
-            joinKey: 'enrollUserId'
-          },
-          {
-            joinTable: 'sections',
-            leftTableName: 'enrolls',
-            leftKey: 'enrollSectionId',
-            joinKey: 'sectionId'
-          },
-          {
-            joinTable: 'courses',
-            leftTableName: 'sections',
-            leftKey: 'sectionCourseId',
-            joinKey: 'courseId'
+            joinKey: 'courseCreateBy'
           },
           {
             joinTable: 'years',
@@ -59,14 +44,9 @@ module.exports = {
         name: 'years',
         condition: [{ yearCreateBy: getCondition.userId }]
       })
-      const doesGetSectionByCreate = await globalModel.select({
-        name: 'sections',
-        condition: [{ sectionCreateBy: getCondition.userId }]
-      })
-      res
-        .status(200)
-        .send({ doesGetSome, doesGetYearByCreate, doesGetSectionByCreate })
+      res.status(200).send({ doesGetSome, doesGetYearByCreate })
     } catch (error) {
+      console.log(error);
       if (error.isJoi === true) return next(createError.InternalServerError())
       next(error)
     }

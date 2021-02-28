@@ -133,9 +133,8 @@ export default {
       const {
         doesGetSome,
         doesGetYearByCreate,
-        doesGetSectionByCreate
       } = await this.getHome(this.$store.state.user.id);
-      console.log(doesGetSome, doesGetYearByCreate, doesGetSectionByCreate);
+      console.log(doesGetSome, doesGetYearByCreate);
       await doesGetSome.map(doesGetSome => {
         doesGetSome.courseUpdateDate = this.$moment(
           doesGetSome.courseUpdateDate
@@ -148,13 +147,8 @@ export default {
           " ภาคเรียนที่ " +
           doesGetYearByCreate.yearSemester;
       });
-      await doesGetSectionByCreate.map(doesGetSectionByCreate => {
-        doesGetSectionByCreate.text =
-          "กลุ่มเรียนที่ " + doesGetSectionByCreate.sectionNumber;
-      });
       this.allCourses = doesGetSome;
       this.yearByCreate = doesGetYearByCreate;
-      this.sectionByCreate = doesGetSectionByCreate;
       // this.$store.commit("course/setCourse", {
       //   course: {
       //     courses: this.allCourses
@@ -195,11 +189,9 @@ export default {
     sectionDialog: false,
     allCourses: [],
     yearByCreate: [],
-    sectionByCreate: [],
     modalCourseCode: "",
     modalCourseName: "",
     modalCourseYearId: "",
-    modalCourseSectionId: "",
     modalCourseStatus: ""
   })
 };
