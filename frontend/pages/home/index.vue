@@ -271,7 +271,10 @@ export default {
       this.yearByCreate = doesGetYearByCreate;
     },
     async clickOpenCourseSection(course) {
-      console.log(course);
+      this.$store.commit("course/setCourse", {
+        course
+      });
+      console.log(this.$store.state.course);
     },
     async clickOpenEditCourse(course) {
       this.modalCourseId = course.courseId;
