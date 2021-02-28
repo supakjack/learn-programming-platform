@@ -47,12 +47,12 @@
               <v-stepper-items>
                 <v-stepper-content step="1">
                   <div>
-                    <insertStep1 />
+                    <insertStep1 :watchArray="watchArray" />
                   </div>
                 </v-stepper-content>
 
                 <v-stepper-content step="2">
-                  <insertStep2 />
+                  <insertStep2 :watchArray="watchArray" />
                 </v-stepper-content>
               </v-stepper-items>
             </v-stepper>
@@ -72,7 +72,7 @@
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="text-center">
-              ต้องการลบแท็กนี้ใช่หรือไม่?
+              ต้องการลบโจทย์ปัญหานี้ใช่หรือไม่?
             </v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -118,7 +118,8 @@ export default {
     insertStep2
   },
   data: () => ({
-    step1: "",
+    editProblemId: null,
+    watchArray: [],
     input: "",
     allProblems: [],
     dialog: false,
@@ -167,10 +168,6 @@ export default {
     ]
   }),
 
-  mounted() {
-    console.log(this.$store.state.problem);
-  },
-
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "สร้างโจทย์ปัญหา" : "แก้ไขโจทย์ปัญหา";
@@ -213,119 +210,193 @@ export default {
       this.allProblems = doesGetAll;
     },
 
+    // add and save problem-data to database
     async save() {
-      let createHashtagData = [];
-      for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
-        const dataHashtag = {
-          hashtagTagId: this.$store.state.problem.tags[i],
-          hashtagProblemId: null,
-          hashtagCreateBy: 1,
-          hashtagUpdateBy: 1
-        };
-        createHashtagData.push(dataHashtag);
-      }
-      // let createTestsetData = [];
       const userId = this.$store.state.user.id;
-      const createTestsetData = this.$store.state.problem.testset.map(item => {
-        return {
-          testsetTitle: item.testsetTitle,
-          testsetDescription: item.testsetDescription,
-          testsetInput: item.testsetInput,
-          testsetOutput: item.testsetOutput,
-          testsetProblemId: null,
-          testsetIsExample: item.testsetIsExample,
-          testsetCreateBy: userId,
-          testsetUpdateBy: userId
-        };
-      });
-
-      const request = {
-        createHashtagData,
-        createTestsetData,
-        createProblemData: {
-          problemTitle: this.$store.state.problem.title,
-          problemDiscription: this.$store.state.problem.description,
-          problemCreateBy: 1,
-          problemUpdateBy: 1
-        },
-        createFilesData: {
-          filePath: "0",
-          fileCreateBy: 1,
-          fileUpdateBy: 1
-        },
-        createPicturesData: {
-          pictureFileId: null,
-          pictureProblemId: null,
-          pictureCreateBy: 1,
-          pictureUpdateBy: 1
+      if (this.editProblemId == null) {
+        console.log(this.$store.state.problem.status);
+        let createHashtagData = [];
+        for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
+          const dataHashtag = {
+            hashtagTagId: this.$store.state.problem.tags[i],
+            hashtagProblemId: null,
+            hashtagCreateBy: userId,
+            hashtagUpdateBy: userId
+          };
+          createHashtagData.push(dataHashtag);
         }
-      };
 
-      const insertResult = await this.insertProblem(request);
-      console.log(insertResult);
+        const createTestsetData = this.$store.state.problem.testset.map(
+          item => {
+            return {
+              testsetTitle: item.testsetTitle,
+              testsetDescription: item.testsetDescription,
+              testsetInput: item.testsetInput,
+              testsetOutput: item.testsetOutput,
+              testsetProblemId: null,
+              testsetIsExample: item.testsetIsExample,
+              testsetCreateBy: userId,
+              testsetUpdateBy: userId
+            };
+          }
+        );
+
+        const request = {
+          createHashtagData,
+          createTestsetData,
+          createProblemData: {
+            problemTitle: this.$store.state.problem.title,
+            problemDiscription: this.$store.state.problem.description,
+            problemStatus: this.$store.state.problem.status,
+            problemCreateBy: userId,
+            problemUpdateBy: userId
+          },
+          createFilesData: {
+            filePath: "0",
+            fileCreateBy: userId,
+            fileUpdateBy: userId
+          },
+          createPicturesData: {
+            pictureFileId: null,
+            pictureProblemId: null,
+            pictureCreateBy: userId,
+            pictureUpdateBy: userId
+          }
+        };
+
+        const insertResult = await this.insertProblem(request);
+      } else {
+        console.log(this.$store.state.problem);
+        let updateHashtagData = [];
+        for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
+          const dataHashtag = {
+            hashtagTagId: this.$store.state.problem.tags[i],
+            hashtagProblemId: this.editProblemId,
+            hashtagCreateBy: userId,
+            hashtagUpdateBy: userId
+          };
+          updateHashtagData.push(dataHashtag);
+        }
+        const updateTestsetData = this.$store.state.problem.testset.map(
+          item => {
+            return {
+              testsetTitle: item.testsetTitle,
+              testsetDescription: item.testsetDescription,
+              testsetInput: item.testsetInput,
+              testsetOutput: item.testsetOutput,
+              testsetProblemId: this.editProblemId,
+              testsetIsExample: item.testsetIsExample,
+              testsetCreateBy: userId,
+              testsetUpdateBy: userId
+            };
+          }
+        );
+
+        const request = {
+          problemId: this.editProblemId,
+          updateHashtagData,
+          updateTestsetData,
+          updateProblemData: {
+            problemTitle: this.$store.state.problem.title,
+            problemDiscription: this.$store.state.problem.description,
+            problemStatus: this.$store.state.problem.status,
+            problemUpdateBy: userId,
+            problemUpdateDate: this.$moment().format("YYYY-MM-DD HH:mm:ss")
+          },
+          updateFilesData: {
+            filePath: "0",
+            fileCreateBy: userId,
+            fileUpdateBy: userId
+          },
+          updatePicturesData: {
+            pictureFileId: null,
+            pictureProblemId: this.editProblemId,
+            pictureCreateBy: userId,
+            pictureUpdateBy: userId
+          }
+        };
+        const updateResult = await this.updateProblem(request);
+      }
       this.dialog = false;
     },
 
-    editItem(item) {
-      this.dialog = true;
-      console.log(item);
-      // let data = {
-      //   createProblemData: {
-      //     problemTitle: item.problemTitle,
-      //     problemDiscription: item.problemDiscription,
-      //     problemCreateBy: 1,
-      //     problemUpdateBy: 1
-      //   },
-      //   createFilesData: {
-      //     filePath: "0",
-      //     fileCreateBy: 1,
-      //     fileUpdateBy: 1
-      //   },
-      //   createPicturesData: {
-      //     pictureFileId: null,
-      //     pictureProblemId: null,
-      //     pictureCreateBy: 1,
-      //     pictureUpdateBy: 1
-      //   },
-      //   createHashtagData: {
-      //     hashtagTagId: null,
-      //     hashtagProblemId: null,
-      //     hashtagCreateBy: 1,
-      //     hashtagUpdateBy: 1
-      //   },
-      //   createTestsetData: {
-      //     testsetTitle: item.testsetTitle,
-      //     testsetDescription: item.testsetDescription,
-      //     testsetInput: item.testsetInput,
-      //     testsetOutput: item.testsetOutput,
-      //     testsetProblemId: null,
-      //     testsetIsExample: null,
-      //     testsetCreateBy: 1,
-      //     testsetUpdateBy: 1
-      //   }
-      // };
+    //edit problem-data by problemId
+    async editItem(item) {
+      const hashtag = this.editHashtag(item.problemId);
+      const testset = this.editTestset(item.problemId);
 
-      // this.dialog = true;
+      const hashtagResult = await hashtag.then(res => {
+        return res;
+      });
+      const testsetResult = await testset.then(res => {
+        return res;
+      });
+
+      const arrayHashtag = hashtagResult.map(res => {
+        return res.hashtagTagId;
+      });
+
+      let arrayTestset = [];
+      testsetResult.map(res => {
+        const data = {
+          testsetTitle: res.testsetTitle,
+          testsetDescription: res.testsetDescription,
+          testsetInput: res.testsetInput,
+          testsetOutput: res.testsetOutput,
+          testsetIsExample: res.testsetIsExample
+        };
+        arrayTestset.push(data);
+      });
+
+      this.$store.commit("problem/setProblem", {
+        problem: {
+          id: item.problemId,
+          title: item.problemTitle,
+          description: item.problemDiscription,
+          status: item.problemStatus,
+          tags: arrayHashtag,
+          testset: arrayTestset
+        }
+      });
+      let status = 1;
+      if (this.$store.state.problem.status == "ไม่ใช้งาน") {
+        status = 2;
+      }
+      this.watchArray = [
+        { name: "id", val: this.$store.state.problem.id },
+        { name: "title", val: this.$store.state.problem.title },
+        { name: "description", val: this.$store.state.problem.title },
+        { name: "status", val: status },
+        { name: "tags", val: this.$store.state.problem.tags },
+        { name: "testset", val: this.$store.state.problem.testset }
+      ];
+      this.editProblemId = item.problemId;
+      this.dialog = true;
+
+      console.log(this.$store.state.problem.tags);
+      console.log(this.watchArray);
     },
 
+    // change status problem-data from enable or disable to delete
     deleteItem(item) {
+      const userId = this.$store.state.user.id;
       this.editedIndex = this.allProblems.indexOf(item);
       console.log(this.editedIndex);
       this.editedItem.problemId = item.problemId;
       this.editedItem.problemTitle = item.problemTitle;
       this.editedItem.problemDiscription = item.problemDiscription;
-      // this.editedItem.problemPath = item.problemPath;
+      // this.editedItem.problemPath = item.problemPath;s
       this.editedItem.problemStatus = 3;
       this.editedItem.taskScore = item.taskScore;
-      this.editedItem.problemCreateBy = 1;
+      this.editedItem.problemCreateBy = userId;
       this.editedItem.problemUpdateBy = this.editedItem.problemCreateBy;
       this.editedItem.problemUpdateDate = this.$moment().format(
         "YYYY-MM-DD HH:mm:ss"
       );
-      console.log(this.editedItem);
       this.dialogDelete = true;
     },
 
+    // confirm change status problem-data
     async deleteItemConfirm() {
       const EditResult = await this.editProblem(this.editedItem);
 
@@ -335,6 +406,7 @@ export default {
       }
     },
 
+    // for close dialog
     close() {
       this.dialog = false;
       this.$nextTick(() => {
@@ -344,6 +416,7 @@ export default {
       this.initialize();
     },
 
+    // for close delete-dialog
     closeDelete() {
       this.dialogDelete = false;
       this.$nextTick(() => {
@@ -353,6 +426,7 @@ export default {
       this.initialize();
     },
 
+    // for close insert-dialog
     closeInsert() {
       this.dialogInsert = false;
       this.$nextTick(() => {

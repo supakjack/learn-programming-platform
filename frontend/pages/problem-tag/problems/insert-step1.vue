@@ -61,13 +61,20 @@ import problemsmixin from "../../../components/problems";
 import tagsmixin from "@/components/tags";
 
 export default {
-  mixins: [problemsmixin],
-  mixins: [tagsmixin],
+  mixins: [problemsmixin, tagsmixin],
+  props: {
+    watchArray: {
+      type: Array,
+      required: true
+    }
+  },
   components: {},
 
   data: () => ({
     items: [],
+    testset: [],
     value: null,
+    problemId: "",
     problemTitle: "",
     problemStatus: "",
     taskScore: "",
@@ -79,42 +86,85 @@ export default {
       { text: "ไม่ใช้งาน", value: 2 }
     ]
   }),
-
+  mounted() {
+    this.watchArray.map((e, i) => {
+      if (e.name == "title") {
+        this.problemTitle = e.val;
+      }
+      if (e.name == "description") {
+        this.problemDescription = e.val;
+      }
+      if (e.name == "status") {
+        this.problemStatus = e.val;
+      }
+      if (e.name == "tags") {
+        this.tags = e.val;
+      }
+      if (e.name == "testset") {
+        this.testset = e.val;
+      }
+    });
+  },
   computed: {},
 
   watch: {
+    watchArray: function(newValue, oldValue) {
+      console.log("testttttttttttt");
+      this.watchArray.map((e, i) => {
+        if (e.name == "title") {
+          this.problemTitle = e.val;
+        }
+        if (e.name == "description") {
+          this.problemDescription = e.val;
+        }
+        if (e.name == "status") {
+          this.problemStatus = e.val;
+        }
+        if (e.name == "tags") {
+          this.tags = e.val;
+        }
+        if (e.name == "testset") {
+          this.testset = e.val;
+        }
+      });
+    },
     problemTitle: function(newValue, oldValue) {
       this.$store.commit("problem/setProblem", {
         problem: {
-          title: this.problemTitle
+          title: this.problemTitle,
+          testset: this.testset
         }
       });
     },
     problemStatus: function(newValue, oldValue) {
       this.$store.commit("problem/setProblem", {
         problem: {
-          status: this.problemStatus
+          status: this.problemStatus,
+          testset: this.testset
         }
       });
     },
     taskScore: function(newValue, oldValue) {
       this.$store.commit("problem/setProblem", {
         problem: {
-          score: this.taskScore
+          score: this.taskScore,
+          testset: this.testset
         }
       });
     },
     problemDescription: function(newValue, oldValue) {
       this.$store.commit("problem/setProblem", {
         problem: {
-          description: this.problemDescription
+          description: this.problemDescription,
+          testset: this.testset
         }
       });
     },
     tags: function(newValue, oldValue) {
       this.$store.commit("problem/setProblem", {
         problem: {
-          tags: this.tags
+          tags: this.tags,
+          testset: this.testset
         }
       });
     }
@@ -129,7 +179,9 @@ export default {
     async initialize() {
       const { doesGetAll } = await this.getTag();
       this.items = doesGetAll;
-    }
+    },
+
+    editItemInstep1(item) {}
   }
 };
 </script>

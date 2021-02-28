@@ -1,20 +1,20 @@
 <script>
 export default {
   methods: {
-    // function name: getHomework
+    // function name: getAssignmentHomework
     // description: get from backend API
     // input: -
-    // output: [doesGetAll]: {tagName, tagId, tagStatus, tagUpdateDate, tagCraeteDate ,CreateName, UpdateName}
+    // output: [doesGetAll]: {assignmentTitle, assignmentId, assignmentStatus, assignmentStartDate, assignmentEndDate }
     // CreateBy: Yotsapat Phurahong / CreateDate: 18/2/2021
     // UpdateBy:
     async getHomework() {
       return this.$axios.$get("homework");
     },
 
-    // function name: getHomework
+    // function name: getTaskHomework
     // description: get from backend API
     // input: -
-    // output: [doesGetAll]: {tagName, tagId, tagStatus, tagUpdateDate, tagCraeteDate ,CreateName, UpdateName}
+    // output: [doesGetAll]: {"taskId","taskScore","taskLimit","problemId","problemTitle","problemDescription","tagName","compilelogScore","compilelogSubmitNo","compilelogTestResult",}
     // CreateBy: Yotsapat Phurahong / CreateDate: 18/2/2021
     // UpdateBy:
     async getProblem(taskAssignmentId) {

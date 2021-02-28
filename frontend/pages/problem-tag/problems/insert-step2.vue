@@ -111,6 +111,12 @@
 
 <script>
 export default {
+  props: {
+    watchArray: {
+      type: Array,
+      required: true
+    }
+  },
   data: () => ({
     items: [],
 
@@ -124,6 +130,37 @@ export default {
     isAdd: true,
     indexForEdit: -1
   }),
+  mounted() {
+    // console.log("step1" + this.$store.state.problem.id);
+    this.watchArray.map((e, i) => {
+      if (e.name == "testset") {
+        this.items = e.val;
+      }
+    });
+    console.log(this.items);
+    this.$store.commit("problem/setProblem", {
+      problem: {
+        testset: this.items
+      }
+    });
+    console.log(this.$store.state.problem);
+  },
+  computed: {},
+
+  watch: {
+    watchArray: function(newValue, oldValue) {
+      this.watchArray.map((e, i) => {
+        if (e.name == "testset") {
+          this.items = e.val;
+        }
+      });
+      this.$store.commit("problem/setProblem", {
+        problem: {
+          testset: this.items
+        }
+      });
+    }
+  },
 
   methods: {
     async addTable() {

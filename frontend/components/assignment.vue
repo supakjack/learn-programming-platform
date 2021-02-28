@@ -6,9 +6,9 @@ export default {
     // input: -
     // output: [doesGetAll]: {assingmetTitle, assingmentDescription, assingmentStartDate, assingmentEndDate ,assingmentStatus}
     // CreateBy: Atikom Wongwan / CreateDate: 19/2/2021
-    // UpdateBy: Atikom Wongwan / UpdateDate: 19/2/2021
-    async getAssignment() {
-      return this.$axios.$get("assignment");
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 28/2/2021
+    async getAssignment(data) {
+      return this.$axios.$get(`assignment/?assignmentSectionId=${data}`);
     },
 
     // function name: insertAssingment
