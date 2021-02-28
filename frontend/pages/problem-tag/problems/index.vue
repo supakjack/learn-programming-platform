@@ -118,6 +118,10 @@ export default {
     insertStep2
   },
   data: () => ({
+    editAllItem: [],
+    hashtagResult: [],
+    testsetResult: [],
+    arrayHashtag: [],
     editProblemId: -1,
     watchArray: [],
     input: "",
@@ -141,7 +145,7 @@ export default {
       // use to add, edit and delete item
       problemId: 0,
       problemTitle: "",
-      problemDiscription: "",
+      problemDescription: "",
       // problemPath: "",
       problemStatus: 0,
       problemCreateBy: 0,
@@ -153,7 +157,7 @@ export default {
       // default of item value
       problemId: 0,
       problemTitle: "",
-      problemDiscription: "",
+      problemDescription: "",
       // problemPath: "",
       problemStatus: 0,
       problemCreateBy: 0,
@@ -246,7 +250,7 @@ export default {
           createTestsetData,
           createProblemData: {
             problemTitle: this.$store.state.problem.title,
-            problemDiscription: this.$store.state.problem.description,
+            problemDescription: this.$store.state.problem.description,
             problemStatus: this.$store.state.problem.status,
             problemCreateBy: userId,
             problemUpdateBy: userId
@@ -266,6 +270,28 @@ export default {
 
         const insertResult = await this.insertProblem(request);
       } else {
+        //process delete
+        console.log(this.hashtagResult);
+        console.log(this.testsetResult);
+        const hashtagId = this.hashtagResult.map(res => {
+          return res.hashtagId;
+        });
+        const testsetId = this.testsetResult.map(res => {
+          return res.testsetId;
+        });
+        this.editAllItem;
+        const dataCondition = {
+          hashtagId,
+          testsetId,
+          fileId: this.editAllItem.fileId,
+          pictureId: this.editAllItem.pictureId
+        };
+
+        console.log(dataCondition);
+        const resultDelete = await this.deleteProblem(dataCondition);
+        console.log(resultDelete);
+
+        //process edit and insert
         console.log(this.$store.state.problem);
         let updateHashtagData = [];
         for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
@@ -298,7 +324,7 @@ export default {
           updateTestsetData,
           updateProblemData: {
             problemTitle: this.$store.state.problem.title,
-            problemDiscription: this.$store.state.problem.description,
+            problemDescription: this.$store.state.problem.description,
             problemStatus: this.$store.state.problem.status,
             problemUpdateBy: userId,
             problemUpdateDate: this.$moment().format("YYYY-MM-DD HH:mm:ss")
@@ -315,6 +341,7 @@ export default {
             pictureUpdateBy: userId
           }
         };
+        console.log(request);
         const updateResult = await this.updateProblem(request);
       }
       this.close();
@@ -322,23 +349,29 @@ export default {
 
     //edit problem-data by problemId
     async editItem(item) {
+      this.editAllItem = item;
       console.log(this.$store.state.problem);
       const hashtag = this.editHashtag(item.problemId);
       const testset = this.editTestset(item.problemId);
 
-      const hashtagResult = await hashtag.then(res => {
+      this.hashtagResult = await hashtag.then(res => {
         return res;
       });
-      const testsetResult = await testset.then(res => {
+      this.testsetResult = await testset.then(res => {
         return res;
       });
 
-      const arrayHashtag = hashtagResult.map(res => {
+      this.arrayHashtag = this.hashtagResult.map(res => {
         return res.hashtagTagId;
       });
 
+      console.log(item);
+      console.log(this.hashtagResult);
+      console.log(this.testsetResult);
+      console.log(this.arrayHashtag);
+
       let arrayTestset = [];
-      testsetResult.map(res => {
+      this.testsetResult.map(res => {
         const data = {
           testsetTitle: res.testsetTitle,
           testsetDescription: res.testsetDescription,
@@ -349,20 +382,21 @@ export default {
         arrayTestset.push(data);
       });
 
-      this.$store.commit("problem/setProblem", {
-        problem: {
-          id: item.problemId,
-          title: item.problemTitle,
-          description: item.problemDiscription,
-          status: item.problemStatus,
-          tags: arrayHashtag,
-          testset: arrayTestset
-        }
-      });
       let status = 1;
       if (this.$store.state.problem.status == "ไม่ใช้งาน") {
         status = 2;
       }
+      this.$store.commit("problem/setProblem", {
+        problem: {
+          id: item.problemId,
+          title: item.problemTitle,
+          description: item.problemDescription,
+          status: status,
+          tags: this.arrayHashtag,
+          testset: arrayTestset
+        }
+      });
+
       this.watchArray = [
         { name: "id", val: this.$store.state.problem.id },
         { name: "title", val: this.$store.state.problem.title },
@@ -381,7 +415,7 @@ export default {
       this.editedIndex = this.allProblems.indexOf(item);
       this.editedItem.problemId = item.problemId;
       this.editedItem.problemTitle = item.problemTitle;
-      this.editedItem.problemDiscription = item.problemDiscription;
+      this.editedItem.problemDescription = item.problemDescription;
       // this.editedItem.problemPath = item.problemPath;s
       this.editedItem.problemStatus = 3;
       this.editedItem.taskScore = item.taskScore;

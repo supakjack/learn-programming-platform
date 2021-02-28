@@ -5,14 +5,12 @@ export default {
       return this.$axios.$get("problem");
     },
 
-    async deleteProblem() {
-      const deleteData = {};
-      deleteData.problemStatus = data.problemStatus;
-      deleteData.problemUpdateDate = data.problemUpdateDate;
+    async deleteProblem(dataCondition) {
+      console.log(dataCondition);
       return this.$axios
-        .$patch(`problem/?problemId=${data.problemId}`, deleteData)
+        .$post("problem/delete", dataCondition)
         .catch(err => console.log(err))
-        .then(response => response.doesUpdate);
+        .then(response => response.doesDeleteFile);
     },
     async editHashtag(data) {
       const editData = {};
@@ -37,7 +35,7 @@ export default {
     async editProblem(data) {
       const editData = {};
       editData.problemTitle = data.problemTitle;
-      // editData.problemDiscription = data.problemDiscription;
+      // editData.problemDescription = data.problemDescription;
       editData.problemStatus = data.problemStatus;
       // editData.taskScore = data.taskScore;
       // editData.problemCreateBy = data.problemCreateBy;

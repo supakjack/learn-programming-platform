@@ -2,6 +2,7 @@ import todos from "./todos/index";
 import user from "./user/index";
 import problem from "./problem/index";
 import course from "./course/index";
+import breadcrumb from "./breadcrumb/index";
 
 export const state = () => ({
   counter: 0,
@@ -38,5 +39,6 @@ export const modules = {
   todos,
   user,
   problem,
-  course
+  course,
+  breadcrumb
 };

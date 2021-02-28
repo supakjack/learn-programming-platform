@@ -204,19 +204,35 @@ module.exports = {
       next(error);
     }
   },
-  updateAnother: async (req, res, next) => {
-    const updateCondition = await updateProblemConditionSchema.validateAsync(
-      req.query
-    );
-    const updateProblemData = await updateProblemSchema.validateAsync(req.body);
+  deleteAnother: async (req, res, next) => {
     // try call function deleteProblem in global model then catch if error
+    console.log(req.body);
+    console.log(req.query);
+
     try {
-      const doesUpdate = await globalModel.update({
-        name: "problems",
-        condition: [updateCondition],
-        updateData: [updateProblemData],
+      req.body.hashtagId.forEach((element) => {
+        const doesDeleteHashtag = globalModel.delete({
+          name: "hashtags",
+          condition: { hashtagId: element },
+        });
       });
-      res.status(200).send({ doesUpdate });
+
+      req.body.testsetId.forEach((element) => {
+        const doesDeleteTestset = globalModel.delete({
+          name: "testsets",
+          condition: { testsetId: element },
+        });
+      });
+
+      const doesDeletePicture = await globalModel.delete({
+        name: "pictures",
+        condition: { pictureId: req.body.pictureId },
+      });
+      const doesDeleteFile = await globalModel.delete({
+        name: "files",
+        condition: { fileId: req.body.fileId },
+      });
+      res.status(200).send({ doesDeleteFile });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);

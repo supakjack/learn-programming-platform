@@ -102,7 +102,7 @@ export default {
       },
       // { text: "ข้อ", value: "problemId" }, // define column name and value
       { text: "ชื่อ", value: "problemTitle" },
-      { text: "คำอธิบาย", value: "problemDiscription" },
+      { text: "คำอธิบาย", value: "problemDescription" },
       { text: "จำนวนที่ส่ง", value: "compilelogSubmitNo" },
       { text: "สถานะการส่งงาน", value: "compilelogTestResult" },
       { text: "คะแนน", value: "taskScore" },

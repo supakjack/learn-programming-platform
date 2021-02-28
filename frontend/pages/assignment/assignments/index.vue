@@ -180,8 +180,50 @@ Last edit: 19/2/2021 -->
 
     <!-- management -->
     <template v-slot:[`item.actions`]="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-      <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon
+            color="primary"
+            v-bind="attrs"
+            v-on="on"
+            small
+            class="mr-2"
+            @click="openDialog(item)"
+          >
+            mdi-information
+          </v-icon>
+        </template>
+        <span>เพิ่มเติม</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon
+            color="orange"
+            v-bind="attrs"
+            v-on="on"
+            small
+            class="mr-2"
+            @click="editItem(item)"
+          >
+            mdi-pencil
+          </v-icon>
+        </template>
+        <span>แก้ไข</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon
+            color="red"
+            v-bind="attrs"
+            v-on="on"
+            small
+            @click="deleteItem(item)"
+          >
+            mdi-delete
+          </v-icon>
+        </template>
+        <span>ลบ</span>
+      </v-tooltip>
     </template>
 
     <template v-slot:no-data>
@@ -291,7 +333,9 @@ export default {
       // console.log(this.$store.state.course.sectionId);
       this.courseData = this.$store.state.course;
       // console.log("hello", this.courseData);
-      const { doesGetAll } = await this.getAssignment(this.courseData.sectionId);
+      const { doesGetAll } = await this.getAssignment(
+        this.courseData.sectionId
+      );
       doesGetAll.map(doesGetAll => {
         doesGetAll.assignmentStartDate = this.$moment(
           doesGetAll.assignmentStartDate

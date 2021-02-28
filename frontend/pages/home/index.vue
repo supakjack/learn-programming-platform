@@ -252,6 +252,12 @@ export default {
   mixins: [coursemixin],
   methods: {
     async initialize() {
+      this.$store.commit("breadcrumb/setBreadcrumb", [
+        {
+          text: "หน้าหลัก",
+          href: "/home"
+        }
+      ]);
       const { doesGetSome, doesGetYearByCreate } = await this.getHome(
         this.$store.state.user.id
       );
@@ -275,7 +281,6 @@ export default {
         course
       });
       this.$router.push("/home/section");
-      console.log(this.$store.state.course);
     },
     async clickOpenEditCourse(course) {
       this.modalCourseId = course.courseId;
