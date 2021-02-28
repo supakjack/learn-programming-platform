@@ -16,19 +16,31 @@ module.exports = {
   }),
   mutations: {
     setCourse(state, { course }) {
-      state.courseId = course.courseId;
-      state.courseName = course.courseName;
-      state.courseCode = course.courseCode;
-      state.courseUpdateDate = course.courseUpdateDate;
+      state.courseId = course.courseId ? course.courseId : state.courseId;
+      state.courseName = course.courseName
+        ? course.courseName
+        : state.courseName;
+      state.courseCode = course.courseCode
+        ? course.courseCode
+        : state.courseCode;
+      state.courseUpdateDate = course.courseUpdateDate
+        ? course.courseUpdateDate
+        : state.courseUpdateDate;
 
-      state.sectionId = course.sectionId;
-      state.sectionNumber = course.sectionNumber;
-      state.userId = course.userId;
-      state.userUsername = course.userUsername;
+      state.sectionId = course.sectionId ? course.sectionId : state.sectionId;
+      state.sectionNumber = course.sectionNumber
+        ? course.sectionNumber
+        : state.sectionNumber;
+      state.userId = course.userId ? course.userId : state.userId;
+      state.userUsername = course.userUsername
+        ? course.userUsername
+        : state.userUsername;
 
-      state.yearId = course.yearId;
-      state.yearName = course.yearName;
-      state.yearSemester = course.yearSemester;
+      state.yearId = course.yearId ? course.yearId : state.yearId;
+      state.yearName = course.yearName ? course.yearName : state.yearName;
+      state.yearSemester = course.yearSemester
+        ? course.yearSemester
+        : state.yearSemester;
       // state.course.push(course);
       // console.log(course);
     }
