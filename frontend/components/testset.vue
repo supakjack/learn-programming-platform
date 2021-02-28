@@ -8,14 +8,21 @@ export default {
     // CreateBy:Theo Seathan / CreateDate: 21/2/2021
     // UpdateBy:
     async getTestset(data) {
-      return this.$axios.$get("testset", data);
+      console.log(data);
+      return this.$axios.$post("testset", data);
+    },
+    async getTestsetExample(data) {
+      const dataCondition = {
+        testsetId: data
+      };
+      return this.$axios.$post("testset/example", dataCondition);
     },
     async getCompilelog(data) {
       const testset = {
         compilelogTaskId: data
       };
       console.log(testset);
-      const result = this.$axios.$get("testset/compilelog", testset);
+      const result = this.$axios.$post("testset/compilelog", testset);
       return result;
     }
   }

@@ -14,54 +14,39 @@
           <v-tabs-items v-model="model">
             <v-tab-item>
               <v-card flat>
+                <v-card-title>
+                  {{ problemTitle }}
+                </v-card-title>
                 <v-card-text>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
+                  <p class="display-0.75 text--primary">
+                    {{ problemDescription }}
+                  </p>
+                  <p>ข้อมูลตัวอย่าง</p>
                 </v-card-text>
+                <v-data-table
+                  :headers="headersTestset"
+                  :items="testsetExample.doesGetAll"
+                  :items-per-page="5"
+                  class="elevation-1"
+                >
+                </v-data-table>
               </v-card>
             </v-tab-item>
             <v-tab-item>
-              <v-card flat>
-                <v-simple-table fixed-header>
-                  <template v-slot:default>
-                    <thead>
-                      <tr cols="12">
-                        <th class="text-center" cols="1">
-                          ครั้งที่
-                        </th>
-                        <th class="text-center" cols="3">
-                          ผลลัพธ์
-                        </th>
-                        <th class="text-center" cols="2">
-                          คะแนน
-                        </th>
-                        <th class="text-center" cols="2">
-                          วันที่
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        v-for="(item, index) in allCompileResult.doesGetAll"
-                        :key="index"
-                      >
-                        <td class="text-center">
-                          {{ item.compilelogSubmitNo }}
-                        </td>
-                        <td style="color:green">
-                          {{ item.compilelogTestResult }}
-                        </td>
-                        <td class="text-center">{{ item.compilelogScore }}</td>
-                        <td class="text-center">
-                          {{ item.compilelogCreateDate }}
-                        </td>
-                      </tr>
-                    </tbody>
+              <template>
+                <v-data-table
+                  :headers="headers"
+                  :items="allCompileResult.doesGetAll"
+                  :items-per-page="5"
+                  class="elevation-1"
+                >
+                  <template v-slot:item.compilelogTestResult="{ item }">
+                    <v-chip :color="getColor(item.compilelogTestResult)" dark>
+                      {{ item.compilelogTestResult }}
+                    </v-chip>
                   </template>
-                </v-simple-table>
-              </v-card>
+                </v-data-table>
+              </template>
             </v-tab-item>
             <v-tab-item>
               <v-card width="auto" height="487px" outlined>
@@ -176,18 +161,18 @@
                       <v-row>
                         <v-textarea
                           v-model="submit.stdin"
-                          autocomplete="email"
                           label="ข้อมูลนำเข้า"
                           rows="2"
                         ></v-textarea>
                       </v-row>
                       <v-row>
-                        <v-text-field
+                        <v-textarea
                           v-model="stdout"
+                          autocomplete="email"
                           label="ข้อมูลส่งออก"
                           value=""
-                          disabled
-                        ></v-text-field>
+                          readonly
+                        ></v-textarea>
                       </v-row>
                       <v-row> </v-row>
                     </v-card-text>
@@ -251,6 +236,29 @@ export default {
   mixins: [idemixin, testsetmixin],
 
   data: () => ({
+    headers: [
+      {
+        text: "ครั้งที่",
+        align: "start",
+        sortable: false,
+        value: "compilelogSubmitNo"
+      },
+      { text: "ผลลัพธ์", value: "compilelogTestResult" },
+      { text: "คะแนน", value: "compilelogScore" },
+      { text: "วันที่", value: "compilelogCreateDate" }
+    ],
+    headersTestset: [
+      {
+        text: "หัวข้อ",
+        align: "start",
+        sortable: false,
+        value: "testsetTitle"
+      },
+      { text: "คำอธิบาย", value: "testsetDescription" },
+      { text: "ข้อมูลนำเข้า", value: "testsetInput" },
+      { text: "ข้อมูลส่งออก", value: "testsetOutput" }
+    ],
+
     tabs: [
       { index: 0, name: "ผลจากการ RUN" },
       { index: 1, name: "ผลจากการ SUBMIT" }
@@ -272,14 +280,30 @@ export default {
     },
     stdout: "",
     model: "tab-3",
-    resultTabs: 0
+    resultTabs: 0,
+    problemTitle: "",
+    problemDescription: "",
+    testsetExample: []
   }),
   async created() {
     this.initialize();
   },
   methods: {
+    getColor(item) {
+      if (item == "Accepted") return "green";
+      else if (item == "Wrong Answer") return "orange";
+      else return "red";
+    },
     async initialize() {
-      const allCompile = this.getCompilelog(1);
+      console.log(this.$store.state.homework.problemId);
+      console.log(this.$store.state.homework.taskId);
+      this.testsetExample = await this.getTestsetExample(
+        this.$store.state.homework.problemId
+      );
+      console.log(this.testsetExample.doesGetAll);
+      this.problemTitle = this.$store.state.homework.problemTitle;
+      this.problemDescription = this.$store.state.homework.problemDescription;
+      const allCompile = this.getCompilelog(this.$store.state.homework.taskId);
 
       this.allCompileResult = await allCompile.then(res => {
         return res;
@@ -289,6 +313,7 @@ export default {
           doesGetAll.compilelogCreateDate
         ).format("Do MMM YY เวลา LT");
       });
+      console.log(this.allCompileResult);
     },
     deleteFile(file) {
       this.files = null;
@@ -322,10 +347,13 @@ export default {
       const submitResult = await this.submitData(formData);
       console.log(submitResult);
 
+      // console.log(this.$store.state.homework.problemId);
+      // console.log(this.$store.state.homework.taskId);
       const testsetProblem = {
-        testsetProblemId: 1
+        testsetProblemId: this.$store.state.homework.problemId
       };
       const testsetResult = await this.getTestset(testsetProblem);
+      console.log(testsetResult);
 
       this.dataTestset = await testsetResult.doesGetAll.map(async res => {
         const data = {
@@ -339,7 +367,7 @@ export default {
       });
 
       const compileData = {
-        compilelogTaskId: 1,
+        compilelogTaskId: this.$store.state.homework.taskId,
         compilelogSubmitNo: submitResult.dataReturn.number,
         compileloglanguage: submitResult.dataReturn.language,
         compilelogFileId: submitResult.dataReturn.fileId,
@@ -351,7 +379,7 @@ export default {
       this.testsetResult = await Promise.all(this.dataTestset).then(value => {
         return value;
       });
-      // console.log(this.testsetResult);
+      console.log(this.testsetResult);
       // this.testsetResult = dataTestset;
       console.log(this.testsetResult);
       compileData.testsetResult = this.testsetResult;
@@ -362,7 +390,7 @@ export default {
         return res;
       });
 
-      const allCompile = this.getCompilelog(1);
+      const allCompile = this.getCompilelog(this.$store.state.homework.taskId);
 
       this.allCompileResult = await allCompile.then(res => {
         return res;
@@ -379,7 +407,8 @@ export default {
       this.resultTabs = 1;
       this.loading = false;
     },
-    run() {
+    async run() {
+      this.loading = true;
       console.log(this.submit.stdin);
       let formData = new FormData();
 
@@ -393,18 +422,20 @@ export default {
       formData.append("stdin", this.submit.stdin);
 
       console.log([...formData]);
-      const result = this.seperate(formData);
-      result.then(result => {
-        console.log(result);
-        if (result.stderr != "") {
-          console.log("err");
-          this.snackbar = true;
-          this.textErr = result.stderr;
-        } else {
-          console.log("no err");
-          this.stdout = result.stdout;
-        }
-      });
+      const result = await this.seperate(formData);
+      console.log(result);
+
+      console.log(result);
+      if (result.stderr != "") {
+        console.log("err");
+        this.snackbar = true;
+        this.textErr = result.stderr;
+      } else {
+        console.log("no err");
+        this.stdout = result.stdout;
+      }
+
+      this.loading = false;
     },
     filePicked(e) {
       console.log(e.currentTarget.files);

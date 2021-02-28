@@ -194,13 +194,18 @@ export default {
       this.rowProblem = doesGetProblem;
       this.dialogDetail = true;
     },
-    openIde(item) {
-      this.$store.commit("problem/setProblem", {
-        problem: {
-          id: item.problemId
+    async openIde(item) {
+      console.log(item);
+      await this.$store.commit("homework/setHomework", {
+        homework: {
+          problemId: item.problemId,
+          taskId: item.taskId,
+          problemTitle: item.problemTitle,
+          problemDescription: item.problemDescription
         }
       });
-      console.log(this.$store.state.problem.id);
+      console.log(this.$store.state.homework.problemId);
+      console.log(this.$store.state.homework.taskId);
     }
   }
 };
