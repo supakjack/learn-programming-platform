@@ -196,6 +196,16 @@ export default {
 
   methods: {
     async initialize() {
+      this.$store.commit("breadcrumb/setBreadcrumb", [
+        {
+          text: "หน้าหลัก",
+          href: "/home"
+        },
+        {
+          text: "โจทย์-แท็ก",
+          href: "/problem-tag"
+        }
+      ]);
       const { doesGetAll } = await this.getProblem();
 
       doesGetAll.map(doesGetAll => {

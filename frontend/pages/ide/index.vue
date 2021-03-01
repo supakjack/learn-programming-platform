@@ -118,6 +118,16 @@ export default {
   mixins: [idemixin],
   mounted() {
     console.log(this.$store.state.problem.id);
+      this.$store.commit("breadcrumb/setBreadcrumb", [
+        {
+          text: "หน้าหลัก",
+          href: "/home"
+        },
+        {
+          text: "IDE",
+          href: "/ide"
+        }
+      ]);
   },
   data: () => ({
     selectedItem: 1,
