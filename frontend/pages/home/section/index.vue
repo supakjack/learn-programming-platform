@@ -41,9 +41,9 @@ export default {
   methods: {
     async initialize() {
       const corseSection =
-        this.$store.state.course.courseName +
+        this.$store.state.course.courseCode +
         " " +
-        this.$store.state.course.courseCode;
+        this.$store.state.course.courseName;
       console.log();
       this.$store.commit("breadcrumb/setBreadcrumb", [
         {
