@@ -31,6 +31,7 @@ module.exports = {
           { name: "taskScore", newName: "sumTaskScore" },
           { name: "compilelogScore", newName: "sumCompilelogScore" },
         ],
+        whereNot: [{ taskId: null }],
         leftJoin: [
           {
             joinTable: "tasks",

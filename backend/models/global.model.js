@@ -82,6 +82,11 @@ module.exports = {
             doesSelect.groupBy(groupBy.name);
           });
         }
+        if (table.orderBy) {
+          table.orderBy.forEach((orderBy) => {
+            doesSelect.orderBy(orderBy.name, orderBy.type);
+          });
+        }
         resolve(doesSelect);
       } catch (error) {
         console.log(error.message);

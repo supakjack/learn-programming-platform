@@ -15,8 +15,6 @@
             :items="problemStatusData"
             menu-props="auto"
             label="สถานะ"
-            hide-details
-            single-line
           ></v-select>
         </v-col>
       </v-row>
@@ -28,7 +26,7 @@
       <v-row>
         <v-col cols="12" sm="12" md="6">
           <p class="text-md-left">
-            ภาพประกอบโจทย์
+            ภาพประกอบ
             <input type="file" />
           </p>
         </v-col>
@@ -104,11 +102,13 @@ export default {
         this.testset = e.val;
       }
     });
+    console.log(this.watchArray);
   },
   computed: {},
 
   watch: {
     watchArray: function(newValue, oldValue) {
+      console.log(this.problemTitle);
       this.watchArray.map((e, i) => {
         if (e.name == "title") {
           this.problemTitle = e.val;
@@ -128,44 +128,74 @@ export default {
       });
     },
     problemTitle: function(newValue, oldValue) {
+      console.log(this.problemTitle);
       this.$store.commit("problem/setProblem", {
         problem: {
           title: this.problemTitle,
-          testset: this.testset
+          tags: this.tags,
+          status: this.problemStatus,
+          score: this.taskScore,
+          testset: this.testset,
+          description: this.problemDescription
         }
       });
+      console.log(this.$store.state.problem);
     },
     problemStatus: function(newValue, oldValue) {
+      console.log(this.problemStatus);
       this.$store.commit("problem/setProblem", {
         problem: {
+          title: this.problemTitle,
+          tags: this.tags,
           status: this.problemStatus,
-          testset: this.testset
+          score: this.taskScore,
+          testset: this.testset,
+          description: this.problemDescription
         }
       });
+      console.log(this.$store.state.problem);
     },
     taskScore: function(newValue, oldValue) {
+      console.log(this.taskScore);
       this.$store.commit("problem/setProblem", {
         problem: {
+          title: this.problemTitle,
+          tags: this.tags,
+          status: this.problemStatus,
           score: this.taskScore,
-          testset: this.testset
+          testset: this.testset,
+          description: this.problemDescription
         }
       });
+      console.log(this.$store.state.problem);
     },
     problemDescription: function(newValue, oldValue) {
+      console.log(this.problemDescription);
       this.$store.commit("problem/setProblem", {
         problem: {
-          description: this.problemDescription,
-          testset: this.testset
+          title: this.problemTitle,
+          tags: this.tags,
+          status: this.problemStatus,
+          score: this.taskScore,
+          testset: this.testset,
+          description: this.problemDescription
         }
       });
+      console.log(this.$store.state.problem);
     },
     tags: function(newValue, oldValue) {
+      console.log(this.tags);
       this.$store.commit("problem/setProblem", {
         problem: {
+          title: this.problemTitle,
           tags: this.tags,
-          testset: this.testset
+          status: this.problemStatus,
+          score: this.taskScore,
+          testset: this.testset,
+          description: this.problemDescription
         }
       });
+      console.log(this.$store.state.problem);
     }
   },
 

@@ -37,16 +37,23 @@
               class="elevation-1"
             >
               <template v-slot:[`item.actionsDialog`]="{ item }">
-                <!-- <router-link to="/student/submit"> -->
-                <v-btn
-                  small
-                  class="mr-2"
-                  @click="openIde(item)"
-                  to="/student/submit"
-                >
-                  ทำโจทย์
-                </v-btn>
-                <!-- </router-link> -->
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <router-link to="/student/submit">
+                      <v-icon
+                        color="green"
+                        medium
+                        v-bind="attrs"
+                        v-on="on"
+                        class="mr-2"
+                        @click="openIde(item)"
+                      >
+                        mdi-plus
+                      </v-icon>
+                    </router-link>
+                  </template>
+                  <span>ทำโจทย์</span>
+                </v-tooltip>
               </template>
             </v-data-table>
           </v-card>
@@ -55,9 +62,20 @@
     </template>
 
     <template v-slot:[`item.actions`]="{ item }">
-      <v-btn small class="mr-2" @click="openDialog(item)">
-        เพิ่มเติม
-      </v-btn>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon
+            color="primary"
+            v-bind="attrs"
+            v-on="on"
+            class="mr-2"
+            @click="openDialog(item)"
+          >
+            mdi-information
+          </v-icon>
+        </template>
+        <span>เพิ่มเติม</span>
+      </v-tooltip>
     </template>
 
     <template v-slot:no-data>
@@ -87,8 +105,8 @@ export default {
         sortable: false
       },
       { text: "ชื่อบท", value: "assignmentTitle" }, // define column name and value
-      { align: "center", text: "สถานะการใช้งาน", value: "assignmentStatus" },
-      { align: "center", text: "สถานะการส่งงาน", value: "result" },
+      { text: "สถานะการใช้งาน", value: "assignmentStatus" },
+      { text: "สถานะการส่งงาน", value: "result" },
       { text: "คะแนน", value: "sumCompilelogScore" },
       { align: "center", text: "ดำเนินการ", value: "actions", sortable: false }
     ],
@@ -106,7 +124,11 @@ export default {
       { text: "จำนวนที่ส่ง", value: "compilelogSubmitNo" },
       { text: "สถานะการส่งงาน", value: "compilelogTestResult" },
       { text: "คะแนน", value: "taskScore" },
-      { text: "ดำเนินการ", value: "actionsDialog", sortable: false }
+      {
+        align: "center",
+        text: "ดำเนินการ",
+        value: "actionsDialog"
+      }
     ],
     editedIndex: -1, //  editedIndex default to -1
 
@@ -194,13 +216,18 @@ export default {
       this.rowProblem = doesGetProblem;
       this.dialogDetail = true;
     },
-    openIde(item) {
-      this.$store.commit("problem/setProblem", {
-        problem: {
-          id: item.problemId
+    async openIde(item) {
+      console.log(item);
+      await this.$store.commit("homework/setHomework", {
+        homework: {
+          problemId: item.problemId,
+          taskId: item.taskId,
+          problemTitle: item.problemTitle,
+          problemDescription: item.problemDescription
         }
       });
-      console.log(this.$store.state.problem.id);
+      console.log(this.$store.state.homework.problemId);
+      console.log(this.$store.state.homework.taskId);
     }
   }
 };

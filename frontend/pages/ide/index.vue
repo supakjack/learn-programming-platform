@@ -73,7 +73,19 @@
 
         <v-row>
           <v-col>
-            <v-card style="margin-top:-30px" outlined height="152px">
+            <v-card
+              style="max-height: 176px;
+              overflow: auto; height : 176px"
+              outlined
+              :loading="loading"
+            >
+              <template slot="progress">
+                <v-progress-linear
+                  color="deep-purple"
+                  height="10"
+                  indeterminate
+                ></v-progress-linear>
+              </template>
               <v-card-text>
                 <div>
                   <v-textarea
@@ -84,12 +96,13 @@
                   ></v-textarea>
                 </div>
                 <div>
-                  <v-text-field
+                  <v-textarea
                     v-model="stdout"
+                    autocomplete="email"
                     label="ข้อมูลส่งออก"
                     value=""
-                    disabled
-                  ></v-text-field>
+                    readonly
+                  ></v-textarea>
                 </div>
               </v-card-text>
             </v-card>
@@ -130,6 +143,7 @@ export default {
       ]);
   },
   data: () => ({
+    loading: false,
     selectedItem: 1,
     snackbar: false,
     textErr: `Hello, I'm a snackbar`,
@@ -161,7 +175,8 @@ export default {
     deleteFile(file) {
       this.files = null;
     },
-    run() {
+    async run() {
+      this.loading = true;
       console.log(this.files);
       let formData = new FormData();
 
@@ -175,18 +190,19 @@ export default {
       formData.append("stdin", this.submit.stdin);
 
       console.log([...formData]);
-      const result = this.seperate(formData);
-      result.then(result => {
-        console.log(result);
-        if (result.stderr != "") {
-          console.log("err");
-          this.snackbar = true;
-          this.textErr = result.stderr;
-        } else {
-          console.log("no err");
-          this.stdout = result.stdout;
-        }
-      });
+      const result = await this.seperate(formData);
+
+      console.log(result);
+      if (result.stderr != "") {
+        console.log("err");
+        this.snackbar = true;
+        this.textErr = result.stderr;
+      } else {
+        console.log("no err");
+        this.stdout = result.stdout;
+      }
+
+      this.loading = false;
     },
     filePicked(e) {
       console.log(e.currentTarget.files);
