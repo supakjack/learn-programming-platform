@@ -78,7 +78,7 @@ export default {
     // const { doseGetAll } = await this.getProblem();
     // this.allProblems = doseGetAll;
     // console.log(this.allProblems);
-    console.log(this.$store.state.course);
+    // console.log(this.$store.state.course);
     // this.courseData.courseCode = this.$store.state.course.courseCode;
     // console.log(this.courseData.courseCode);
   },

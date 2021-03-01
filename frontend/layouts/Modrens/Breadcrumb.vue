@@ -10,7 +10,7 @@
 <script>
 export default {
   mounted() {
-    console.log(this.$store.state.breadcrumb.list);
+    // console.log(this.$store.state.breadcrumb.list);
   }
 };
 </script>
