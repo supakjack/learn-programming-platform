@@ -176,6 +176,7 @@ module.exports = {
       );
 
       console.log(doesCompile.stdout);
+      console.log("--------");
       console.log(doesGetTestset[0].testsetOutput);
       if (
         doesCompile.stdout == doesGetTestset[0].testsetOutput &&

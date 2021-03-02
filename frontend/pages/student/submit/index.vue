@@ -154,7 +154,10 @@
                   {{ tab.name }}
                 </v-tab>
               </v-tabs>
-              <v-tabs-items v-model="resultTabs">
+              <v-tabs-items
+                v-model="resultTabs"
+                style="font-family: 'Courier New', monospace;"
+              >
                 <v-tab-item>
                   <v-card flat>
                     <v-card-text>
@@ -195,7 +198,7 @@
                           {{ testset.compilelogErrorMessage }}
                         </p>
                         <p v-if="testset.compilelogCompileStatus != 'Error'">
-                          {{ index + 1 }} .
+                          กรณีทดสอบที่ {{ index + 1 }} .
                           <span
                             v-if="testset.compilelogCompileStatus == 'Passed'"
                             style="color:green"
