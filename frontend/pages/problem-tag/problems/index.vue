@@ -447,7 +447,13 @@ export default {
           testset: arrayTestset
         }
       });
+      this.$store.commit("problem/setTestset", {
+        problem: {
+          testset: arrayTestset
+        }
+      });
 
+      console.log(this.$store.state.problem);
       this.watchArray = [
         { name: "id", val: this.$store.state.problem.id },
         { name: "title", val: this.$store.state.problem.title },
@@ -500,6 +506,11 @@ export default {
             description: "",
             status: "",
             tags: [],
+            testset: []
+          }
+        });
+        this.$store.commit("problem/setTestset", {
+          problem: {
             testset: []
           }
         });
