@@ -86,7 +86,6 @@ module.exports = {
   findUser: async (req, res, next) => {
     const ad = await ladp.config(req.query.username, req.query.password)
     passportHelper.config(passport, ad)
-    console.log(req.params)
     try {
       if (req.params) {
         var accountName = req.params.username

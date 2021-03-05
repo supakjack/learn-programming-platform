@@ -1,31 +1,27 @@
 const createError = require("http-errors");
 const globalModel = require("../models/global.model");
+const problemsModel = require("../models/problems.model");
+
 const {
   userSchema,
-  updateUserConditionSchema,
+  getUserIdSchema,
   updateUserSchema,
   FileuserSchema,
   createUserSchema,
-  UserusernameConditionSchema,
+  userIdConditionSchema,
+  getUserFromCourseSchema,
 } = require("./../helpers/validation.helper");
 const nanoid = require("nanoid");
 const readXlsxFile = require("read-excel-file/node");
 
 module.exports = {
   findById: async (req, res, next) => {
-    const getUserData = await UserusernameConditionSchema.validateAsync(
-      req.query
-    );
-    // const username = req.query.username;
-    console.log(getUserData);
+    const getUserData = await getUserIdSchema.validateAsync(req.query);
     try {
       const doesGet = await globalModel.select({
         name: "users",
         condition: [getUserData],
-
-        // condition: [getUserData],
       });
-      // console.log(doesGetAll);
       res.status(201).send({ doesGet });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
@@ -33,13 +29,10 @@ module.exports = {
     }
   },
   findAll: async (req, res, next) => {
-    // const getUserData = await userSchema.validateAsync(req.query);
     try {
       const doesGetAll = await globalModel.select({
         name: "users",
-        // condition: [getUserData],
       });
-      // console.log(doesGetAll);
       res.status(201).send({ doesGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
@@ -49,23 +42,52 @@ module.exports = {
 
   create: async (req, res, next) => {
     console.log(req.body);
+    // const userData = await userSchema.validateAsync(req.body);
+    // console.log(userData);
     try {
-      const doesCreate = await globalModel.insert({
+      const doesCreateUser = await problemsModel.insertReturnId({
         name: "users",
-        insertData: [req.body],
+        insertData: [
+          {
+            userUsername: req.body.userUsername,
+            userPrefixThai: req.body.userPrefixThai,
+            userFirstnameThai: req.body.userFirstnameThai,
+            userLastnameThai: req.body.userLastnameThai,
+            userPrefixEnglish: req.body.userPrefixEnglish,
+            userFirstnameEnglish: req.body.userFirstnameEnglish,
+            userLastnameEnglish: req.body.userLastnameEnglish,
+            userStatus: req.body.userStatus,
+            userCreateBy: req.body.userCreateBy,
+            userUpdateBy: req.body.userUpdateBy,
+          },
+        ],
       });
-      res.status(200).send({ doesCreate });
+      console.log(doesCreateUser);
+
+      const doesCreateEnrollByUserId = await globalModel.insert({
+        name: "enrolls",
+        insertData: [
+          {
+            enrollUserId: doesCreateUser,
+            enrollSectionId: req.body.sectionId,
+            enrollRole: "student",
+            enrollStatus: req.body.userStatus,
+            enrollCreateBy: req.body.userUpdateBy,
+            enrollUpdateBy: req.body.userUpdateBy,
+          },
+        ],
+      });
+
+      // console.log(doesCreateUser, doesCreateEnrollByUserId);
+      res.status(200).send({ doesCreateUser, doesCreateEnrollByUserId });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
     }
   },
+
   update: async (req, res, next) => {
-    // console.log(req.query);
-    // console.log(req.body);
-    const updateCondition = await updateUserConditionSchema.validateAsync(
-      req.query
-    );
+    const updateCondition = await getUserIdSchema.validateAsync(req.query);
     try {
       const doesUpdate = await globalModel.update({
         name: "users",
@@ -79,8 +101,7 @@ module.exports = {
     }
   },
   upload: async (req, res, next) => {
-    console.log("filesssssss");
-    console.log(req);
+    // console.log(req);
     const singleFile = req.files ? req.files.file : null;
     const randomFileName = nanoid(10);
     const splitFileName = singleFile.name.split(".");
@@ -115,5 +136,39 @@ module.exports = {
         next(error);
       }
     });
+  },
+  getUserByCourse: async (req, res, next) => {
+    console.log("getUserByCourse");
+    // console.log(req.body);
+    const getUserData = await getUserFromCourseSchema.validateAsync(req.body);
+    console.log(getUserData);
+    try {
+      const doesGetAll = await globalModel.select({
+        name: "users",
+        condition: [
+          { userCreateBy: getUserData.userId },
+          { sectionId: getUserData.sectionId },
+        ],
+        leftJoin: [
+          {
+            joinTable: "enrolls",
+            leftTableName: "users",
+            leftKey: "userId",
+            joinKey: "enrollUserId",
+          },
+          {
+            joinTable: "sections",
+            leftTableName: "enrolls",
+            leftKey: "enrollSectionId",
+            joinKey: "sectionId",
+          },
+        ],
+      });
+      console.log(doesGetAll);
+      res.status(200).send({ doesGetAll });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
   },
 };

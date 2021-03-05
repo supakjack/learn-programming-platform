@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 28, 2021 at 10:53 AM
+-- Generation Time: Feb 17, 2021 at 05:10 PM
 -- Server version: 10.4.13-MariaDB
 -- PHP Version: 7.4.7
 
@@ -64,10 +64,7 @@ CREATE TABLE `assignments` (
 --
 
 INSERT INTO `assignments` (`assignmentId`, `assignmentTitle`, `assignmentDescription`, `assignmentSectionId`, `assignmentStartDate`, `assignmentEndDate`, `assignmentCreateDate`, `assignmentUpdateDate`, `assignmentCreateBy`, `assignmentUpdateBy`, `assignmentStatus`) VALUES
-(2, 'บวกลบเลขเบื้องต้น', 'บวกลบเลขเบื้องต้นโดยการเขียนโค้ด', 1, '2021-02-17 22:11:39', '2021-02-18 22:11:39', '2021-02-17 15:12:33', '2021-02-17 15:12:33', 1, 1, 'active'),
-(3, 'บวกลบเลขเบื้องต้นโดยใช้ Array', 'หาผลคูณเลขยกกำลังโดยการเขียนโค้ด', 1, '2021-02-17 22:11:39', '2021-02-18 22:11:39', '2021-02-17 15:12:33', '2021-02-17 15:12:33', 1, 1, 'active'),
-(4, 'บวกลบเลขเบื้องต้น', 'บวกลบเลขเบื้องต้นโดยการเขียนโค้ด', 3, '2021-02-17 22:11:39', '2021-02-18 22:11:39', '2021-02-17 15:12:33', '2021-02-17 15:12:33', 1, 1, 'active'),
-(5, 'บวกลบเลขเบื้องต้นโดยใช้ Array', 'หาผลคูณเลขยกกำลังโดยการเขียนโค้ด', 3, '2021-02-17 22:11:39', '2021-02-18 22:11:39', '2021-02-17 15:12:33', '2021-02-17 15:12:33', 1, 1, 'active');
+(2, 'บวกลบเลขเบื้องต้น', 'บวกลบเลขเบื้องต้นโดยการเขียนโค้ด', 1, '2021-02-17 22:11:39', '2021-02-18 22:11:39', '2021-02-17 15:12:33', '2021-02-17 15:12:33', 1, 1, 'active');
 
 -- --------------------------------------------------------
 
@@ -82,6 +79,7 @@ CREATE TABLE `compilelogs` (
   `compilelogSubmitNo` int(2) UNSIGNED NOT NULL,
   `compilelogTestResult` varchar(10) NOT NULL,
   `compilelogErrorMessage` varchar(255) DEFAULT NULL,
+  `compilelogCompileStatus` varchar(255) NOT NULL,
   `compileloglanguage` varchar(255) NOT NULL,
   `compilelogFileId` int(8) UNSIGNED NOT NULL,
   `compilelogCreateDate` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -90,36 +88,6 @@ CREATE TABLE `compilelogs` (
   `compilelogUpdateBy` int(8) UNSIGNED NOT NULL,
   `compilelogStatus` enum('active','inactive','delete') DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `compilelogs`
---
-
-INSERT INTO `compilelogs` (`compilelogId`, `compilelogTaskId`, `compilelogScore`, `compilelogSubmitNo`, `compilelogTestResult`, `compilelogErrorMessage`, `compileloglanguage`, `compilelogFileId`, `compilelogCreateDate`, `compilelogUpdateDate`, `compilelogCreateBy`, `compilelogUpdateBy`, `compilelogStatus`) VALUES
-(3, 1, 100, 0, '', NULL, 'cpp', 1, '2021-02-18 07:36:31', '2021-02-18 07:36:31', 1, 1, 'active'),
-(4, 1, 0, 0, '', NULL, 'cpp', 1, '2021-02-18 07:37:10', '2021-02-18 07:37:10', 1, 1, 'active'),
-(5, 1, 0, 0, '', NULL, 'cpp', 1, '2021-02-18 07:44:42', '2021-02-18 07:44:42', 1, 1, 'active'),
-(6, 1, 0, 0, '', NULL, 'cpp', 1, '2021-02-18 07:47:42', '2021-02-18 07:47:42', 1, 1, 'active'),
-(7, 1, 0, 0, '', NULL, 'cpp', 1, '2021-02-18 07:50:05', '2021-02-18 07:50:05', 1, 1, 'active'),
-(8, 1, 0, 0, '', NULL, 'cpp', 1, '2021-02-18 07:50:23', '2021-02-18 07:50:23', 1, 1, 'active'),
-(9, 1, 0, 0, '', NULL, 'cpp', 1, '2021-02-18 07:52:24', '2021-02-18 07:52:24', 1, 1, 'active'),
-(10, 1, 0, 0, '', NULL, 'cpp', 1, '2021-02-18 08:09:01', '2021-02-18 08:09:01', 1, 1, 'active'),
-(11, 1, 0, 0, '', NULL, 'cpp', 1, '2021-02-18 08:12:17', '2021-02-18 08:12:17', 1, 1, 'active'),
-(12, 1, 0, 0, '', NULL, 'cpp', 1, '2021-02-18 08:13:37', '2021-02-18 08:13:37', 1, 1, 'active'),
-(13, 1, 0, 0, 'Compile Er', 'Line 18 semi colon', 'cpp', 1, '2021-02-24 03:36:50', '2021-02-24 03:36:50', 1, 1, 'active'),
-(14, 1, 0, 0, 'Compile Er', 'Line 18 semi colon', 'cpp', 1, '2021-02-24 03:39:18', '2021-02-24 03:39:18', 1, 1, 'active'),
-(15, 1, 83, 0, 'Wrong Answ', NULL, 'cpp', 1, '2021-02-24 03:39:41', '2021-02-24 03:39:41', 1, 1, 'active'),
-(16, 1, 83, 1, 'Wrong Answ', NULL, 'cpp', 1, '2021-02-24 03:40:30', '2021-02-24 03:40:30', 1, 1, 'active'),
-(17, 1, 100, 1, 'Accepted', NULL, 'cpp', 1, '2021-02-24 03:44:35', '2021-02-24 03:44:35', 1, 1, 'active'),
-(18, 1, 17, 1, 'Compile Er', 'line 19 semicolon', 'cpp', 1, '2021-02-25 11:55:37', '2021-02-25 11:55:37', 1, 1, 'active'),
-(19, 1, 17, 1, 'Compile Er', 'line 19 semicolon', 'cpp', 1, '2021-02-25 11:56:07', '2021-02-25 11:56:07', 1, 1, 'active'),
-(20, 1, 17, 1, 'Compile Er', 'line 19 semicolon', 'cpp', 1, '2021-02-25 11:56:14', '2021-02-25 11:56:14', 1, 1, 'active'),
-(21, 1, 33, 1, 'Compile Er', 'line 19 semicolon', 'cpp', 1, '2021-02-25 11:57:26', '2021-02-25 11:57:26', 1, 1, 'active'),
-(22, 1, 33, 1, 'Compile Er', 'line 19 semicolon', 'cpp', 1, '2021-02-25 11:58:32', '2021-02-25 11:58:32', 1, 1, 'active'),
-(23, 1, 17, 1, 'Compile Er', 'line 19 semicolon', 'cpp', 1, '2021-02-25 11:58:45', '2021-02-25 11:58:45', 1, 1, 'active'),
-(24, 1, 100, 1, 'Accepted', NULL, 'cpp', 1, '2021-02-25 11:59:43', '2021-02-25 11:59:43', 1, 1, 'active'),
-(25, 1, 83, 1, 'Wrong Answ', NULL, 'cpp', 1, '2021-02-25 11:59:56', '2021-02-25 11:59:56', 1, 1, 'active'),
-(26, 1, 83, 1, 'Wrong Answ', NULL, 'cpp', 1, '2021-02-25 12:03:39', '2021-02-25 12:03:39', 1, 1, 'active');
 
 -- --------------------------------------------------------
 
@@ -144,8 +112,7 @@ CREATE TABLE `courses` (
 --
 
 INSERT INTO `courses` (`courseId`, `courseCode`, `courseName`, `courseYearId`, `courseCreateDate`, `courseUpdateDate`, `courseCreateBy`, `courseUpdateBy`, `courseStatus`) VALUES
-(1, '88814159', 'ภาษาซีพลัสพลัสเบื้องต้น', 1, '2021-02-17 15:10:26', '2021-02-17 15:10:26', 1, 1, 'active'),
-(2, '88814259', 'ภาษาซีเบื้องต้น', 1, '2021-02-22 15:10:26', '2021-02-17 15:10:26', 1, 1, 'active');
+(1, '88814159', 'ภาษาซีพลัสพลัสเบื้องต้น', 1, '2021-02-17 15:10:26', '2021-02-17 15:10:26', 1, 1, 'active');
 
 -- --------------------------------------------------------
 
@@ -164,18 +131,6 @@ CREATE TABLE `enrolls` (
   `enrollUpdateBy` int(8) UNSIGNED NOT NULL,
   `enrollStatus` enum('active','inactive','delete') DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `enrolls`
---
-
-INSERT INTO `enrolls` (`enrollId`, `enrollUserId`, `enrollSectionId`, `enrollRole`, `enrollCreateDate`, `enrollUpdateDate`, `enrollCreateBy`, `enrollUpdateBy`, `enrollStatus`) VALUES
-(1, 2, 1, 'student', '2021-02-22 13:39:17', '2021-02-22 13:39:17', 1, 1, 'active'),
-(2, 1, 1, 'teacher', '2021-02-22 13:41:38', '2021-02-22 13:41:38', 1, 1, 'active'),
-(3, 2, 4, 'student', '2021-02-22 13:45:20', '2021-02-22 13:45:20', 1, 1, 'active'),
-(4, 1, 4, 'teacher', '2021-02-24 05:24:26', '2021-02-24 05:24:26', 1, 1, 'active'),
-(6, 1, 3, 'teacher', '2021-02-24 08:05:06', '2021-02-24 08:05:06', 1, 1, 'active'),
-(7, 1, 5, 'teacher', '2021-02-24 08:05:13', '2021-02-24 08:05:13', 1, 1, 'active');
 
 -- --------------------------------------------------------
 
@@ -253,7 +208,7 @@ CREATE TABLE `pictures` (
 CREATE TABLE `problems` (
   `problemId` int(8) UNSIGNED NOT NULL,
   `problemTitle` varchar(255) DEFAULT NULL,
-  `problemDescription` text NOT NULL,
+  `problemDiscription` text NOT NULL,
   `problemCreateDate` timestamp NOT NULL DEFAULT current_timestamp(),
   `problemUpdateDate` timestamp NOT NULL DEFAULT current_timestamp(),
   `problemCreateBy` int(8) UNSIGNED NOT NULL,
@@ -265,9 +220,8 @@ CREATE TABLE `problems` (
 -- Dumping data for table `problems`
 --
 
-INSERT INTO `problems` (`problemId`, `problemTitle`, `problemDescription`, `problemCreateDate`, `problemUpdateDate`, `problemCreateBy`, `problemUpdateBy`, `problemStatus`) VALUES
-(1, 'โจทย์บวกเลข 2 จำนวน', 'ให้นิสิตรับข้อมูลเป็นตัวเลขจำนวน 2 จำนวน แล้วนำมาบวกกัน', '2021-02-15 05:18:20', '2021-02-15 05:18:20', 1, 1, 'active'),
-(2, 'โจทย์หาผลคูณเลขยกกำลัง 2 ', 'ให้นิสิตรับข้อมูลเป็นตัวเลขจำนวน 2 จำนวน แล้วนำมาหาผลคูณ', '2021-02-26 05:18:20', '2021-02-26 05:18:20', 1, 1, 'active');
+INSERT INTO `problems` (`problemId`, `problemTitle`, `problemDiscription`, `problemCreateDate`, `problemUpdateDate`, `problemCreateBy`, `problemUpdateBy`, `problemStatus`) VALUES
+(1, 'โจทย์บวกเลข 2 จำนวน', 'ให้นิสิตรับข้อมูลเป็นตัวเลขจำนวน 2 จำนวน แล้วนำมาบวกกัน', '2021-02-15 05:18:20', '2021-02-15 05:18:20', 1, 1, 'active');
 
 -- --------------------------------------------------------
 
@@ -292,9 +246,7 @@ CREATE TABLE `sections` (
 
 INSERT INTO `sections` (`sectionId`, `sectionNumber`, `sectionCourseId`, `sectionCreateDate`, `sectionUpdateDate`, `sectionCreateBy`, `sectionUpdateBy`, `sectionStatus`) VALUES
 (1, 1, 1, '2021-02-17 15:10:46', '2021-02-17 15:10:46', 1, 1, 'active'),
-(3, 2, 1, '2021-02-17 15:10:46', '2021-02-17 15:10:46', 1, 1, 'active'),
-(4, 1, 2, '2021-02-22 13:44:59', '2021-02-22 13:44:59', 1, 1, 'active'),
-(5, 2, 2, '2021-02-24 08:01:16', '2021-02-24 08:01:16', 1, 1, 'active');
+(3, 2, 1, '2021-02-17 15:10:46', '2021-02-17 15:10:46', 1, 1, 'active');
 
 -- --------------------------------------------------------
 
@@ -355,8 +307,7 @@ CREATE TABLE `tasks` (
 --
 
 INSERT INTO `tasks` (`taskId`, `taskLimit`, `taskScore`, `taskProblemId`, `taskAssignmentId`, `taskStartDate`, `taskEndDate`, `taskCreateDate`, `taskUpdateDate`, `taskCreateBy`, `taskUpdateBy`, `taskStatus`) VALUES
-(1, NULL, 100.00, 1, 2, '2021-02-17 15:12:42', '2021-02-18 15:12:42', '2021-02-17 15:14:05', '2021-02-17 15:14:05', 1, 1, 'active'),
-(2, NULL, 100.00, 2, 2, '2021-02-28 15:12:42', '2021-03-07 15:12:42', '2021-02-28 15:14:05', '2021-02-28 15:14:05', 1, 1, 'active');
+(1, NULL, 100.00, 1, 2, '2021-02-17 15:12:42', '2021-02-18 15:12:42', '2021-02-17 15:14:05', '2021-02-17 15:14:05', 1, 1, 'active');
 
 -- --------------------------------------------------------
 
@@ -384,15 +335,12 @@ CREATE TABLE `testsets` (
 --
 
 INSERT INTO `testsets` (`testsetId`, `testsetTitle`, `testsetDescription`, `testsetInput`, `testsetOutput`, `testsetProblemId`, `testsetIsExample`, `testsetCreateDate`, `testsetUpdateDate`, `testsetCreateBy`, `testsetUpdateBy`, `testsetStatus`) VALUES
-(1, 'บวกเลขจำนวนเต็มบวก', 'ตัวรับทั้ง 2 จำนวนเป็นเลขจำนวนเต็มบวก', '1 2', 'Sum is: 3\r\n', 1, 1, '2021-02-15 05:19:40', '2021-02-15 05:19:40', 1, 1, 'active'),
-(2, 'บวกเลขจำนวนเต็มลบ', 'ตัวรับทั้ง 2 จำนวนเป็นเลขจำนวนเต็มลบ', '-1 -2', 'Sum is: -3\r\n', 1, 1, '2021-02-15 05:19:40', '2021-02-15 05:19:40', 1, 1, 'active'),
-(3, 'บวกเลขจำนวนเต็มบวกและจำนวนเต็มลบ', 'ตัวรับทั้ง 2 จำนวนเป็นเลขจำนวนเต็มยวกและจำนวนเต็มลบ', '-1 2', 'Sum is: 1\r\n', 1, 0, '2021-02-15 05:19:40', '2021-02-15 05:19:40', 1, 1, 'active'),
-(4, 'บวกเลขจำนวนเต็มศูนย์', 'ตัวรับทั้ง 2 จำนวนเป็นเลขจำนวนเต็มศูนย์', '0 0', 'Sum is: 0\r\n', 1, 0, '2021-02-15 05:19:40', '2021-02-15 05:19:40', 1, 1, 'active'),
-(5, 'บวกเลขจำนวนเต็มบวกและเต็มศูนย์', 'ตัวรับทั้ง 2 จำนวนเป็นเลขจำนวนเต็มบวกและเต็ม\r\nศูนย์', '2 0', 'Sum is: 2\r\n', 1, 0, '2021-02-15 05:19:40', '2021-02-15 05:19:40', 1, 1, 'active'),
-(6, 'บวกเลขจำนวนเต็มลบและเต็มศูนย์', 'ตัวรับทั้ง 2 จำนวนเป็นเลขจำนวนเต็มลบและเต็ม\r\nศูนย์', '-1 0', 'Sum is: -1\r\n', 1, 0, '2021-02-15 05:19:40', '2021-02-15 05:19:40', 1, 1, 'active'),
-(7, 'คูณกำลังเต็มบวก', 'รับผลคูณเป็นเลขจำนวนเต็มบวก', '2,2', 'result: 4', 2, 1, '2021-02-26 05:47:23', '2021-02-26 05:47:23', 1, 1, 'active'),
-(8, 'คูณกำลังเต็มลบ', 'รับผลคูณเป็นเลขจำนวนเต็มบวก', '-2,-2', 'result: 4', 2, 1, '2021-02-26 05:48:01', '2021-02-26 05:48:01', 1, 1, 'active'),
-(9, 'คูณกำลังเต็มบวกและลบ', 'รับผลคูณเป็นเลขจำนวนเต็มบวกและจำนวนเต็มลบ', '-2,2', 'result: -4', 2, 1, '2021-02-26 05:48:01', '2021-02-26 05:48:01', 1, 1, 'active');
+(1, 'บวกเลขจำนวนเต็มบวก', 'ตัวรับทั้ง 2 จำนวนเป็นเลขจำนวนเต็มบวก', '1 2', 'Sum is: 3', 1, 1, '2021-02-15 05:19:40', '2021-02-15 05:19:40', 1, 1, 'active'),
+(2, 'บวกเลขจำนวนเต็มลบ', 'ตัวรับทั้ง 2 จำนวนเป็นเลขจำนวนเต็มลบ', '-1 -2', 'Sum is: -3', 1, 1, '2021-02-15 05:19:40', '2021-02-15 05:19:40', 1, 1, 'active'),
+(3, 'บวกเลขจำนวนเต็มบวกและจำนวนเต็มลบ', 'ตัวรับทั้ง 2 จำนวนเป็นเลขจำนวนเต็มยวกและจำนวนเต็มลบ', '-1 2', 'Sum is: 1', 1, 0, '2021-02-15 05:19:40', '2021-02-15 05:19:40', 1, 1, 'active'),
+(4, 'บวกเลขจำนวนเต็มศูนย์', 'ตัวรับทั้ง 2 จำนวนเป็นเลขจำนวนเต็มศูนย์', '0 0', 'Sum is: 0', 1, 0, '2021-02-15 05:19:40', '2021-02-15 05:19:40', 1, 1, 'active'),
+(5, 'บวกเลขจำนวนเต็มบวกและเต็มศูนย์', 'ตัวรับทั้ง 2 จำนวนเป็นเลขจำนวนเต็มบวกและเต็ม\r\nศูนย์', '2 0', 'Sum is: 2', 1, 0, '2021-02-15 05:19:40', '2021-02-15 05:19:40', 1, 1, 'active'),
+(6, 'บวกเลขจำนวนเต็มลบและเต็มศูนย์', 'ตัวรับทั้ง 2 จำนวนเป็นเลขจำนวนเต็มลบและเต็ม\r\nศูนย์', '-1 0', 'Sum is: -1', 1, 0, '2021-02-15 05:19:40', '2021-02-15 05:19:40', 1, 1, 'active');
 
 -- --------------------------------------------------------
 
@@ -423,10 +371,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`userId`, `userUsername`, `userPrefixThai`, `userPrefixEnglish`, `userFirstnameThai`, `userFirstnameEnglish`, `userLastnameThai`, `userLastnameEnglish`, `userCreateDate`, `userUpdateDate`, `userCreateBy`, `userUpdateBy`, `userStatus`) VALUES
 (1, 'admin', 'นาย', 'Mr.', 'แอดมิน', 'admin', 'แอดมิน', 'admin', '2021-02-10 07:25:27', '2021-02-10 07:25:27', 1, 1, 'active'),
 (2, '60160170', 'นาย', 'Mr.', 'นิพิฐพนธ์', 'Niphitphon', 'ถนัดกุลกิจ', 'Thanatkulkit', '2021-02-10 07:25:27', '2021-02-10 07:25:27', 1, 1, 'active'),
-(3, 'admin2', 'นาย', 'Mr.', 'แอดมิน2', 'admin2', 'แอดมิน2', 'admin2', '2021-02-10 07:25:27', '2021-02-10 07:25:27', 1, 1, 'active'),
-(4, '60160344', 'นาย', 'Mr.', 'พฤกษ์', 'Phurk', 'เทพพิทักษ์', 'Theppitak', '2021-02-28 07:20:48', '2021-02-28 07:20:48', 1, 1, 'active'),
-(5, '60160334', 'นางสาว', 'Ms.', 'ชนากานต์', 'Chanakarn', 'โฮ่กี่', 'Hokee', '2021-02-28 08:47:33', '2021-02-28 08:47:33', 1, 1, 'active'),
-(6, '60160094', 'นางสาว', 'Ms.', 'ยศพัท', 'Yotsapat', 'ภู่รพงห์', 'Phurahong', '2021-02-28 08:52:01', '2021-02-28 08:52:01', 1, 1, 'active');
+(3, 'admin2', 'นาย', 'Mr.', 'แอดมิน2', 'admin2', 'แอดมิน2', 'admin2', '2021-02-10 07:25:27', '2021-02-10 07:25:27', 1, 1, 'active');
 
 -- --------------------------------------------------------
 
@@ -576,25 +521,25 @@ ALTER TABLE `assesses`
 -- AUTO_INCREMENT for table `assignments`
 --
 ALTER TABLE `assignments`
-  MODIFY `assignmentId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `assignmentId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `compilelogs`
 --
 ALTER TABLE `compilelogs`
-  MODIFY `compilelogId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `compilelogId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `courseId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `courseId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `enrolls`
 --
 ALTER TABLE `enrolls`
-  MODIFY `enrollId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `enrollId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `files`
@@ -618,13 +563,13 @@ ALTER TABLE `pictures`
 -- AUTO_INCREMENT for table `problems`
 --
 ALTER TABLE `problems`
-  MODIFY `problemId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `problemId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `sections`
 --
 ALTER TABLE `sections`
-  MODIFY `sectionId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `sectionId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tags`
@@ -636,19 +581,19 @@ ALTER TABLE `tags`
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `taskId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `taskId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `testsets`
 --
 ALTER TABLE `testsets`
-  MODIFY `testsetId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `testsetId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `userId` int(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `years`
