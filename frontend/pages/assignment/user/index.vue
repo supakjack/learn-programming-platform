@@ -7,6 +7,11 @@
       sort-by="userUsername"
       class="elevation-1"
     >
+      <template v-slot:item.userStatus="{ item }">
+        <v-chip :color="getColor(item.userStatus)" dark>
+          {{ item.userStatus }}
+        </v-chip>
+      </template>
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>ตารางผู้ใช้งาน</v-toolbar-title>
@@ -22,7 +27,7 @@
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+              <v-btn color="success" dark class="mb-2" v-bind="attrs" v-on="on">
                 เพิ่มผู้ใช้งาน
               </v-btn>
             </template>
@@ -138,9 +143,36 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template v-slot:item.actions="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-        <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+              color="orange"
+              v-bind="attrs"
+              v-on="on"
+              small
+              class="mr-2"
+              @click="editItem(item)"
+            >
+              mdi-pencil
+            </v-icon>
+          </template>
+          <span>แก้ไข</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+              color="red"
+              v-bind="attrs"
+              v-on="on"
+              small
+              @click="deleteItem(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+          <span>ลบ</span>
+        </v-tooltip>
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="initialize"> โหลดข้อมูลใหม่ </v-btn>
@@ -390,6 +422,10 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
+    },
+    getColor(userStatus) {
+      if (userStatus == "ไม่ใช้งาน") return "red";
+      else return "green";
     },
   },
 };
