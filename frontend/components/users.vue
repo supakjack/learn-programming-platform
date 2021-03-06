@@ -75,11 +75,12 @@ export default {
     },
     async insertFile(data) {
       console.log(data);
-      const InsertFile = {};
-      InsertFile.file = data.file;
-
       return this.$axios
-        .$post("user/upload", InsertFile)
+        .$post("user/upload", data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
         .catch((error) => {
           console.error(error);
         })

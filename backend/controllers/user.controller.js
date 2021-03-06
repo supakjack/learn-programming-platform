@@ -78,7 +78,6 @@ module.exports = {
         ],
       });
 
-      // console.log(doesCreateUser, doesCreateEnrollByUserId);
       res.status(200).send({ doesCreateUser, doesCreateEnrollByUserId });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
@@ -101,9 +100,10 @@ module.exports = {
     }
   },
   upload: async (req, res, next) => {
-    // console.log(req);
-    const singleFile = req.files ? req.files.file : null;
+    console.log(req.files);
+    const singleFile = req.files ? req.files.singleFile : null;
     const randomFileName = nanoid(10);
+    console.log(singleFile);
     const splitFileName = singleFile.name.split(".");
     singleFile.name = randomFileName + "." + splitFileName[1];
     const filePath = process.env.BASE_STORAGE_PATH + "temp";
