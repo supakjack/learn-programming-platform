@@ -111,7 +111,7 @@ module.exports = {
 
     let path = "..\\storages\\temp\\" + singleFile.name;
 
-    readXlsxFile(path).then((rows) => {
+    readXlsxFile(path).then(async (rows) => {
       rows.shift();
       let users = [];
       rows.forEach((row) => {
@@ -125,10 +125,11 @@ module.exports = {
       });
       console.log(users);
       try {
-        const doesCreate = globalModel.insert({
+        const doesCreate = await problemsModel.insertReturnId({
           name: "users",
           insertData: users,
         });
+        console.log(doesCreate);
         res.status(200).send({ doesCreate });
       } catch (error) {
         if (error.isJoi === true)
