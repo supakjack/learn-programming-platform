@@ -14,6 +14,9 @@ router.post("/edit/hashtag", problemController.editHashtag);
 // Get problem by condition
 router.post("/edit/testset", problemController.editTestset);
 
+// Get problem by condition
+router.post("/edit/picture", problemController.editPicture);
+
 // delete a problem by condition
 router.patch("/", problemController.update);
 

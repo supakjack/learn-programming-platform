@@ -524,6 +524,7 @@ export default {
     //   this.close();
     // },
     openReportDialog(item) {
+      console.log(item);
       this.dialogReport = true;
     }
   }
