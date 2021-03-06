@@ -403,6 +403,8 @@ export default {
             for (let file of this.files) {
               formData.append("singleFile", file);
             }
+            formData.append("sectionId", this.$store.state.course.sectionId);
+            formData.append("userId", this.$store.state.user.id);
           }
           console.log(...formData);
           // console.log(formData);

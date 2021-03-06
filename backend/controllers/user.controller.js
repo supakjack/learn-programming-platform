@@ -72,7 +72,7 @@ module.exports = {
             enrollSectionId: req.body.sectionId,
             enrollRole: "student",
             enrollStatus: req.body.userStatus,
-            enrollCreateBy: req.body.userUpdateBy,
+            enrollCreateBy: req.body.userCreateBy,
             enrollUpdateBy: req.body.userUpdateBy,
           },
         ],
@@ -101,6 +101,7 @@ module.exports = {
   },
   upload: async (req, res, next) => {
     console.log(req.files);
+    console.log("req.body" + req.body);
     const singleFile = req.files ? req.files.singleFile : null;
     const randomFileName = nanoid(10);
     console.log(singleFile);
@@ -120,17 +121,35 @@ module.exports = {
           userPrefixThai: row[1],
           userFirstnameThai: row[2],
           userLastnameThai: row[3],
+          userCreateBy: req.body.userId,
+          userUpdateBy: req.body.userId,
         };
         users.push(user);
       });
-      console.log(users);
+      // console.log(users);
       try {
         const doesCreate = await problemsModel.insertReturnId({
           name: "users",
           insertData: users,
         });
+
         console.log(doesCreate);
-        res.status(200).send({ doesCreate });
+
+        const doesCreateEnrollByUserId = await globalModel.insert({
+          name: "enrolls",
+          insertData: [
+            {
+              enrollUserId: doesCreate,
+              enrollSectionId: req.body.sectionId,
+              enrollRole: "student",
+              enrollStatus: 1,
+              enrollCreateBy: req.body.userId,
+              enrollUpdateBy: req.body.userId,
+            },
+          ],
+        });
+
+        res.status(200).send({ doesCreate, doesCreateEnrollByUserId });
       } catch (error) {
         if (error.isJoi === true)
           return next(createError.InternalServerError());
