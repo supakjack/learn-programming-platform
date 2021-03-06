@@ -7,7 +7,7 @@
       sort-by="userUsername"
       class="elevation-1"
     >
-      <template v-slot:item.userStatus="{ item }">
+      <template v-slot:[`item.userStatus`]="{ item }">
         <v-chip :color="getColor(item.userStatus)" dark>
           {{ item.userStatus }}
         </v-chip>
@@ -110,7 +110,16 @@
                   </v-row>
                   <div v-if="editedIndex === -1">
                     <div class="flex justify-center">หรือ</div>
-                    <v-file-input label="Excel" v-model="file"></v-file-input>
+                    <div>
+                      <label for="upload">อัพโหลด</label>
+                      <input
+                        id="upload"
+                        type="file"
+                        name="singleFile"
+                        multiple
+                        @change="saveExcel"
+                      />
+                    </div>
                   </div>
                 </v-container>
               </v-card-text>
@@ -178,6 +187,18 @@
         <v-btn color="primary" @click="initialize"> โหลดข้อมูลใหม่ </v-btn>
       </template>
     </v-data-table>
+    <template>
+      <div>
+        <v-snackbar v-model="snackbar" :timeout="timeout">
+          {{ text }}
+          <template v-slot:action="{ attrs }">
+            <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+              Close
+            </v-btn>
+          </template>
+        </v-snackbar>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -186,10 +207,13 @@ import usersmixin from "../../../components/users";
 export default {
   mixins: [usersmixin],
   data: () => ({
+    snackbar: false,
+    text: `มีรหัสนิสิตนี้แล้ว กรุณากรอกใหม่!!!`,
+    timeout: 2000,
     dialog: false,
     dialogDelete: false,
     search: "",
-    file: null,
+    files: undefined,
     headers: [
       {
         text: "รหัสนิสิต",
@@ -246,8 +270,9 @@ export default {
       return this.editedIndex === -1 ? "เพิ่มผู้ใช้งาน" : "แก้ไขผู้ใช้งาน";
     },
   },
+
   mounted() {
-    this.initialize();
+    // this.initialize();
   },
 
   watch: {
@@ -337,10 +362,8 @@ export default {
     async deleteItemConfirm() {
       const EditResult = await this.editUser(this.editedItem);
       console.log(EditResult);
-
-      if (typeof EditResult === "number") {
-        this.closeDelete();
-      }
+      this.closeDelete();
+      await this.initialize();
     },
 
     close() {
@@ -360,52 +383,61 @@ export default {
     },
 
     async save() {
-      // if  this.editedIndex > -1 == it edited tag else this.editedIndex == -1 insert tag
+      // if  this.editedIndex > -1 == it edited user else this.editedIndex == -1 insert user
+      // edit user
       if (this.editedIndex > -1) {
         console.log("userCreateBy 0");
         const EditResult = await this.editUser(this.editedItem);
         console.log(EditResult);
         if (typeof EditResult === "number") {
           this.dialog = false;
-          this.SuccessTitle = "แก้ไขสำเร็จ";
-          this.dialogSuccess = true;
         }
-      } else {
+      }
+      // insert user
+      else {
         console.log("userCreateBy -1");
-        // if (this.file != null) {
-        //   console.log("file");
-        //   const [insertResult] = await this.insertFile(this.file);
-
-        //   if (typeof insertResult === "number") {
-        //     this.close();
-        //     this.SuccessTitle = "บันทึกสำเร็จ";
-        //     this.dialogSuccess = true;
-        //   }
-        // } else {
-        console.log("data");
-        this.editedItem.userCreateBy = this.$store.state.user.id;
-        this.editedItem.userUpdateBy = this.$store.state.user.id;
-        this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
-        this.editedItem.userLastnameEnglish = this.userLDAP.sn;
-        /* warp */
-        // console.log(this.userLDAP.cn);
-        // console.log(this.users);
-        if (
-          !this.users.filter((user) => user.userUsername == this.userLDAP.cn)
-            .length
-        ) {
-          console.log("insert");
-          const [insertResult] = await this.insertUser(this.editedItem);
-          if (typeof insertResult === "number") {
+        console.log("files");
+        if (this.files != undefined) {
+          let formData = new FormData();
+          if (this.files) {
+            for (let file of this.files) {
+              formData.append("singleFile", file);
+            }
+            formData.append("sectionId", this.$store.state.course.sectionId);
+            formData.append("userId", this.$store.state.user.id);
           }
-          // }
+          console.log(...formData);
+          // console.log(formData);
+          const insertExcelResult = await this.insertFile(formData);
           this.close();
-          this.initialize();
-          this.SuccessTitle = "บันทึกสำเร็จ";
-          this.dialogSuccess = true;
+        } else {
+          console.log("data");
+          this.editedItem.userCreateBy = this.$store.state.user.id;
+          this.editedItem.userUpdateBy = this.$store.state.user.id;
+          this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
+          this.editedItem.userLastnameEnglish = this.userLDAP.sn;
+          // check repeat user if repert can't insert
+          if (
+            !this.users.filter((user) => user.userUsername == this.userLDAP.cn)
+              .length
+          ) {
+            const insertResult = await this.insertUser(this.editedItem);
+            this.close();
+          } else {
+            this.snackbar = true;
+          }
         }
       }
       await this.initialize();
+    },
+
+    async saveExcel(excel) {
+      console.log(excel.currentTarget.files);
+      console.log(this.files);
+
+      this.files = excel.currentTarget.files;
+
+      console.log(this.files);
     },
 
     close() {

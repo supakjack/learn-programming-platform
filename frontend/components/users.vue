@@ -5,7 +5,6 @@ export default {
       const courseData = {};
       courseData.userId = this.$store.state.course.userId;
       courseData.sectionId = this.$store.state.course.sectionId;
-      console.log(courseData);
       return this.$axios.$post("user/course", courseData);
     },
 
@@ -66,6 +65,7 @@ export default {
       InsertData.userCreateBy = this.$store.state.course.userId;
       InsertData.userUpdateBy = this.$store.state.course.userId;
       InsertData.sectionId = this.$store.state.course.sectionId;
+      console.log(InsertData);
       return this.$axios
         .$post("user", InsertData)
         .catch((error) => {
@@ -75,11 +75,12 @@ export default {
     },
     async insertFile(data) {
       console.log(data);
-      const InsertFile = {};
-      InsertFile.file = data.file;
-
       return this.$axios
-        .$post("user/upload", InsertFile)
+        .$post("user/upload", data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
         .catch((error) => {
           console.error(error);
         })

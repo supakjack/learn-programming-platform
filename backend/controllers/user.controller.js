@@ -72,13 +72,12 @@ module.exports = {
             enrollSectionId: req.body.sectionId,
             enrollRole: "student",
             enrollStatus: req.body.userStatus,
-            enrollCreateBy: req.body.userUpdateBy,
+            enrollCreateBy: req.body.userCreateBy,
             enrollUpdateBy: req.body.userUpdateBy,
           },
         ],
       });
 
-      // console.log(doesCreateUser, doesCreateEnrollByUserId);
       res.status(200).send({ doesCreateUser, doesCreateEnrollByUserId });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
@@ -101,9 +100,11 @@ module.exports = {
     }
   },
   upload: async (req, res, next) => {
-    // console.log(req);
-    const singleFile = req.files ? req.files.file : null;
+    console.log(req.files);
+    console.log("req.body" + req.body);
+    const singleFile = req.files ? req.files.singleFile : null;
     const randomFileName = nanoid(10);
+    console.log(singleFile);
     const splitFileName = singleFile.name.split(".");
     singleFile.name = randomFileName + "." + splitFileName[1];
     const filePath = process.env.BASE_STORAGE_PATH + "temp";
@@ -111,7 +112,7 @@ module.exports = {
 
     let path = "..\\storages\\temp\\" + singleFile.name;
 
-    readXlsxFile(path).then((rows) => {
+    readXlsxFile(path).then(async (rows) => {
       rows.shift();
       let users = [];
       rows.forEach((row) => {
@@ -120,16 +121,35 @@ module.exports = {
           userPrefixThai: row[1],
           userFirstnameThai: row[2],
           userLastnameThai: row[3],
+          userCreateBy: req.body.userId,
+          userUpdateBy: req.body.userId,
         };
         users.push(user);
       });
-      console.log(users);
+      // console.log(users);
       try {
-        const doesCreate = globalModel.insert({
+        const doesCreate = await problemsModel.insertReturnId({
           name: "users",
           insertData: users,
         });
-        res.status(200).send({ doesCreate });
+
+        console.log(doesCreate);
+
+        const doesCreateEnrollByUserId = await globalModel.insert({
+          name: "enrolls",
+          insertData: [
+            {
+              enrollUserId: doesCreate,
+              enrollSectionId: req.body.sectionId,
+              enrollRole: "student",
+              enrollStatus: 1,
+              enrollCreateBy: req.body.userId,
+              enrollUpdateBy: req.body.userId,
+            },
+          ],
+        });
+
+        res.status(200).send({ doesCreate, doesCreateEnrollByUserId });
       } catch (error) {
         if (error.isJoi === true)
           return next(createError.InternalServerError());
