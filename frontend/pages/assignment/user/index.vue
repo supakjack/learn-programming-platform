@@ -7,6 +7,11 @@
       sort-by="userUsername"
       class="elevation-1"
     >
+      <template v-slot:item.userStatus="{ item }">
+        <v-chip :color="getColor(item.userStatus)" dark>
+          {{ item.userStatus }}
+        </v-chip>
+      </template>
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>ตารางผู้ใช้งาน</v-toolbar-title>
@@ -22,7 +27,7 @@
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+              <v-btn color="success" dark class="mb-2" v-bind="attrs" v-on="on">
                 เพิ่มผู้ใช้งาน
               </v-btn>
             </template>
@@ -104,7 +109,7 @@
                     </v-col>
                   </v-row>
                   <div v-if="editedIndex === -1">
-                    <div class="  ">หรือ</div>
+                    <div class="flex justify-center">หรือ</div>
                     <v-file-input label="Excel" v-model="file"></v-file-input>
                   </div>
                 </v-container>
@@ -138,9 +143,36 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template v-slot:item.actions="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-        <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+              color="orange"
+              v-bind="attrs"
+              v-on="on"
+              small
+              class="mr-2"
+              @click="editItem(item)"
+            >
+              mdi-pencil
+            </v-icon>
+          </template>
+          <span>แก้ไข</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+              color="red"
+              v-bind="attrs"
+              v-on="on"
+              small
+              @click="deleteItem(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+          <span>ลบ</span>
+        </v-tooltip>
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="initialize"> โหลดข้อมูลใหม่ </v-btn>
@@ -163,14 +195,14 @@ export default {
         text: "รหัสนิสิต",
         align: "start",
         sortable: true,
-        value: "userUsername"
+        value: "userUsername",
       },
       { text: "คำนำหน้า", value: "userPrefixThai" },
       { text: "ชื่อ", value: "userFirstnameThai" },
       { text: "นามสกุล", value: "userLastnameThai" },
-      { text: "สิทธิ์", value: "role" },
+      { text: "สิทธิ์", value: "enrollRole" },
       { text: "สถานะ", value: "userStatus" },
-      { text: "การจัดการ", value: "actions", sortable: false }
+      { text: "การจัดการ", value: "actions", sortable: false },
     ],
     userLDAP: [],
     users: [],
@@ -186,7 +218,7 @@ export default {
       userLastnameEnglish: "",
       userStatus: 1,
       userCreateBy: 0,
-      userUpdateBy: 0
+      userUpdateBy: 0,
     },
     defaultItem: {
       userId: 0,
@@ -199,20 +231,20 @@ export default {
       userLastnameEnglish: "",
       userStatus: 1,
       userCreateBy: 0,
-      userUpdateBy: 0
+      userUpdateBy: 0,
     },
     userStatus: [
       { text: "ใช้งาน", value: 1 },
-      { text: "ไม่ใช้งาน", value: 2 }
+      { text: "ไม่ใช้งาน", value: 2 },
     ],
     userPrefixEnglish: [{ text: "Mr." }, { text: "Mrs." }, { text: "Ms." }],
-    userPrefixThai: [{ text: "นาง" }, { text: "นางสาว" }, { text: "นาย" }]
+    userPrefixThai: [{ text: "นาง" }, { text: "นางสาว" }, { text: "นาย" }],
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "เพิ่มผู้ใช้งาน" : "แก้ไขผู้ใช้งาน";
-    }
+    },
   },
   mounted() {
     this.initialize();
@@ -224,7 +256,7 @@ export default {
     },
     dialogDelete(val) {
       val || this.closeDelete();
-    }
+    },
   },
 
   created() {
@@ -234,13 +266,18 @@ export default {
   methods: {
     async initialize() {
       const { doesGetAll } = await this.getUser();
-      doesGetAll.map(doesGetAll => {
+      doesGetAll.map((doesGetAll) => {
         doesGetAll.userCreateDate = this.$moment(
           doesGetAll.userCreateDate
         ).format("Do MMM YY เวลา LT");
         doesGetAll.userUpdateDate = this.$moment(
           doesGetAll.userUpdateDate
         ).format("Do MMM YY เวลา LT");
+        if (doesGetAll.enrollRole == "student") {
+          doesGetAll.enrollRole = "นักเรียน";
+        } else {
+          doesGetAll.enrollRole = "อาจารย์";
+        }
         if (doesGetAll.userStatus == "active") {
           doesGetAll.userStatus = "ใช้งาน";
         } else {
@@ -248,7 +285,7 @@ export default {
         }
       });
       this.users = doesGetAll;
-      // console.log(this.users);
+      console.log(this.user);
     },
 
     async getUserLdap() {
@@ -269,8 +306,8 @@ export default {
       this.editedItem.userFirstnameThai = item.userFirstnameThai;
       this.editedItem.userLastnameThai = item.userLastnameThai;
       this.editedItem.userStatus = item.userStatus;
-      this.editedItem.userCreateBy = 1;
-      this.editedItem.userUpdateBy = this.editedItem.userCreateBy;
+      this.editedItem.userCreateBy = this.$store.state.user.id;
+      this.editedItem.userUpdateBy = this.$store.state.user.id;
       this.editedItem.userUpdateDate = this.$moment().format(
         "YYYY-MM-DD HH:mm:ss"
       );
@@ -335,34 +372,35 @@ export default {
         }
       } else {
         console.log("userCreateBy -1");
-        if (this.file != null) {
-          console.log("file");
-          const [insertResult] = await this.insertFile(this.file);
+        // if (this.file != null) {
+        //   console.log("file");
+        //   const [insertResult] = await this.insertFile(this.file);
 
+        //   if (typeof insertResult === "number") {
+        //     this.close();
+        //     this.SuccessTitle = "บันทึกสำเร็จ";
+        //     this.dialogSuccess = true;
+        //   }
+        // } else {
+        console.log("data");
+        this.editedItem.userCreateBy = this.$store.state.user.id;
+        this.editedItem.userUpdateBy = this.$store.state.user.id;
+        this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
+        this.editedItem.userLastnameEnglish = this.userLDAP.sn;
+        /* warp */
+        // console.log(this.userLDAP.cn);
+        // console.log(this.users);
+        if (
+          !this.users.filter((user) => user.userUsername == this.userLDAP.cn)
+            .length
+        ) {
+          console.log("insert");
+          const [insertResult] = await this.insertUser(this.editedItem);
           if (typeof insertResult === "number") {
-            this.close();
-            this.SuccessTitle = "บันทึกสำเร็จ";
-            this.dialogSuccess = true;
           }
-        } else {
-          console.log("data");
-          this.editedItem.userCreateBy = this.$store.state.user.id;
-          this.editedItem.userUpdateBy = this.$store.state.user.id;
-          this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
-          this.editedItem.userLastnameEnglish = this.userLDAP.sn;
-          /* warp */
-          // console.log(this.userLDAP.cn);
-          // console.log(this.users);
-          if (
-            !this.users.filter(user => user.userUsername == this.userLDAP.cn)
-              .length
-          ) {
-            console.log("insert");
-            const [insertResult] = await this.insertUser(this.editedItem);
-            if (typeof insertResult === "number") {
-            }
-          }
+          // }
           this.close();
+          this.initialize();
           this.SuccessTitle = "บันทึกสำเร็จ";
           this.dialogSuccess = true;
         }
@@ -384,7 +422,11 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
-    }
-  }
+    },
+    getColor(userStatus) {
+      if (userStatus == "ไม่ใช้งาน") return "red";
+      else return "green";
+    },
+  },
 };
 </script>
