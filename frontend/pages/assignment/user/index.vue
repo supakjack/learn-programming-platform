@@ -306,8 +306,8 @@ export default {
       this.editedItem.userFirstnameThai = item.userFirstnameThai;
       this.editedItem.userLastnameThai = item.userLastnameThai;
       this.editedItem.userStatus = item.userStatus;
-      this.editedItem.userCreateBy = 1;
-      this.editedItem.userUpdateBy = this.editedItem.userCreateBy;
+      this.editedItem.userCreateBy = this.$store.state.user.id;
+      this.editedItem.userUpdateBy = this.$store.state.user.id;
       this.editedItem.userUpdateDate = this.$moment().format(
         "YYYY-MM-DD HH:mm:ss"
       );
