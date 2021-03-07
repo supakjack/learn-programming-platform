@@ -333,4 +333,6 @@ module.exports = {
   getCompilelogSchema,
   insertCourseSchema,
   updateCourseSchema,
+  getUserFromCourseSchema,
+  getUserIdSchema
 };
