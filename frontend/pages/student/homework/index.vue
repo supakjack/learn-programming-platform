@@ -1,89 +1,89 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :footer-props="{
-      'items-per-page-options': [8, 15, 20, -1],
-      'items-per-page-text': `จำนวนแถวต่อหน้า`,
-      'items-per-page-all-text': `ทั้งหมด`
-    }"
-    :items="allHomeworks"
-    :items-per-page="8"
-    item-key="assignmentId"
-    :sort-desc="[false, true]"
-    multi-sort
-    :search="search"
-    height="450"
-    class="elevation-1 kanit-font"
-  >
-    <template v-slot:top>
-      <v-toolbar flat class="kanit-font">
-        <v-toolbar-title>ตารางงาน</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="ค้นหา"
-          single-line
-          hide-details
-        ></v-text-field>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialogDetail" max-width="1100px">
-          <v-card>
-            <v-data-table
-              :headers="headersDialog"
-              :items="rowProblem"
-              :items-per-page="5"
-              class="elevation-1"
+    <v-data-table
+      :headers="headers"
+      :footer-props="{
+        'items-per-page-options': [8, 15, 20, -1],
+        'items-per-page-text': `จำนวนแถวต่อหน้า`,
+        'items-per-page-all-text': `ทั้งหมด`
+      }"
+      :items="allHomeworks"
+      :items-per-page="8"
+      item-key="assignmentId"
+      :sort-desc="[false, true]"
+      multi-sort
+      :search="search"
+      height="450"
+      class="elevation-1 kanit-font"
+    >
+      <template v-slot:top>
+        <v-toolbar flat class="kanit-font">
+          <v-toolbar-title>ตารางงาน</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          <v-spacer></v-spacer>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="ค้นหา"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-spacer></v-spacer>
+          <v-dialog v-model="dialogDetail" max-width="1100px">
+            <v-card>
+              <v-data-table
+                :headers="headersDialog"
+                :items="rowProblem"
+                :items-per-page="5"
+                class="elevation-1"
+              >
+                <template v-slot:[`item.actionsDialog`]="{ item }">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <router-link to="/student/submit">
+                        <v-icon
+                          color="green"
+                          medium
+                          v-bind="attrs"
+                          v-on="on"
+                          class="mr-2"
+                          @click="openIde(item)"
+                        >
+                          mdi-plus
+                        </v-icon>
+                      </router-link>
+                    </template>
+                    <span>ทำโจทย์</span>
+                  </v-tooltip>
+                </template>
+              </v-data-table>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+              color="primary"
+              v-bind="attrs"
+              v-on="on"
+              class="mr-2"
+              @click="openDialog(item)"
             >
-              <template v-slot:[`item.actionsDialog`]="{ item }">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <router-link to="/student/submit">
-                      <v-icon
-                        color="green"
-                        medium
-                        v-bind="attrs"
-                        v-on="on"
-                        class="mr-2"
-                        @click="openIde(item)"
-                      >
-                        mdi-plus
-                      </v-icon>
-                    </router-link>
-                  </template>
-                  <span>ทำโจทย์</span>
-                </v-tooltip>
-              </template>
-            </v-data-table>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
+              mdi-information
+            </v-icon>
+          </template>
+          <span>เพิ่มเติม</span>
+        </v-tooltip>
+      </template>
 
-    <template v-slot:[`item.actions`]="{ item }">
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon
-            color="primary"
-            v-bind="attrs"
-            v-on="on"
-            class="mr-2"
-            @click="openDialog(item)"
-          >
-            mdi-information
-          </v-icon>
-        </template>
-        <span>เพิ่มเติม</span>
-      </v-tooltip>
-    </template>
-
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">
-        โหลดข้อมูลใหม่
-      </v-btn>
-    </template>
-  </v-data-table>
+      <template v-slot:no-data>
+        <v-btn color="primary" @click="initialize">
+          โหลดข้อมูลใหม่
+        </v-btn>
+      </template>
+    </v-data-table>
 </template>
 <script>
 import homeworkmixin from "@/components/homework";
@@ -91,11 +91,35 @@ import homeworkmixin from "@/components/homework";
 export default {
   mixins: [homeworkmixin],
   // declare variable and data in this component
+  mounted() {
+    this.courseData = this.$store.state.course;
+    const corseSection =
+      this.$store.state.course.courseCode +
+      " " +
+      this.$store.state.course.courseName;
+    const sectionName =
+      "กลุ่มเรียนที่ " + this.$store.state.course.sectionNumber;
+    this.$store.commit("breadcrumb/setBreadcrumb", [
+      {
+        text: "หน้าหลัก",
+        href: "/student/home"
+      },
+      {
+        text: corseSection,
+        href: "/student/homework"
+      },
+      {
+        text: sectionName,
+        href: "/student/homework"
+      }
+    ]);
+  },
   data: () => ({
     formTitle: "ข้อมูลการบ้าน",
     SuccessTitle: "",
     allHomeworks: [],
     rowProblem: [],
+    courseData: [],
     dialogDetail: false,
     search: "", // use for search in table all column
     headers: [
@@ -228,6 +252,12 @@ export default {
       });
       console.log(this.$store.state.homework.problemId);
       console.log(this.$store.state.homework.taskId);
+    },
+    async clickOpenCourseSection(course) {
+      this.$store.commit("course/setCourse", {
+        course
+      });
+      this.$router.push("/student/homework");
     }
   }
 };
