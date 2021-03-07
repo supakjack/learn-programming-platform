@@ -168,6 +168,7 @@ export default {
     insertStep2
   },
   data: () => ({
+    formTitle: "สร้างโจทย์",
     editAllItem: [],
     hashtagResult: [],
     testsetResult: [],
@@ -219,12 +220,12 @@ export default {
   }),
 
   computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "สร้างโจทย์ปัญหา" : "แก้ไขโจทย์ปัญหา";
-    },
-    SuccessTitle() {
-      return this.editedIndex === -1 ? "บันทึกสำเร็จ" : "แก้ไขสำเร็จ";
-    }
+    // formTitle() {
+    //   return this.editedIndex === -1 ? "สร้างโจทย์ปัญหา" : "แก้ไขโจทย์ปัญหา";
+    // },
+    // SuccessTitle() {
+    //   return this.editedIndex === -1 ? "บันทึกสำเร็จ" : "แก้ไขสำเร็จ";
+    // }
   },
 
   watch: {
@@ -302,7 +303,6 @@ export default {
             formData.append("singleFile", file);
           }
         }
-        console.log([...formData]);
         let createHashtagData = [];
         for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
           const dataHashtag = {
@@ -360,7 +360,6 @@ export default {
         let formData = new FormData();
         let fileOldId = null;
         let pictureOldId = null;
-        console.log(this.$store.state.problem.files);
         if (this.$store.state.problem.files) {
           for (let file of this.$store.state.problem.files) {
             formData.append("singleFile", file);
@@ -369,10 +368,6 @@ export default {
           pictureOldId = this.editAllItem.pictureId;
           console.log(fileOldId);
         }
-        console.log([...formData]);
-        //process delete
-        console.log(this.hashtagResult);
-        console.log(this.testsetResult);
         const hashtagId = this.hashtagResult.map(res => {
           return res.hashtagId;
         });
@@ -387,12 +382,9 @@ export default {
           pictureId: pictureOldId
         };
 
-        console.log(dataCondition);
         const resultDelete = await this.deleteProblem(dataCondition);
-        console.log(resultDelete);
 
         //process edit and insert
-        console.log(this.$store.state.problem);
         let updateHashtagData = [];
         for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
           const dataHashtag = {
@@ -451,19 +443,19 @@ export default {
           formData.append("updateFilesData", null);
           formData.append("updatePicturesData", null);
         }
-        console.log([...formData]);
         const updateResult = await this.updateProblem(
           formData,
           this.editProblemId
         );
       }
       this.close();
+      this.formTitle = "สร้างโจทย์";
     },
 
     //edit problem-data by problemId
     async editItem(item) {
+      this.formTitle = "แก้ไขโจทย์";
       this.editAllItem = item;
-      console.log(this.$store.state.problem);
       const hashtag = this.editHashtag(item.problemId);
       const testset = this.editTestset(item.problemId);
       const picture = this.editPicture(item.problemId);
@@ -481,13 +473,6 @@ export default {
       this.arrayHashtag = this.hashtagResult.map(res => {
         return res.hashtagTagId;
       });
-
-      console.log(item);
-      console.log(this.hashtagResult);
-      console.log(this.testsetResult);
-      console.log(this.arrayHashtag);
-      console.log(this.pictureResult);
-
       let arrayTestset = [];
       this.testsetResult.map(res => {
         const data = {
@@ -519,8 +504,6 @@ export default {
           testset: arrayTestset
         }
       });
-
-      console.log(this.$store.state.problem);
       this.watchArray = [
         { name: "id", val: this.$store.state.problem.id },
         { name: "title", val: this.$store.state.problem.title },
@@ -597,7 +580,7 @@ export default {
         ];
         console.log(this.watchArray);
       });
-      console.log(this.$store.state.problem);
+      this.formTitle = "สร้างโจทย์";
       await this.initialize();
     },
 

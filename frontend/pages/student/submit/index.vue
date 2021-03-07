@@ -21,7 +21,18 @@
                   <p class="display-0.75 text--primary">
                     {{ problemDescription }}
                   </p>
-                  <p>ข้อมูลตัวอย่าง</p>
+                </v-card-text>
+                <v-card-text>
+                  <v-row>
+                    <v-col>
+                      <p>ข้อมูลตัวอย่าง</p>
+                    </v-col>
+                    <v-col>
+                      <a class="float-right" @click="openDialogPicture()"
+                        >รูปภาพตัวอย่าง</a
+                      >
+                    </v-col>
+                  </v-row>
                 </v-card-text>
                 <v-data-table
                   :headers="headersTestset"
@@ -284,6 +295,22 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-dialog v-model="dialogPicture" max-width="500px">
+      <v-card>
+        <div id="app">
+          <h2>รูปภาพตัวอย่าง:</h2>
+          <img :src="image" style="width:100%;" alt="" />
+        </div>
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="dialogPicture = false">
+            ปิด
+          </v-btn>
+        </v-card-actions></v-card
+      >
+    </v-dialog>
   </v-container>
 </template>
 
@@ -332,6 +359,7 @@ export default {
       { index: 1, name: "ผลจากการ SUBMIT" }
     ],
     dialog: false,
+    dialogPicture: false,
     loading: false,
     testsetResult: [],
     allCompileResult: [],
@@ -353,7 +381,8 @@ export default {
     problemTitle: "",
     problemDescription: "",
     testsetExample: [],
-    breakcump: []
+    breakcump: [],
+    image: ""
   }),
   async created() {
     this.initialize();
@@ -601,6 +630,9 @@ export default {
       for (var i = 0; i < uploadedFiles.length; i++) {
         this.submit.codeFiles.push(uploadedFiles[i]);
       }
+    },
+    openDialogPicture() {
+      this.dialogPicture = true;
     }
   }
 };
