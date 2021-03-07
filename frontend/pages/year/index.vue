@@ -146,6 +146,61 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- delete dialog -->
+    <v-dialog v-model="deleteYearDialog" persistent max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="">ลบปีการศึกษา</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" sm="6" md="12">
+                <v-text-field
+                  readonly
+                  v-model="modalCourseYearName"
+                  label="ปีการศึกษา*"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6" md="12">
+                <v-text-field
+                  readonly
+                  v-model="modalCourseYearSemester"
+                  label="ภาคเรียนที่*"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-select
+                  readonly
+                  v-model="modalCourseYearStatus"
+                  :items="[
+                    { text: 'ใช้งาน', val: 1 },
+                    { text: 'ปิดใช้งาน', val: 2 }
+                  ]"
+                  item-text="text"
+                  item-value="val"
+                  label="สถานะ*"
+                  required
+                ></v-select>
+              </v-col>
+            </v-row>
+          </v-container>
+          <small>*โปรดระบุข้อมูลที่ต้องการ</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="cancelModal">
+            ยกเลิก
+          </v-btn>
+          <v-btn color="danger darken-1" text @click="clickUpdateYear(3)">
+            ลบ
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <!-- year section -->
   </div>
 </template>
@@ -175,52 +230,7 @@ export default {
       this.yearByCreate = doesGetAll;
       this.cancelModal();
     },
-    async clickOpenCourseSection(course) {
-      this.$store.commit("course/setCourse", {
-        course
-      });
-      this.$router.push("/home/section");
-    },
-    async clickInsertCourse() {
-      const inserData = {
-        courseCode: this.modalCourseCode,
-        courseName: this.modalCourseName,
-        courseYearId: this.modalCourseYearId,
-        courseCreateBy: this.$store.state.user.id,
-        courseUpdateBy: this.$store.state.user.id,
-        courseStatus: this.modalCourseStatus
-      };
-      await this.insertCourse(inserData);
-      this.modalCourseCode = "";
-      this.modalCourseName = "";
-      this.modalCourseYearId = "";
-      this.modalCourseStatus = "";
-      this.insertCourseDialog = false;
-      await this.initialize();
-    },
-    async clickUpdateCourse(status) {
-      const updateData = {
-        courseId: this.modalCourseId,
-        courseCode: this.modalCourseCode,
-        courseName: this.modalCourseName,
-        courseYearId: this.modalCourseYearId,
-        courseCreateBy: this.$store.state.user.id,
-        courseUpdateBy: this.$store.state.user.id,
-        courseStatus: status ? status : this.modalCourseStatus
-      };
-      await this.updateCourse(updateData);
-      this.modalCourseId = "";
-      this.modalCourseCode = "";
-      this.modalCourseName = "";
-      this.modalCourseYearId = "";
-      this.modalCourseStatus = "";
-      if (updateData.courseStatus == 3) {
-        this.deleteCourseDialog = false;
-      } else {
-        this.updateCourseDialog = false;
-      }
-      await this.initialize();
-    },
+
     async cancelModal() {
       this.modalCourseId = "";
       this.modalCourseCode = "";
@@ -230,11 +240,9 @@ export default {
       this.modalCourseYearName = "";
       this.modalCourseYearSemester = "";
       this.modalCourseYearStatus = "";
-      this.insertCourseDialog = false;
-      this.updateCourseDialog = false;
-      this.deleteCourseDialog = false;
       this.insertYearDialog = false;
       this.updateYearDialog = false;
+      this.deleteYearDialog = false;
     },
     async openEditYearModal(item) {
       this.modalCourseYearId = item.yearId;
@@ -253,27 +261,34 @@ export default {
         yearSemester: this.modalCourseYearSemester,
         yearCreateBy: this.$store.state.user.id,
         yearUpdateBy: this.$store.state.user.id,
-        yearStatus: status ? status : this.modalCourseYearStatus
+        yearStatus: this.modalCourseYearStatus
       };
-      console.log(updateData);
-      // await this.updateCourse(updateData);
+      if (status == 3) {
+        console.log("update delete");
+        updateData.yearStatus = 3;
+      }
+      await this.updateYear(updateData);
       await this.initialize();
     },
 
     async openDeleteYearModal(item) {
-      console.log("openDeleteYearModal");
-      console.log(item);
+      this.modalCourseYearId = item.yearId;
+      this.modalCourseYearName = item.yearName;
+      this.modalCourseYearSemester = item.yearSemester;
+      this.modalCourseYearStatus = item.yearStatus == "active" ? 1 : 2;
+      this.deleteYearDialog = true;
     },
+
     async clickInsertYear() {
       console.log("clickInsertYear");
-      this.insertYear({
+      await this.insertYear({
         yearName: this.modalCourseYearName,
         yearSemester: this.modalCourseYearSemester,
         yearCreateBy: this.$store.state.user.id,
         yearUpdateBy: this.$store.state.user.id,
         yearStatus: this.modalCourseYearStatus
       });
-      this.initialize();
+      await this.initialize();
     }
   },
   async created() {
@@ -284,9 +299,6 @@ export default {
     insertYearDialog: false,
     updateYearDialog: false,
     deleteYearDialog: false,
-    deleteCourseDialog: false,
-    insertCourseDialog: false,
-    updateCourseDialog: false,
     search: "", // use for search in table all column
     allCourses: [],
     yearByCreate: [],
