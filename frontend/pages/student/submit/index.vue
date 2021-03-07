@@ -313,8 +313,8 @@
           <v-btn color="primary" text @click="dialogPicture = false">
             ปิด
           </v-btn>
-        </v-card-actions></v-card
-      >
+        </v-card-actions>
+      </v-card>
     </v-dialog>
   </v-container>
 </template>

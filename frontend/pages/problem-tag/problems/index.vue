@@ -112,12 +112,12 @@
             v-on="on"
             small
             class="mr-2"
-            @click="openDialog(item)"
+            @click="openDialogPicture(item)"
           >
-            mdi-information
+            mdi-image
           </v-icon>
         </template>
-        <span>เพิ่มเติม</span>
+        <span>รูปภาพตัวอย่าง</span>
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
@@ -148,6 +148,18 @@
         </template>
         <span>ลบ</span>
       </v-tooltip>
+      <v-dialog v-model="dialogPicture" max-width="500px">
+        <v-card>
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="dialogPicture = false">
+              ปิด
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </template>
 
     <template v-slot:no-data>
@@ -180,6 +192,7 @@ export default {
     allProblems: [],
     dialog: false,
     dialogDelete: false, // if true show delete modal
+    dialogPicture: false,
     search: "",
     headers: [
       { align: "start", text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
@@ -601,6 +614,9 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editProblemId = -1;
       });
+    },
+    openDialogPicture() {
+      this.dialogPicture = true;
     }
   }
 };
