@@ -342,7 +342,8 @@ export default {
     resultTabs: 0,
     problemTitle: "",
     problemDescription: "",
-    testsetExample: []
+    testsetExample: [],
+    breakcump: []
   }),
   async created() {
     this.initialize();
@@ -389,14 +390,24 @@ export default {
       else return "red";
     },
     async initialize() {
-      console.log(this.$store.state.course.yearId);
-      console.log(this.$store.state.course.sectionNumber);
-      console.log(this.$store.state.course.sectionId);
-      console.log(this.$store.state.course.courseId);
-      console.log(this.$store.state.homework.assignmentId);
-      console.log(this.$store.state.homework.problemId);
-      console.log(this.$store.state.user.id);
-      console.log(this.$store.state.homework.taskId);
+      this.breakcump = {
+        yearId: this.$store.state.course.yearId,
+        sectionId: this.$store.state.course.sectionId,
+        courseId: this.$store.state.course.courseId,
+        assignmentId: this.$store.state.homework.assignmentId,
+        problemId: this.$store.state.homework.problemId,
+        userId: this.$store.state.user.id,
+        taskId: this.$store.state.homework.taskId
+      };
+      console.log(this.breakcump);
+      // console.log(this.$store.state.course.yearId);
+      // console.log(this.$store.state.course.sectionId);
+      // console.log(this.$store.state.course.courseId);
+      // console.log(this.$store.state.homework.assignmentId);
+      // console.log(this.$store.state.homework.problemId);
+      // console.log(this.$store.state.user.id);
+      // console.log(this.$store.state.homework.taskId);
+
       this.testsetExample = await this.getTestsetExample(
         this.$store.state.homework.problemId
       );
@@ -429,11 +440,11 @@ export default {
 
       let formData = new FormData();
 
-      formData.append("yearName", "2021");
-      formData.append("courseCode", "88889999");
-      formData.append("sectionNumber", "2");
-      formData.append("assignmentTitle", "Array4");
-      formData.append("problemTitle", "LoopArray");
+      formData.append("yearName", this.breakcump.yearId);
+      formData.append("courseCode", this.breakcump.courseId);
+      formData.append("sectionNumber", this.breakcump.sectionId);
+      formData.append("assignmentTitle", this.breakcump.assignmentId);
+      formData.append("problemTitle", this.breakcump.problemId);
       formData.append("userUsername", userId);
       formData.append("fileCreateBy", userId);
       formData.append("fileUpdateBy", userId);
@@ -493,8 +504,11 @@ export default {
       this.compileResult = await createCompileLogData.then(res => {
         return res;
       });
-
-      const allCompile = this.getCompilelog(this.$store.state.homework.taskId);
+      const data = {
+        compilelogTaskId: this.$store.state.homework.taskId,
+        compilelogCreateBy: this.$store.state.user.id
+      };
+      const allCompile = this.getCompilelog(data);
 
       this.allCompileResult = await allCompile.then(res => {
         return res;
