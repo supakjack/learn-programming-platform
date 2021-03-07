@@ -104,7 +104,7 @@
 
     <!-- management -->
     <template v-slot:[`item.actions`]="{ item }">
-      <!-- <v-tooltip bottom>
+      <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-icon
             color="primary"
@@ -118,7 +118,7 @@
           </v-icon>
         </template>
         <span>เพิ่มเติม</span>
-      </v-tooltip> -->
+      </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-icon

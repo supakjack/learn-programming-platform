@@ -297,9 +297,14 @@
     </v-snackbar>
     <v-dialog v-model="dialogPicture" max-width="500px">
       <v-card>
-        <div id="app">
+        <div id="app" v-if="image != ''">
           <h2>รูปภาพตัวอย่าง:</h2>
-          <img :src="image" style="width:100%;" alt="" />
+          <v-img
+            :src="require('../../../../storages/picture/' + image)"
+            aspect-ratio="1.5"
+            max-height="500"
+            contain
+          ></v-img>
         </div>
         <v-divider></v-divider>
 
@@ -382,6 +387,7 @@ export default {
     problemDescription: "",
     testsetExample: [],
     breakcump: [],
+    path: "../../../../storages/picture/1/",
     image: ""
   }),
   async created() {
@@ -450,6 +456,16 @@ export default {
       this.testsetExample = await this.getTestsetExample(
         this.$store.state.homework.problemId
       );
+
+      let text = this.testsetExample.doesGetAll[0].filePath.replaceAll(
+        "\\",
+        "/"
+      );
+
+      var path = text.substr(20, text.length);
+
+      this.image = path;
+      console.log(this.image);
       console.log(this.testsetExample.doesGetAll);
       this.problemTitle = this.$store.state.homework.problemTitle;
       this.problemDescription = this.$store.state.homework.problemDescription;
