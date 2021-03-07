@@ -259,6 +259,15 @@ const getCourseSchema = joi.object({
   userId: joi.number().max(99999999).min(1),
 });
 
+// get assignment schema
+const getUserFromCourseSchema = joi.object({
+  userId: joi.number().integer().max(99999999),
+  sectionId: joi.number().max(99999999).min(1),
+});
+const getUserIdSchema = joi.object({
+  userId: joi.number().integer().max(99999999),
+});
+
 // insertCourse
 const insertCourseSchema = joi.object({
   courseCode: joi.string().max(255),
