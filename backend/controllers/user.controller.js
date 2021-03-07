@@ -1,6 +1,7 @@
 const createError = require("http-errors");
 const globalModel = require("../models/global.model");
 const problemsModel = require("../models/problems.model");
+const rmdir = require("rmdir");
 
 const {
   userSchema,
@@ -127,7 +128,7 @@ module.exports = {
   },
   upload: async (req, res, next) => {
     // console.log(req.files);
-    // console.log("req.body" + req.body);
+    console.log("req.body" + req.body);
     const singleFile = req.files ? req.files.singleFile : null;
     const randomFileName = nanoid(10);
     // console.log(singleFile);
@@ -152,20 +153,28 @@ module.exports = {
         };
         users.push(user);
       });
-      // console.log(users);
+      console.log(users);
+      // await rows.map((row) => {
+      //   (userUsername = row[0]),
+      //     (userPrefixThai = row[1]),
+      //     (userFirstnameThai = row[2]),
+      //     (userLastnameThai = row[3]),
+      //     (userCreateBy = req.body.userId),
+      //     (userUpdateBy = req.body.userId);
+      // });
+      // console.log(rows);
       try {
         const doesCreate = await problemsModel.insertReturnId({
           name: "users",
           insertData: users,
         });
-
-        console.log(doesCreate);
+        // console.log(doesCreate);
 
         const doesCreateEnrollByUserId = await globalModel.insert({
           name: "enrolls",
           insertData: [
             {
-              enrollUserId: doesCreate[1],
+              enrollUserId: doesCreate,
               enrollSectionId: req.body.sectionId,
               enrollRole: "student",
               enrollStatus: 1,
@@ -173,6 +182,10 @@ module.exports = {
               enrollUpdateBy: req.body.userId,
             },
           ],
+        });
+
+        let result = await rmdir(path, function (err, dirs, files) {
+          console.log("all files are removed");
         });
 
         res.status(200).send({ doesCreate, doesCreateEnrollByUserId });
