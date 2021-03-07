@@ -384,12 +384,6 @@ export default {
       console.log(this.$store.state.homework.problemId);
       console.log(this.$store.state.homework.taskId);
     },
-    async clickOpenCourseSection(course) {
-      this.$store.commit("course/setCourse", {
-        course
-      });
-      this.$router.push("/student/homework");
-    }
   }
 };
 </script>
