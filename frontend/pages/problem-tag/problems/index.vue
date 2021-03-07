@@ -7,6 +7,11 @@
     :search="search"
     class="elevation-1 kanit-font"
   >
+    <template v-slot:item.problemStatus="{ item }">
+      <v-chip :color="getColor(item.problemStatus)" dark>
+        {{ item.problemStatus }}
+      </v-chip>
+    </template>
     <template v-slot:top>
       <v-toolbar flat class="kanit-font">
         <v-toolbar-title>ตารางโจทย์ปัญหา</v-toolbar-title>
@@ -99,7 +104,7 @@
 
     <!-- management -->
     <template v-slot:[`item.actions`]="{ item }">
-      <v-tooltip bottom>
+      <!-- <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-icon
             color="primary"
@@ -113,7 +118,7 @@
           </v-icon>
         </template>
         <span>เพิ่มเติม</span>
-      </v-tooltip>
+      </v-tooltip> -->
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-icon
@@ -176,15 +181,10 @@ export default {
     dialogDelete: false, // if true show delete modal
     search: "",
     headers: [
-      {
-        align: "start",
-        sortable: false
-        // value: "problemId"
-      },
-      { text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
-      { text: "วันที่สร้าง", value: "problemCreateDate" },
-      { text: "สถานะ", value: "problemStatus" },
-      { text: "ดำเนินการ", value: "actions", sortable: false }
+      { align: "start", text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
+      { align: "center", text: "วันที่สร้าง", value: "problemCreateDate" },
+      { align: "center", text: "สถานะ", value: "problemStatus" },
+      { align: "center", text: "ดำเนินการ", value: "actions", sortable: false }
     ],
     editedIndex: -1, //  editedIndex default to -1
     editedItem: {
@@ -284,6 +284,11 @@ export default {
         }
       });
       this.allProblems = doesGetAll;
+    },
+    getColor(item) {
+      if (item == "ใช้งาน") return "green";
+      else if (item == "ไม่ใช้งาน") return "orange";
+      else return "red";
     },
 
     // add and save problem-data to database

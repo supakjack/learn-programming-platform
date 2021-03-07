@@ -296,25 +296,35 @@ export default {
   data: () => ({
     headers: [
       {
-        text: "ครั้งที่",
-        align: "start",
-        sortable: false,
-        value: "compilelogSubmitNo"
+        align: "center",
+        text: "ที่",
+        value: "compilelogSubmitNo",
+        sortable: false
       },
-      { text: "ผลลัพธ์", value: "compilelogTestResult" },
-      { text: "คะแนน", value: "compilelogScore" },
-      { text: "วันที่", value: "compilelogCreateDate" }
+      {
+        align: "center",
+        text: "ผลลัพธ์",
+        value: "compilelogTestResult",
+        sortable: false
+      },
+      {
+        align: "center",
+        text: "คะแนน",
+        value: "compilelogScore",
+        sortable: false
+      },
+      {
+        align: "center",
+        text: "วันที่",
+        value: "compilelogCreateDate",
+        sortable: false
+      }
     ],
     headersTestset: [
-      {
-        text: "หัวข้อ",
-        align: "start",
-        sortable: false,
-        value: "testsetTitle"
-      },
-      { text: "คำอธิบาย", value: "testsetDescription" },
-      { text: "ข้อมูลนำเข้า", value: "testsetInput" },
-      { text: "ข้อมูลส่งออก", value: "testsetOutput" }
+      { align: "center", text: "หัวข้อ", value: "testsetTitle" },
+      { align: "center", text: "คำอธิบาย", value: "testsetDescription" },
+      { align: "center", text: "ข้อมูลนำเข้า", value: "testsetInput" },
+      { align: "center", text: "ข้อมูลส่งออก", value: "testsetOutput" }
     ],
 
     tabs: [
