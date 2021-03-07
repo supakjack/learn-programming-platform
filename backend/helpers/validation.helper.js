@@ -5,11 +5,12 @@ const authSchema = joi.object({
   password: joi.string().min(2).required(),
 });
 
-const updateUserConditionSchema = joi.object({
-  userId: joi.number().integer().max(99999999),
-});
-const UserusernameConditionSchema = joi.object({
+const getUsernameSchema = joi.object({
   userUsername: joi.string().max(255),
+});
+const getUserFromCourseSchema = joi.object({
+  userId: joi.number().integer().max(99999999),
+  sectionId: joi.number().max(99999999).min(1),
 });
 
 // update user schema
@@ -299,6 +300,8 @@ const getYearSchema = joi.object({
 module.exports = {
   getYearSchema,
   authSchema,
+  getUserFromCourseSchema,
+  getUsernameSchema,
   createUserSchema,
   FileuserSchema,
   getAssignmentByUserIdSchema,
