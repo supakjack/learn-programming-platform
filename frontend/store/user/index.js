@@ -4,7 +4,7 @@ module.exports = {
     token: "",
     username: "60160344",
     password: "050440705bB_",
-    id: "1"
+    id: 1
   }),
   mutations: {
     setUser(state, { user }) {

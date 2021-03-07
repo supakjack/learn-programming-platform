@@ -163,7 +163,7 @@ Last edit: 19/2/2021 -->
               <v-stepper-content step="2">
                 <v-card class="mb-12" width="1000px" height="500px">
                   <v-row>
-                    <v-col cols="12" sm="9" md="9">
+                    <v-col cols="12" sm="11" md="10" class="ml-4">
                       <v-combobox
                         clearable
                         hide-selected
@@ -175,8 +175,8 @@ Last edit: 19/2/2021 -->
                         label="เลือกแท็กสำหรับค้นหาโจทย์ปัญหา"
                       ></v-combobox>
                     </v-col>
-                    <v-col cols="6" md="3">
-                      <v-btn elevation="2">
+                    <v-col cols="6" md="1">
+                      <v-btn elevation="2" class="mt-3 ml-4">
                         ค้นหา
                       </v-btn>
                     </v-col>
@@ -195,11 +195,6 @@ Last edit: 19/2/2021 -->
                       :items="allProblems"
                       :search="searchProblem"
                     >
-                      <v-text-field
-                        v-model="calories"
-                        type="number"
-                        label="Less than"
-                      ></v-text-field>
                       <template v-slot:[`item.actions`]="{ item }">
                         <v-tooltip bottom>
                           <template v-slot:activator="{ on, attrs }">

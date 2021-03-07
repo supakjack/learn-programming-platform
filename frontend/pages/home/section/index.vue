@@ -31,13 +31,80 @@
           </v-card-actions>
         </v-card>
       </div>
+      <v-row>
+        <!-- insert dialog -->
+        <v-dialog v-model="insertSectionDialog" persistent max-width="600px">
+          <template v-slot:activator="{ on, attrs }">
+            <v-card
+              class="ml-7 mt-5"
+              color="grey lighten-3"
+              max-width="344"
+              height="150"
+              width="350"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-divider color="blue"></v-divider>
+
+              <v-card-text class="font-weight-bold text-center">
+                เพิ่มรายวิชา
+              </v-card-text>
+              <v-row justify="space-around">
+                <v-icon large color="blue"> mdi-plus-circle-outline </v-icon>
+              </v-row>
+            </v-card>
+          </template>
+          <v-card>
+            <v-card-title>
+              <span class="">เพิ่มกลุ่มเรียน</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" sm="12" md="8">
+                    <v-text-field
+                      v-model="sectionNumber"
+                      label="กลุ่มเรียนที่*"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-select
+                      v-model="sectionStatus"
+                      :items="[
+                        { text: 'ใช้งาน', val: 1 },
+                        { text: 'ปิดใช้งาน', val: 2 }
+                      ]"
+                      item-text="text"
+                      item-value="val"
+                      label="สถานะ*"
+                      required
+                    ></v-select>
+                  </v-col>
+                </v-row>
+              </v-container>
+              <small>*โปรดระบุข้อมูลที่ต้องการ</small>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="cancelModal">
+                ยกเลิก
+              </v-btn>
+              <v-btn color="blue darken-1" text @click="clickInsertSection">
+                บันทึก
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-row>
     </v-card>
   </div>
 </template>
 <script>
 import coursemixin from "@/components/course";
+import sectionmixin from "@/components/section";
 export default {
-  mixins: [coursemixin],
+  mixins: [coursemixin, sectionmixin],
   methods: {
     async initialize() {
       const corseSection =
@@ -54,7 +121,7 @@ export default {
           href: "/home/section"
         }
       ]);
-      const { doesGet } = await this.getCourseSection({
+       const { doesGet } = await this.getCourseSection({
         courseId: this.$store.state.course.courseId,
         userId: this.$store.state.user.id
       });
@@ -64,20 +131,55 @@ export default {
         ).format("Do MMM YY เวลา LT");
       });
       this.allCourses = doesGet;
-      // console.log(this.allCourses);
+      this.cancelModal();
     },
     async clickOpenUserSection(course) {
       this.$store.commit("course/setCourse", {
         course
       });
       this.$router.push("/assignment");
+    },
+    async clickInsertSection() {
+      if (this.isDuplicatedSectionNumber) {
+        alert("กลุ่มเรียนซ้ำ");
+      } else {
+        const insertData = {
+          sectionNumber: this.sectionNumber,
+          sectionCourseId: this.$store.state.course.courseId,
+          sectionCreateBy: this.$store.state.user.id,
+          sectionUpdateBy: this.$store.state.user.id,
+          sectionStatus: this.sectionStatus
+        };
+        console.log(insertData);
+        await this.insertSection(insertData);
+      }
+      await this.initialize();
+    },
+    async cancelModal() {
+      this.sectionNumber = "";
+      this.sectionStatus = "";
+      this.insertSectionDialog = false;
+    }
+  },
+  watch: {
+    sectionNumber(val) {
+      if (this.allCourses.filter(a => a.sectionNumber == val).length) {
+        this.isDuplicatedSectionNumber = true;
+      } else {
+        this.isDuplicatedSectionNumber = false;
+      }
+      console.log(this.isDuplicatedSectionNumber);
     }
   },
   created() {
     this.initialize();
   },
   data: () => ({
-    allCourses: []
+    allCourses: [],
+    sectionNumber: "",
+    isDuplicatedSectionNumber: false,
+    sectionStatus: "",
+    insertSectionDialog: false
   }),
   mounted() {
     this.$store.commit("setCrumbs", [

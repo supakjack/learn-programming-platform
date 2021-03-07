@@ -1,18 +1,21 @@
 module.exports = {
   state: () => ({
-    courseId: null,
-    courseName: null,
-    courseCode: null,
-    courseUpdateDate: null,
-
-    sectionId: null,
-    sectionNumber: null,
     userId: null,
     userUsername: null,
 
+    courseId: null,
+    courseName: null,
+    courseCode: null,
+    courseStatus: null,
+    courseUpdateDate: null,
+
     yearId: null,
     yearName: null,
-    yearSemester: null
+    yearSemester: null,
+
+    sectionId: null,
+    sectionNumber: null,
+
   }),
   mutations: {
     setCourse(state, { course }) {
@@ -23,6 +26,9 @@ module.exports = {
       state.courseCode = course.courseCode
         ? course.courseCode
         : state.courseCode;
+        state.courseStatus = course.courseStatus
+        ? course.courseStatus
+        : state.courseStatus;
       state.courseUpdateDate = course.courseUpdateDate
         ? course.courseUpdateDate
         : state.courseUpdateDate;
