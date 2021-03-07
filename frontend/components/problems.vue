@@ -5,6 +5,10 @@ export default {
       return this.$axios.$get("problem");
     },
 
+    async getProblem(dataCondition) {
+      return this.$axios.$get("problem",dataCondition);
+    },
+
     async deleteProblem(dataCondition) {
       console.log(dataCondition);
       return this.$axios
