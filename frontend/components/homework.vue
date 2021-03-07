@@ -10,6 +10,22 @@ export default {
     async getHomework() {
       return this.$axios.$get("homework");
     },
+    async getAssignmentUser(data) {
+      const dataCreate = {};
+      dataCreate.enrollUserId = data;
+      const result = this.$axios
+        .$post("homework/assignment", dataCreate)
+        .catch(err => console.log(err));
+      console.log(result);
+      return result;
+    },
+    async getAssignmentScore(data) {
+      const result = this.$axios
+        .$post("homework/assignment/score", data)
+        .catch(err => console.log(err));
+      console.log(result);
+      return result;
+    },
 
     // function name: getTaskHomework
     // description: get from backend API

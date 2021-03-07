@@ -174,7 +174,6 @@
     </v-snackbar>
   </v-container>
 </template>
-
 <script>
 import tags from "./../problem-tag/tags/index";
 import problems from "./../problem-tag/problems/index";
@@ -196,6 +195,8 @@ export default {
     ]);
   },
   data: () => ({
+    code: 'console.log("Hello World")',
+    lineNumbers: true,
     dialog: false,
     loading: false,
     selectedItem: 1,
@@ -226,6 +227,9 @@ export default {
     problems
   },
   methods: {
+    highlighter(code) {
+      return highlight(code, languages.js); //returns html
+    },
     deleteFile(file) {
       this.files = null;
     },

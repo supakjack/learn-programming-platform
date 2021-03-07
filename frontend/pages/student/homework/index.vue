@@ -96,6 +96,7 @@ export default {
     SuccessTitle: "",
     allHomeworks: [],
     rowProblem: [],
+    scoreLastResult: [],
     dialogDetail: false,
     search: "", // use for search in table all column
     headers: [
@@ -106,8 +107,8 @@ export default {
       },
       { text: "ชื่อบท", value: "assignmentTitle" }, // define column name and value
       { text: "สถานะการใช้งาน", value: "assignmentStatus" },
-      { text: "สถานะการส่งงาน", value: "result" },
-      { text: "คะแนน", value: "sumCompilelogScore" },
+      { text: "สถานะการส่งงาน", value: "scoreResult" },
+      { text: "คะแนน", value: "showScore" },
       { align: "center", text: "ดำเนินการ", value: "actions", sortable: false }
     ],
 
@@ -168,52 +169,182 @@ export default {
     // UpdateBy:
 
     async initialize() {
-      const { doesGetAll } = await this.getHomework();
-      doesGetAll.map(doesGetAll => {
-        doesGetAll.assignmentCreateDate = this.$moment(
-          doesGetAll.assignmentCreateDate
-        ).format("Do MMM YY เวลา LT");
-        doesGetAll.assignmentUpdateDate = this.$moment(
-          doesGetAll.assignmentUpdateDate
-        ).format("Do MMM YY เวลา LT");
-        if (doesGetAll.assignmentStatus == "active") {
-          doesGetAll.assignmentStatus = "ใช้งาน";
-        } else {
-          doesGetAll.assignmentStatus = "ไม่ใช้งาน";
+      console.log(this.$store.state.user.id);
+      console.log(this.$store.state.user.username);
+      const result = await this.getAssignmentUser(this.$store.state.user.id);
+      console.log(result);
+
+      const scoreResult = await result.doesGetAll.map(async res => {
+        const data = {
+          taskAssignmentId: res.assignmentId,
+          compilelogCreateBy: res.enrollUserId,
+          taskId: res.taskId
+        };
+        const score = await this.getAssignmentScore(data);
+        if (score.doesGetAll.length == 0) {
+          const mockData = {
+            compilelogScore: 0,
+            taskAssignmentId: res.assignmentId
+          };
+          return mockData;
         }
-        if (doesGetAll.sumCompilelogScore == null) {
-          doesGetAll.sumCompilelogScore = 0;
-        }
-        if (doesGetAll.sumCompilelogScore == doesGetAll.sumTaskScore) {
-          doesGetAll.result = "ส่งแล้ว";
-        } else if (
-          doesGetAll.sumCompilelogScore > 0 &&
-          doesGetAll.sumCompilelogScore < doesGetAll.sumTaskScore
-        ) {
-          doesGetAll.result = "ยังไม่เสร็จ";
-        } else if (doesGetAll.sumCompilelogScore == 0) {
-          doesGetAll.result = "ยังไม่ส่ง";
-        }
-        doesGetAll.sumCompilelogScore =
-          doesGetAll.sumCompilelogScore + "/" + doesGetAll.sumTaskScore;
+        console.log(score);
+        return score.doesGetAll[0];
       });
-      this.allHomeworks = doesGetAll;
+
+      this.scoreLastResult = await Promise.all(scoreResult).then(value => {
+        return value;
+      });
+      console.log(this.scoreLastResult);
+
+      let dataSuccess = [];
+      let score = 0;
+      let j = 0;
+      for (let i = 0; i < result.doesGetAll.length; i++) {
+        if (i != result.doesGetAll.length - 1) {
+          if (
+            result.doesGetAll[i].assignmentId ==
+            result.doesGetAll[i + 1].assignmentId
+          ) {
+            score += result.doesGetAll[i].taskScore;
+          } else {
+            score += result.doesGetAll[i].taskScore;
+            dataSuccess[j] = {
+              assignmentTitle: result.doesGetAll[i].assignmentTitle,
+              assignmentId: result.doesGetAll[i].assignmentId,
+              assignmentStatus: result.doesGetAll[i].assignmentStatus,
+              sumScore: score
+            };
+            j++;
+            score = 0;
+          }
+        } else {
+          if (
+            result.doesGetAll[i].assignmentId ==
+            result.doesGetAll[i - 1].assignmentId
+          ) {
+            score += result.doesGetAll[i].taskScore;
+            dataSuccess[j] = {
+              assignmentTitle: result.doesGetAll[i].assignmentTitle,
+              assignmentId: result.doesGetAll[i].assignmentId,
+              assignmentStatus: result.doesGetAll[i].assignmentStatus,
+              sumScore: score
+            };
+          }
+        }
+      }
+      console.log(dataSuccess);
+
+      let dataScore = [];
+      let score2 = 0;
+      let k = 0;
+      for (let i = 0; i < this.scoreLastResult.length; i++) {
+        if (i != this.scoreLastResult.length - 1) {
+          if (
+            this.scoreLastResult[i].taskAssignmentId ==
+            this.scoreLastResult[i + 1].taskAssignmentId
+          ) {
+            score2 += this.scoreLastResult[i].compilelogScore;
+          } else {
+            score2 += this.scoreLastResult[i].compilelogScore;
+            dataScore[k] = {
+              taskAssignmentId: this.scoreLastResult[i].taskAssignmentId,
+              sumScore: score2
+            };
+            k++;
+            score2 = 0;
+          }
+        } else {
+          if (
+            this.scoreLastResult[i].taskAssignmentId ==
+            this.scoreLastResult[i - 1].taskAssignmentId
+          ) {
+            score2 += this.scoreLastResult[i].compilelogScore;
+            dataScore[k] = {
+              taskAssignmentId: this.scoreLastResult[i].taskAssignmentId,
+              sumScore: score2
+            };
+          }
+        }
+      }
+      console.log(dataScore);
+
+      for (let i = 0; i < dataSuccess.length; i++) {
+        for (let j = 0; j < dataScore.length; j++) {
+          if (dataSuccess[i].assignmentId == dataScore[j].taskAssignmentId) {
+            dataSuccess[i].showScore =
+              dataScore[j].sumScore + "/" + dataSuccess[i].sumScore;
+            dataSuccess[i].score = dataScore[j].sumScore;
+
+            if (dataSuccess[i].score == 0) {
+              dataSuccess[i].scoreResult = "ยังไม่ส่ง";
+            } else if (dataSuccess[i].score < dataSuccess[i].sumScore) {
+              dataSuccess[i].scoreResult = "ยังไม่เสร็จ";
+            } else if (dataSuccess[i].score == dataSuccess[i].sumScore) {
+              dataSuccess[i].scoreResult = "ส่งแล้ว";
+            }
+
+            if (dataSuccess[i].assignmentStatus == "active") {
+              dataSuccess[i].assignmentStatus = "ใช้งาน";
+            } else {
+              dataSuccess[i].assignmentStatus = "ไม่ใช้งาน";
+            }
+          }
+        }
+      }
+
+      console.log(dataSuccess);
+      // result.doesGetAll.then(res => {
+      //   console.log(res);
+      // });
+      // const { doesGetAll } = await this.getHomework();
+      // doesGetAll.map(doesGetAll => {
+      //   doesGetAll.assignmentCreateDate = this.$moment(
+      //     doesGetAll.assignmentCreateDate
+      //   ).format("Do MMM YY เวลา LT");
+      //   doesGetAll.assignmentUpdateDate = this.$moment(
+      //     doesGetAll.assignmentUpdateDate
+      //   ).format("Do MMM YY เวลา LT");
+      //   if (doesGetAll.assignmentStatus == "active") {
+      //     doesGetAll.assignmentStatus = "ใช้งาน";
+      //   } else {
+      //     doesGetAll.assignmentStatus = "ไม่ใช้งาน";
+      //   }
+      //   if (doesGetAll.sumCompilelogScore == null) {
+      //     doesGetAll.sumCompilelogScore = 0;
+      //   }
+      //   if (doesGetAll.sumCompilelogScore == doesGetAll.sumTaskScore) {
+      //     doesGetAll.result = "ส่งแล้ว";
+      //   } else if (
+      //     doesGetAll.sumCompilelogScore > 0 &&
+      //     doesGetAll.sumCompilelogScore < doesGetAll.sumTaskScore
+      //   ) {
+      //     doesGetAll.result = "ยังไม่เสร็จ";
+      //   } else if (doesGetAll.sumCompilelogScore == 0) {
+      //     doesGetAll.result = "ยังไม่ส่ง";
+      //   }
+      //   doesGetAll.sumCompilelogScore =
+      //     doesGetAll.sumCompilelogScore + "/" + doesGetAll.sumTaskScore;
+      // });
+      this.allHomeworks = dataSuccess;
     },
 
     async openDialog(item) {
+      console.log(item);
       const { doesGetProblem } = await this.getProblem(item.assignmentId);
-      doesGetProblem.map(doesGetProblem => {
-        if (doesGetProblem.compilelogTestResult == "Accepted") {
-          doesGetProblem.compilelogTestResult = "ผ่าน";
-        } else if (doesGetProblem.compilelogTestResult == null) {
-          doesGetProblem.compilelogTestResult = "ยังไม่ส่ง";
-        } else {
-          doesGetProblem.compilelogTestResult = "ไม่ผ่าน";
-        }
-        doesGetProblem.taskScore =
-          doesGetProblem.compilelogScore + "/" + doesGetProblem.taskScore;
-      });
-      this.rowProblem = doesGetProblem;
+      console.log(doesGetProblem);
+      // doesGetProblem.map(doesGetProblem => {
+      //   if (doesGetProblem.compilelogTestResult == "Accepted") {
+      //     doesGetProblem.compilelogTestResult = "ผ่าน";
+      //   } else if (doesGetProblem.compilelogTestResult == null) {
+      //     doesGetProblem.compilelogTestResult = "ยังไม่ส่ง";
+      //   } else {
+      //     doesGetProblem.compilelogTestResult = "ไม่ผ่าน";
+      //   }
+      //   doesGetProblem.taskScore =
+      //     doesGetProblem.compilelogScore + "/" + doesGetProblem.taskScore;
+      // });
+      // this.rowProblem = doesGetProblem;
       this.dialogDetail = true;
     },
     async openIde(item) {

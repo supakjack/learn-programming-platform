@@ -15,11 +15,13 @@
     "@nuxtjs/proxy": "^2.1.0",
     "core-js": "^3.6.5",
     "nuxt": "^2.14.6",
+    "vue-code-highlight": "^0.7.6",
+    "vue-prism-editor": "^1.2.2",
     "vue-sidebar-menu": "^4.7.4"
   },
   "devDependencies": {
     "@nuxtjs/moment": "^1.6.1",
     "@nuxtjs/tailwindcss": "^3.4.2",
-    "@nuxtjs/vuetify": "^1.11.2"
+    "@nuxtjs/vuetify": "^1.11.3"
   }
 }

@@ -110,6 +110,17 @@ const getProblemSchema = joi.object({
   problemId: joi.number().max(99999999).min(1),
 });
 
+// get problem schema
+const getAssignmentchema = joi.object({
+  assignmentId: joi.number().max(99999999).min(1),
+});
+
+const getScoreUserSchema = joi.object({
+  taskAssignmentId: joi.number().max(99999999).min(1),
+  compilelogCreateBy: joi.number().max(99999999).min(1),
+  taskId: joi.number().max(99999999).min(1),
+});
+
 // get assignment schema
 const getAssignmentSchema = joi.object({
   assignmentSectionId: joi.number().max(99999999).min(1),
@@ -151,6 +162,11 @@ const getTaskAssignmentSchema = joi.object({
 });
 
 // get assignment schema
+const getAssignmentByUserIdSchema = joi.object({
+  enrollUserId: joi.number().max(99999999).min(1),
+});
+
+// get assignment schema
 const getTestsetSchema = joi.object({
   testsetProblemId: joi.number().max(99999999).min(1),
 });
@@ -158,6 +174,7 @@ const getTestsetSchema = joi.object({
 // get assignment schema
 const getCompilelogSchema = joi.object({
   compilelogTaskId: joi.number().max(99999999).min(1),
+  compilelogCreateBy: joi.number().max(99999999).min(1),
 });
 
 // create compile log schema
@@ -259,6 +276,7 @@ module.exports = {
   authSchema,
   createUserSchema,
   FileuserSchema,
+  getAssignmentByUserIdSchema,
   userSchema,
   getUserFromCourseSchema,
   getUserIdSchema,
@@ -268,11 +286,13 @@ module.exports = {
   updateTagSchema,
   createAssessSchema,
   getProblemSchema,
+  getAssignmentchema,
   getAssignmentSchema,
   getTestsetSchema,
   createFiles,
   creteCompileLogSchema,
   createProblemSchema,
+  getScoreUserSchema,
   createPicturesScheme,
   createHashtagSchema,
   createTestsetsSchema,

@@ -12,6 +12,8 @@ const {
   createPicturesScheme,
   createHashtagSchema,
   createTestsetsSchema,
+  getAssignmentchema,
+  getScoreUserSchema,
   createFiles,
 } = require("./../helpers/validation.helper");
 
@@ -116,6 +118,120 @@ module.exports = {
         insertData: [createAssessData],
       });
       res.status(201).send({ doesCreate });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
+  getUserAssignment: async (req, res, next) => {
+    // passing data from query string validate data from
+    const getAssignmentData = await getAssignmentchema.validateAsync(req.body);
+
+    // try call function getTagById in tags model then catch if error
+    try {
+      const doesGetAll = await globalModel.select({
+        name: "assignments",
+        condition: [getAssignmentData],
+        filter: [
+          "assignmentId",
+          "assignmentTitle",
+          "sectionId",
+          "enrollUserId",
+          "userUsername",
+          "userPrefixThai",
+          "userFirstNameThai",
+          "userLastnameThai",
+          "taskId",
+        ],
+        leftJoin: [
+          {
+            joinTable: "sections",
+            leftTableName: "assignments",
+            leftKey: "assignmentSectionId",
+            joinKey: "sectionId",
+          },
+          {
+            joinTable: "enrolls",
+            leftTableName: "sections",
+            leftKey: "sectionId",
+            joinKey: "enrollSectionId",
+          },
+          {
+            joinTable: "users",
+            leftTableName: "enrolls",
+            leftKey: "enrollUserId",
+            joinKey: "userId",
+          },
+          {
+            joinTable: "tasks",
+            leftTableName: "assignments",
+            leftKey: "assignmentId",
+            joinKey: "taskAssignmentId",
+          },
+        ],
+      });
+      res.status(201).send({ doesGetAll });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
+  getScoreUser: async (req, res, next) => {
+    // passing data from query string validate data from
+    const getScoreUserData = await getScoreUserSchema.validateAsync(req.body);
+
+    // try call function getTagById in tags model then catch if error
+    try {
+      const doesGetAll = await globalModel.select({
+        name: "tasks",
+        condition: [getScoreUserData],
+        orderBy: [{ name: "compilelogId", type: "DESC" }],
+        limit: [{ size: 1 }],
+        filter: [
+          "taskId",
+          "taskScore",
+          "taskAssignmentId",
+          "compilelogId",
+          "compilelogScore",
+          "compilelogTestResult",
+          "compilelogCreateBy",
+        ],
+        leftJoin: [
+          {
+            joinTable: "compilelogs",
+            leftTableName: "tasks",
+            leftKey: "taskId",
+            joinKey: "compilelogTaskId",
+          },
+        ],
+      });
+      res.status(201).send({ doesGetAll });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
+  getMaxScore: async (req, res, next) => {
+    // passing data from query string validate data from
+    const getAssignmentData = await getAssignmentchema.validateAsync(req.body);
+
+    // try call function getTagById in tags model then catch if error
+    try {
+      const doesGetAll = await globalModel.select({
+        name: "assignments",
+        condition: [getAssignmentData],
+        sum: [{ name: "taskScore", newName: "sumTaskScore" }],
+        filter: ["assignmentId", "assignmentTitle"],
+        leftJoin: [
+          {
+            joinTable: "tasks",
+            leftTableName: "assignments",
+            leftKey: "assignmentId",
+            joinKey: "taskAssignmentId",
+          },
+        ],
+      });
+      res.status(201).send({ doesGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
