@@ -29,7 +29,7 @@
                     </v-col>
                     <v-col>
                       <a class="float-right" @click="openDialogPicture()"
-                        >รูปภาพตัวอย่าง</a
+                        >รูปภาพประกอบ</a
                       >
                     </v-col>
                   </v-row>
@@ -136,6 +136,7 @@
         <v-row style="margin-top:-35px">
           <v-col>
             <v-textarea
+              style="font-family: 'Courier New', monospace;"
               v-model="submit.source"
               autocomplete="coding"
               label="Coding"
@@ -306,7 +307,11 @@
             contain
           ></v-img>
         </div>
-        <v-divider></v-divider>
+        <div v-else>
+          <center>
+            <h2>ไม่พบรูปภาพตัวอย่าง</h2>
+          </center>
+        </div>
 
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -387,7 +392,6 @@ export default {
     problemDescription: "",
     testsetExample: [],
     breakcump: [],
-    path: "../../../../storages/picture/1/",
     image: ""
   }),
   async created() {
@@ -457,14 +461,16 @@ export default {
         this.$store.state.homework.problemId
       );
 
-      let text = this.testsetExample.doesGetAll[0].filePath.replaceAll(
-        "\\",
-        "/"
-      );
+      if (this.testsetExample.doesGetAll[0].filePath != null) {
+        let text = this.testsetExample.doesGetAll[0].filePath.replaceAll(
+          "\\",
+          "/"
+        );
 
-      var path = text.substr(20, text.length);
+        var path = text.substr(20, text.length);
 
-      this.image = path;
+        this.image = path;
+      }
       console.log(this.image);
       console.log(this.testsetExample.doesGetAll);
       this.problemTitle = this.$store.state.homework.problemTitle;

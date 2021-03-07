@@ -99,6 +99,30 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <v-dialog v-model="dialogPicture" max-width="500px">
+          <v-card>
+            <div id="app" v-if="imagePicture != ''">
+              <h2>รูปภาพตัวอย่าง:</h2>
+              <v-img
+                :src="require('../../../../storages/picture/' + imagePicture)"
+                aspect-ratio="1.5"
+                max-height="500"
+                contain
+              ></v-img>
+            </div>
+            <div v-else>
+              <center>
+                <h2>ไม่พบรูปภาพตัวอย่าง</h2>
+              </center>
+            </div>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" text @click="closeDialogPicture()">
+                ปิด
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-toolbar>
     </template>
 
@@ -148,18 +172,6 @@
         </template>
         <span>ลบ</span>
       </v-tooltip>
-      <v-dialog v-model="dialogPicture" max-width="500px">
-        <v-card>
-          <v-divider></v-divider>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="dialogPicture = false">
-              ปิด
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
     </template>
 
     <template v-slot:no-data>
@@ -181,6 +193,7 @@ export default {
   },
   data: () => ({
     formTitle: "สร้างโจทย์",
+    imagePicture: "",
     editAllItem: [],
     hashtagResult: [],
     testsetResult: [],
@@ -297,6 +310,8 @@ export default {
           doesGetAll.problemStatus = "ไม่ใช้งาน";
         }
       });
+
+      // console.log(doesGetAll);
       this.allProblems = doesGetAll;
     },
     getColor(item) {
@@ -615,8 +630,21 @@ export default {
         this.editProblemId = -1;
       });
     },
-    openDialogPicture() {
+    openDialogPicture(item) {
+      console.log(item);
+      if (item.filePath != null) {
+        let text = item.filePath.replaceAll("\\", "/");
+
+        var path = text.substr(20, text.length);
+
+        this.imagePicture = path;
+      }
+      console.log(this.imagePicture);
       this.dialogPicture = true;
+    },
+    closeDialogPicture() {
+      this.dialogPicture = false;
+      this.imagePicture = "";
     }
   }
 };
