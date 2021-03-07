@@ -13,7 +13,7 @@ export default {
     },
     async getTestsetExample(data) {
       const dataCondition = {
-        testsetId: data
+        problemId: data
       };
       return this.$axios.$post("testset/example", dataCondition);
     },

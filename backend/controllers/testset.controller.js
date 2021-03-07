@@ -37,7 +37,40 @@ module.exports = {
       const doesGetAll = await globalModel.select({
         name: "testsets",
         condition: [
-          { testsetProblemId: req.body.testsetId, testsetIsExample: 1 },
+          { testsetProblemId: req.body.problemId, testsetIsExample: 1 },
+        ],
+        filter: [
+          "testsetId",
+          "testsetTitle",
+          "testsetDescription",
+          "testsetInput",
+          "testsetOutput",
+          "testsetProblemId",
+          "testsetIsExample",
+          "problemId",
+          "pictureFileId",
+          "filePath",
+          "pictureId",
+        ],
+        leftJoin: [
+          {
+            joinTable: "problems",
+            leftTableName: "testsets",
+            leftKey: "testsetProblemId",
+            joinKey: "problemId",
+          },
+          {
+            joinTable: "pictures",
+            leftTableName: "problems",
+            leftKey: "problemId",
+            joinKey: "pictureProblemId",
+          },
+          {
+            joinTable: "files",
+            leftTableName: "pictures",
+            leftKey: "pictureFileId",
+            joinKey: "fileId",
+          },
         ],
       });
       res.status(201).send({ doesGetAll });
