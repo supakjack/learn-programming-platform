@@ -255,7 +255,15 @@ const updateCourseSchema = joi.object({
   courseStatus: joi.number().integer().max(3),
 });
 
+// get year schema
+const getYearSchema = joi.object({
+  yearId: joi.number().max(99999999).min(1),
+  yearCreateBy: joi.number().integer().max(99999999).min(1),
+  yearStatus: joi.number().integer().max(3),
+});
+
 module.exports = {
+  getYearSchema,
   authSchema,
   createUserSchema,
   FileuserSchema,
