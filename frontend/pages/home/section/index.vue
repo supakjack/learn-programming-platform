@@ -54,7 +54,7 @@ export default {
           href: "/home/section"
         }
       ]);
-      const { doesGet } = await this.getCourseSection({
+       const { doesGet } = await this.getCourseSection({
         courseId: this.$store.state.course.courseId,
         userId: this.$store.state.user.id
       });
