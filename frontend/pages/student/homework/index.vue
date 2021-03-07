@@ -333,18 +333,55 @@ export default {
       console.log(item);
       const { doesGetProblem } = await this.getProblem(item.assignmentId);
       console.log(doesGetProblem);
-      // doesGetProblem.map(doesGetProblem => {
-      //   if (doesGetProblem.compilelogTestResult == "Accepted") {
-      //     doesGetProblem.compilelogTestResult = "ผ่าน";
-      //   } else if (doesGetProblem.compilelogTestResult == null) {
-      //     doesGetProblem.compilelogTestResult = "ยังไม่ส่ง";
-      //   } else {
-      //     doesGetProblem.compilelogTestResult = "ไม่ผ่าน";
-      //   }
-      //   doesGetProblem.taskScore =
-      //     doesGetProblem.compilelogScore + "/" + doesGetProblem.taskScore;
-      // });
-      // this.rowProblem = doesGetProblem;
+      const scoreResult = await doesGetProblem.map(async res => {
+        const data = {
+          taskAssignmentId: item.assignmentId,
+          compilelogCreateBy: this.$store.state.user.id,
+          taskId: res.taskId
+        };
+        const score = await this.getAssignmentScore(data);
+        if (score.doesGetAll.length == 0) {
+          const mockData = {
+            compilelogScore: 0,
+            compilelogSubmitNo: 0,
+            compilelogTestResult: null,
+            taskAssignmentId: item.assignmentId,
+            taskId: res.taskId
+          };
+          return mockData;
+        }
+        return score.doesGetAll[0];
+      });
+      console.log(scoreResult);
+      const scoreLastResult = await Promise.all(scoreResult).then(value => {
+        return value;
+      });
+      console.log(scoreLastResult);
+      for (let i = 0; i < doesGetProblem.length; i++) {
+        for (let j = 0; j < scoreLastResult.length; j++) {
+          if (doesGetProblem[i].taskId == scoreLastResult[i].taskId) {
+            doesGetProblem[i].compilelogScore =
+              scoreLastResult[i].compilelogScore;
+            doesGetProblem[i].compilelogSubmitNo =
+              scoreLastResult[i].compilelogSubmitNo;
+            doesGetProblem[i].compilelogTestResult =
+              scoreLastResult[i].compilelogTestResult;
+          }
+        }
+      }
+      console.log(doesGetProblem);
+      doesGetProblem.map(doesGetProblem => {
+        if (doesGetProblem.compilelogTestResult == "Accepted") {
+          doesGetProblem.compilelogTestResult = "ผ่าน";
+        } else if (doesGetProblem.compilelogTestResult == null) {
+          doesGetProblem.compilelogTestResult = "ยังไม่ส่ง";
+        } else {
+          doesGetProblem.compilelogTestResult = "ไม่ผ่าน";
+        }
+        doesGetProblem.taskScore =
+          doesGetProblem.compilelogScore + "/" + doesGetProblem.taskScore;
+      });
+      this.rowProblem = doesGetProblem;
       this.dialogDetail = true;
     },
     async openIde(item) {
