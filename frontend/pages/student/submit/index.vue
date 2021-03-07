@@ -21,7 +21,18 @@
                   <p class="display-0.75 text--primary">
                     {{ problemDescription }}
                   </p>
-                  <p>ข้อมูลตัวอย่าง</p>
+                </v-card-text>
+                <v-card-text>
+                  <v-row>
+                    <v-col>
+                      <p>ข้อมูลตัวอย่าง</p>
+                    </v-col>
+                    <v-col>
+                      <a class="float-right" @click="openDialogPicture()"
+                        >รูปภาพตัวอย่าง</a
+                      >
+                    </v-col>
+                  </v-row>
                 </v-card-text>
                 <v-data-table
                   :headers="headersTestset"
@@ -284,6 +295,22 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-dialog v-model="dialogPicture" max-width="500px">
+      <v-card>
+        <div id="app">
+          <h2>รูปภาพตัวอย่าง:</h2>
+          <img :src="image" style="width:100%;" alt="" />
+        </div>
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="dialogPicture = false">
+            ปิด
+          </v-btn>
+        </v-card-actions></v-card
+      >
+    </v-dialog>
   </v-container>
 </template>
 
@@ -296,25 +323,35 @@ export default {
   data: () => ({
     headers: [
       {
-        text: "ครั้งที่",
-        align: "start",
-        sortable: false,
-        value: "compilelogSubmitNo"
+        align: "center",
+        text: "ที่",
+        value: "compilelogSubmitNo",
+        sortable: false
       },
-      { text: "ผลลัพธ์", value: "compilelogTestResult" },
-      { text: "คะแนน", value: "compilelogScore" },
-      { text: "วันที่", value: "compilelogCreateDate" }
+      {
+        align: "center",
+        text: "ผลลัพธ์",
+        value: "compilelogTestResult",
+        sortable: false
+      },
+      {
+        align: "center",
+        text: "คะแนน",
+        value: "compilelogScore",
+        sortable: false
+      },
+      {
+        align: "center",
+        text: "วันที่",
+        value: "compilelogCreateDate",
+        sortable: false
+      }
     ],
     headersTestset: [
-      {
-        text: "หัวข้อ",
-        align: "start",
-        sortable: false,
-        value: "testsetTitle"
-      },
-      { text: "คำอธิบาย", value: "testsetDescription" },
-      { text: "ข้อมูลนำเข้า", value: "testsetInput" },
-      { text: "ข้อมูลส่งออก", value: "testsetOutput" }
+      { align: "center", text: "หัวข้อ", value: "testsetTitle" },
+      { align: "center", text: "คำอธิบาย", value: "testsetDescription" },
+      { align: "center", text: "ข้อมูลนำเข้า", value: "testsetInput" },
+      { align: "center", text: "ข้อมูลส่งออก", value: "testsetOutput" }
     ],
 
     tabs: [
@@ -322,6 +359,7 @@ export default {
       { index: 1, name: "ผลจากการ SUBMIT" }
     ],
     dialog: false,
+    dialogPicture: false,
     loading: false,
     testsetResult: [],
     allCompileResult: [],
@@ -342,7 +380,9 @@ export default {
     resultTabs: 0,
     problemTitle: "",
     problemDescription: "",
-    testsetExample: []
+    testsetExample: [],
+    breakcump: [],
+    image: ""
   }),
   async created() {
     this.initialize();
@@ -389,14 +429,24 @@ export default {
       else return "red";
     },
     async initialize() {
-      console.log(this.$store.state.course.yearId);
-      console.log(this.$store.state.course.sectionNumber);
-      console.log(this.$store.state.course.sectionId);
-      console.log(this.$store.state.course.courseId);
-      console.log(this.$store.state.homework.assignmentId);
-      console.log(this.$store.state.homework.problemId);
-      console.log(this.$store.state.user.id);
-      console.log(this.$store.state.homework.taskId);
+      this.breakcump = {
+        yearId: this.$store.state.course.yearId,
+        sectionId: this.$store.state.course.sectionId,
+        courseId: this.$store.state.course.courseId,
+        assignmentId: this.$store.state.homework.assignmentId,
+        problemId: this.$store.state.homework.problemId,
+        userId: this.$store.state.user.id,
+        taskId: this.$store.state.homework.taskId
+      };
+      console.log(this.breakcump);
+      // console.log(this.$store.state.course.yearId);
+      // console.log(this.$store.state.course.sectionId);
+      // console.log(this.$store.state.course.courseId);
+      // console.log(this.$store.state.homework.assignmentId);
+      // console.log(this.$store.state.homework.problemId);
+      // console.log(this.$store.state.user.id);
+      // console.log(this.$store.state.homework.taskId);
+
       this.testsetExample = await this.getTestsetExample(
         this.$store.state.homework.problemId
       );
@@ -412,10 +462,30 @@ export default {
       this.allCompileResult = await allCompile.then(res => {
         return res;
       });
+
       this.allCompileResult.doesGetAll.map(doesGetAll => {
-        doesGetAll.compilelogCreateDate = this.$moment(
+        let dayCreateDate = this.$moment(
           doesGetAll.compilelogCreateDate
-        ).format("Do MMM YY เวลา LT");
+        ).format("Do");
+        let monthCreateDate = this.$moment(
+          doesGetAll.compilelogCreateDate
+        ).format("MMM");
+        let yearCreateDate =
+          this.$moment(doesGetAll.compilelogCreateDate.getFullYear).year() +
+          543;
+        let timeCreateDate = this.$moment(
+          doesGetAll.compilelogCreateDate
+        ).format(" เวลา LT");
+        doesGetAll.compilelogCreateDate =
+          dayCreateDate +
+          " " +
+          monthCreateDate +
+          " " +
+          yearCreateDate +
+          timeCreateDate;
+        // doesGetAll.compilelogCreateDate = this.$moment(
+        //   doesGetAll.compilelogCreateDate
+        // ).format("Do MMM YY เวลา LT");
       });
       console.log(this.allCompileResult);
     },
@@ -429,11 +499,11 @@ export default {
 
       let formData = new FormData();
 
-      formData.append("yearName", "2021");
-      formData.append("courseCode", "88889999");
-      formData.append("sectionNumber", "2");
-      formData.append("assignmentTitle", "Array4");
-      formData.append("problemTitle", "LoopArray");
+      formData.append("yearName", this.breakcump.yearId);
+      formData.append("courseCode", this.breakcump.courseId);
+      formData.append("sectionNumber", this.breakcump.sectionId);
+      formData.append("assignmentTitle", this.breakcump.assignmentId);
+      formData.append("problemTitle", this.breakcump.problemId);
       formData.append("userUsername", userId);
       formData.append("fileCreateBy", userId);
       formData.append("fileUpdateBy", userId);
@@ -493,8 +563,11 @@ export default {
       this.compileResult = await createCompileLogData.then(res => {
         return res;
       });
-
-      const allCompile = this.getCompilelog(this.$store.state.homework.taskId);
+      const data = {
+        compilelogTaskId: this.$store.state.homework.taskId,
+        compilelogCreateBy: this.$store.state.user.id
+      };
+      const allCompile = this.getCompilelog(data);
 
       this.allCompileResult = await allCompile.then(res => {
         return res;
@@ -557,6 +630,9 @@ export default {
       for (var i = 0; i < uploadedFiles.length; i++) {
         this.submit.codeFiles.push(uploadedFiles[i]);
       }
+    },
+    openDialogPicture() {
+      this.dialogPicture = true;
     }
   }
 };

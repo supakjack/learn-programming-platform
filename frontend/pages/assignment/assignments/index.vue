@@ -326,10 +326,10 @@ Last edit: 19/2/2021 -->
             class="mr-2"
             @click="openReportDialog(item)"
           >
-            mdi-information
+            mdi-file-chart
           </v-icon>
         </template>
-        <span>เพิ่มเติม</span>
+        <span>Report</span>
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
