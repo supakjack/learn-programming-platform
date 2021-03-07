@@ -162,29 +162,38 @@ Last edit: 19/2/2021 -->
 
               <v-stepper-content step="2">
                 <v-card class="mb-12" width="1000px" height="500px">
-                  <v-combobox
-                    clearable
-                    hide-selected
-                    multiple
-                    persistent-hint
-                    small-chips
-                    v-model="selectTag"
-                    :items="tagItems"
-                    label="เลือกแท็กสำหรับค้นหาโจทย์ปัญหา"
-                  ></v-combobox>
+                  <v-row>
+                    <v-col cols="12" sm="9" md="9">
+                      <v-combobox
+                        clearable
+                        hide-selected
+                        multiple
+                        persistent-hint
+                        small-chips
+                        v-model="selectTag"
+                        :items="tagItems"
+                        label="เลือกแท็กสำหรับค้นหาโจทย์ปัญหา"
+                      ></v-combobox>
+                    </v-col>
+                    <v-col cols="6" md="3">
+                      <v-btn elevation="2">
+                        ค้นหา
+                      </v-btn>
+                    </v-col>
+                  </v-row>
                   <v-card>
                     <v-card-title>
-                        <v-text-field
-                          v-model="search"
-                          append-icon="mdi-magnify"
-                          label="ค้นหา"
-                          hide-details
-                        ></v-text-field>
+                      <v-text-field
+                        v-model="searchProblem"
+                        append-icon="mdi-magnify"
+                        label="ค้นหา"
+                        hide-details
+                      ></v-text-field>
                     </v-card-title>
                     <v-data-table
                       :headers="proplemHeaders"
                       :items="allProblems"
-                      :search="selectTag.tagName"
+                      :search="searchProblem"
                     >
                       <v-text-field
                         v-model="calories"
@@ -389,6 +398,7 @@ export default {
     dialogSuccess: false,
     dialogReport: false,
     search: "",
+    searchProblem: "",
     proplemHeaders: [
       {
         align: "start",
