@@ -30,7 +30,7 @@
         </v-btn> -->
         <v-dialog
           v-model="dialog"
-          fullscreen
+          width="1280px"
           hide-overlay
           transition="dialog-bottom-transition"
         >
