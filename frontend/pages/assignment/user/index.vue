@@ -448,6 +448,8 @@ export default {
           this.close();
         } else {
           // console.log("data");
+          this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
+          this.editedItem.userLastnameEnglish = this.userLDAP.sn;
           this.editedItem.userCreateBy = this.$store.state.user.id;
           this.editedItem.userUpdateBy = this.$store.state.user.id;
           // this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
