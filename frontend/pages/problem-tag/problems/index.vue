@@ -255,9 +255,25 @@ export default {
       const { doesGetAll } = await this.getProblem();
 
       doesGetAll.map(doesGetAll => {
-        doesGetAll.problemCreateDate = this.$moment(
-          doesGetAll.problemCreateDate
-        ).format("Do MMM YY เวลา LT");
+        let dayCreateDate = this.$moment(doesGetAll.problemCreateDate).format(
+          "Do"
+        );
+        let monthCreateDate = this.$moment(doesGetAll.problemCreateDate).format(
+          "MMM"
+        );
+        let yearCreateDate =
+          this.$moment(doesGetAll.problemCreateDate.getFullYear).year() + 543;
+        let timeCreateDate = this.$moment(doesGetAll.problemUpdateDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.problemCreateDate =
+          dayCreateDate +
+          " " +
+          monthCreateDate +
+          " " +
+          yearCreateDate +
+          timeCreateDate;
+
         doesGetAll.problemUpdateDate = this.$moment(
           doesGetAll.problemUpdateDate
         ).format("Do MMM YY เวลา LT");
