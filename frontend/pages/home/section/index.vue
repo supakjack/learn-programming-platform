@@ -44,7 +44,6 @@ export default {
         this.$store.state.course.courseCode +
         " " +
         this.$store.state.course.courseName;
-      console.log();
       this.$store.commit("breadcrumb/setBreadcrumb", [
         {
           text: "หน้าหลัก",

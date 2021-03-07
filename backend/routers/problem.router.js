@@ -9,6 +9,15 @@ router.post("/assess", problemController.assess);
 router.get("/", problemController.get);
 
 // Get problem by condition
+router.post("/problem/user", problemController.getUserAssignment);
+
+// Get problem by condition
+router.post("/score/user", problemController.getScoreUser);
+
+// Get problem by condition
+router.post("/score/max", problemController.getMaxScore);
+
+// Get problem by condition
 router.post("/edit/hashtag", problemController.editHashtag);
 
 // Get problem by condition

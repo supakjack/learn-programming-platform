@@ -347,6 +347,41 @@ export default {
   async created() {
     this.initialize();
   },
+  mounted() {
+    this.courseData = this.$store.state.course;
+    const corseSection =
+      this.$store.state.course.courseCode +
+      " " +
+      this.$store.state.course.courseName;
+    const sectionName =
+      "กลุ่มเรียนที่ " + this.$store.state.course.sectionNumber;
+    // const sectionName =
+    //   "กลุ่มเรียนที่ " + this.$store.state.course.sectionNumber;
+    // const sectionName =
+    //   "กลุ่มเรียนที่ " + this.$store.state.course.sectionNumber;
+    this.$store.commit("breadcrumb/setBreadcrumb", [
+      {
+        text: "หน้าหลัก",
+        href: "/student/home"
+      },
+      {
+        text: corseSection,
+        href: "/student/homework"
+      },
+      {
+        text: sectionName,
+        href: "/student/homework"
+      },
+      {
+        text: this.$store.state.homework.assignmentTitle,
+        href: "/student/submit"
+      },
+      {
+        text: this.$store.state.homework.problemTitle,
+        href: "/student/submit"
+      }
+    ]);
+  },
   methods: {
     getColor(item) {
       if (item == "Accepted") return "green";
@@ -362,7 +397,11 @@ export default {
       console.log(this.testsetExample.doesGetAll);
       this.problemTitle = this.$store.state.homework.problemTitle;
       this.problemDescription = this.$store.state.homework.problemDescription;
-      const allCompile = this.getCompilelog(this.$store.state.homework.taskId);
+      const data = {
+        compilelogTaskId: this.$store.state.homework.taskId,
+        compilelogCreateBy: this.$store.state.user.id
+      };
+      const allCompile = this.getCompilelog(data);
 
       this.allCompileResult = await allCompile.then(res => {
         return res;

@@ -24,15 +24,15 @@ export default {
           console.error(error);
         })
         .then(response => response.doesCreate);
+    },
+    async updateYear(data) {
+      return this.$axios
+        .$put("year", data)
+        .catch(error => {
+          console.error(error);
+        })
+        .then(response => response.doesUpdate);
     }
-    // async updateCourse(data) {
-    //   return this.$axios
-    //     .$put("course", data)
-    //     .catch(error => {
-    //       console.error(error);
-    //     })
-    //     .then(response => response.doesUpdate);
-    // }
   }
 };
 </script>

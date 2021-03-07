@@ -18,11 +18,8 @@ export default {
       return this.$axios.$post("testset/example", dataCondition);
     },
     async getCompilelog(data) {
-      const testset = {
-        compilelogTaskId: data
-      };
-      console.log(testset);
-      const result = this.$axios.$post("testset/compilelog", testset);
+      console.log(data);
+      const result = this.$axios.$post("testset/compilelog", data);
       return result;
     }
   }

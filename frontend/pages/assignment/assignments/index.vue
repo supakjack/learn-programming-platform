@@ -162,29 +162,38 @@ Last edit: 19/2/2021 -->
 
               <v-stepper-content step="2">
                 <v-card class="mb-12" width="1000px" height="500px">
-                  <v-combobox
-                    clearable
-                    hide-selected
-                    multiple
-                    persistent-hint
-                    small-chips
-                    v-model="selectTag"
-                    :items="tagItems"
-                    label="เลือกแท็กสำหรับค้นหาโจทย์ปัญหา"
-                  ></v-combobox>
+                  <v-row>
+                    <v-col cols="12" sm="9" md="9">
+                      <v-combobox
+                        clearable
+                        hide-selected
+                        multiple
+                        persistent-hint
+                        small-chips
+                        v-model="selectTag"
+                        :items="tagItems"
+                        label="เลือกแท็กสำหรับค้นหาโจทย์ปัญหา"
+                      ></v-combobox>
+                    </v-col>
+                    <v-col cols="6" md="3">
+                      <v-btn elevation="2">
+                        ค้นหา
+                      </v-btn>
+                    </v-col>
+                  </v-row>
                   <v-card>
                     <v-card-title>
-                        <v-text-field
-                          v-model="search"
-                          append-icon="mdi-magnify"
-                          label="ค้นหา"
-                          hide-details
-                        ></v-text-field>
+                      <v-text-field
+                        v-model="searchProblem"
+                        append-icon="mdi-magnify"
+                        label="ค้นหา"
+                        hide-details
+                      ></v-text-field>
                     </v-card-title>
                     <v-data-table
                       :headers="proplemHeaders"
                       :items="allProblems"
-                      :search="selectTag.tagName"
+                      :search="searchProblem"
                     >
                       <v-text-field
                         v-model="calories"
@@ -263,7 +272,7 @@ Last edit: 19/2/2021 -->
             </v-card-title>
             <v-data-table
               :headers="reportDialog"
-              :items="rowProblem"
+              :items="resultLast"
               :items-per-page="5"
               class="elevation-1"
             >
@@ -389,6 +398,7 @@ export default {
     dialogSuccess: false,
     dialogReport: false,
     search: "",
+    searchProblem: "",
     proplemHeaders: [
       {
         align: "start",
@@ -419,12 +429,18 @@ export default {
         sortable: false
       },
       // { text: "ข้อ", value: "problemId" }, // define column name and value
-      { text: "ชื่อ-นามสกุล", value: "" },
-      { text: "สถานะการส่ง", value: "" },
-      { text: "คะแนน", value: "" }
+      { text: "ชื่อ-นามสกุล", value: "name" },
+      {
+        text: "สถานะการส่ง",
+        value: "scoreResultText"
+      },
+      { text: "คะแนน", value: "scoreResult" }
     ],
     problem: [],
     editedIndex: -1,
+    resultLast: [],
+    scoreResult: {},
+    userAssignment: [],
     editedItem: {
       assignmentId: 0,
       assignmentTitle: "",
@@ -631,8 +647,118 @@ export default {
     //   }
     //   this.close();
     // },
-    openReportDialog(item) {
+    async openReportDialog(item) {
       console.log(item);
+      const result = this.getUserAssignment(item.assignmentId);
+      console.log(result);
+      this.userAssignment = await result.then(res => {
+        return res.doesGetAll;
+      });
+      console.log(this.userAssignment);
+      const dataScoreResult2 = this.userAssignment.map(async res => {
+        const data = {
+          taskAssignmentId: res.assignmentId,
+          compilelogCreateBy: res.enrollUserId,
+          taskId: res.taskId
+        };
+        console.log(data);
+        const dataScore = this.getScoreUser(data);
+        const dataScoreResult = await dataScore.then(resScore => {
+          return resScore.doesGetAll;
+        });
+        console.log(dataScoreResult);
+
+        return dataScoreResult;
+      });
+      console.log(dataScoreResult2);
+
+      this.scoreResult = await Promise.all(dataScoreResult2).then(value => {
+        return value;
+      });
+
+      console.log(this.scoreResult);
+      console.log(this.userAssignment);
+      let k = 0;
+      this.userAssignment.map(res => {
+        res.score = this.scoreResult[k];
+        k++;
+      });
+      console.log(this.userAssignment);
+
+      this.userAssignment.map(res => {
+        if (res.score.length == 0) {
+          res.score[0] = {
+            compilelogTestResult: "fail",
+            compilelogScore: 0
+          };
+        }
+      });
+      console.log(this.userAssignment);
+      let dataSuccess = [];
+      let score = 0;
+      let j = 0;
+      for (let i = 0; i < this.userAssignment.length; i++) {
+        if (i != this.userAssignment.length - 1) {
+          if (
+            this.userAssignment[i].enrollUserId ==
+            this.userAssignment[i + 1].enrollUserId
+          ) {
+            score += this.userAssignment[i].score[0].compilelogScore;
+          } else {
+            score += this.userAssignment[i].score[0].compilelogScore;
+            dataSuccess[j] = {
+              name:
+                this.userAssignment[i].userPrefixThai +
+                " " +
+                this.userAssignment[i].userFirstNameThai +
+                " " +
+                this.userAssignment[i].userLastnameThai,
+              scoreResult: score
+            };
+            j++;
+            score = 0;
+          }
+        } else {
+          if (
+            this.userAssignment[i].enrollUserId ==
+            this.userAssignment[i - 1].enrollUserId
+          ) {
+            score += this.userAssignment[i].score[0].compilelogScore;
+            dataSuccess[j] = {
+              name:
+                this.userAssignment[i].userPrefixThai +
+                " " +
+                this.userAssignment[i].userFirstNameThai +
+                " " +
+                this.userAssignment[i].userLastnameThai,
+              scoreResult: score
+            };
+          }
+        }
+      }
+
+      const maxScore = this.getScoreMax(item.assignmentId);
+      console.log(maxScore);
+      const maxScoreResult = await maxScore.then(res => {
+        return res.doesGetAll;
+      });
+      console.log(maxScoreResult);
+      console.log(dataSuccess);
+      dataSuccess.map(res => {
+        if (res.scoreResult == maxScoreResult[0].sumTaskScore) {
+          res.scoreResultText = "Completed";
+        } else {
+          res.scoreResultText = "Not completed";
+        }
+        res.scoreResult =
+          res.scoreResult + "/" + maxScoreResult[0].sumTaskScore;
+      });
+      console.log(dataSuccess);
+      this.resultLast = dataSuccess;
+      // this.resultLast.dataScoreResult.then(res => {
+      //   console.log(res);
+      // });
+      // console.log(this.resultLast);
       this.dialogReport = true;
     }
   }
