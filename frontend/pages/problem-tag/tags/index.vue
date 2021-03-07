@@ -230,10 +230,10 @@ export default {
       doesGetAll.map(doesGetAll => {
         doesGetAll.tagCreateDate = this.$moment(
           doesGetAll.tagCreateDate
-        ).format("Do MMM YY เวลา LT");
+        ).format("Do MMM YYYY เวลา LT");
         doesGetAll.tagUpdateDate = this.$moment(
           doesGetAll.tagUpdateDate
-        ).format("Do MMM YY เวลา LT");
+        ).format("Do MMM YYYY เวลา LT");
         if (doesGetAll.tagStatus == "active") {
           doesGetAll.tagStatus = "ใช้งาน";
         } else {
@@ -263,7 +263,7 @@ export default {
       } else {
         this.editedItem.tagCreateBy = 1;
         this.editedItem.tagUpdateBy = this.editedItem.tagCreateBy;
-
+        
         const [insertResult] = await this.insertTag(this.editedItem);
 
         if (typeof insertResult === "number") {

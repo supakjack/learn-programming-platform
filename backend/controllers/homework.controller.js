@@ -163,6 +163,8 @@ module.exports = {
         condition: [getCondition],
         groupBy: [{ name: "taskId" }],
         filter: [
+          "assignmentId",
+          "assignmentTitle",
           "taskId",
           "taskScore",
           "taskLimit",
@@ -172,6 +174,12 @@ module.exports = {
           "tagName",
         ],
         leftJoin: [
+          {
+            joinTable: "assignments",
+            leftTableName: "tasks",
+            leftKey: "taskAssignmentId",
+            joinKey: "assignmentId",
+          },
           {
             joinTable: "problems",
             leftTableName: "tasks",

@@ -26,6 +26,7 @@ module.exports = {
           "yearId",
           "yearName",
           "yearSemester",
+          "sectionId",
           "sectionNumber",
         ],
         leftJoin: [
