@@ -51,8 +51,8 @@ import usermixin from "@/components/users";
 import assignmentmixin from "@/components/assignment";
 
 export default {
-  mixins: [usermixin],
-  mixins: [assignmentmixin],
+  mixins: [usermixin,assignmentmixin],
+  // mixins: [assignmentmixin],
   computed: {
     tab: {
       set(tab) {

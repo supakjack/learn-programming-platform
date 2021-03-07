@@ -5,14 +5,11 @@ const authSchema = joi.object({
   password: joi.string().min(2).required(),
 });
 
-const getUserIdSchema = joi.object({
+const updateUserConditionSchema = joi.object({
   userId: joi.number().integer().max(99999999),
 });
-
-// get assignment schema
-const getUserFromCourseSchema = joi.object({
-  userId: joi.number().integer().max(99999999),
-  sectionId: joi.number().max(99999999).min(1),
+const UserusernameConditionSchema = joi.object({
+  userUsername: joi.string().max(255),
 });
 
 // update user schema
@@ -110,6 +107,12 @@ const getProblemSchema = joi.object({
   problemId: joi.number().max(99999999).min(1),
 });
 
+// get problem with tag schema
+const getProblemWithTagSchema = joi.object({
+  problemId: joi.number().max(99999999).min(1),
+  // problemId: joi.number().max(99999999).min(1)
+});
+
 // get assignment schema
 const getAssignmentSchema = joi.object({
   assignmentSectionId: joi.number().max(99999999).min(1),
@@ -197,6 +200,12 @@ const createPicturesScheme = joi.object({
   pictureUpdateBy: joi.number().max(99999999).min(1).required(),
 });
 
+// get hashtag schema
+const getHashtagSchema = joi.object({
+  hashtagTagId: joi.number().max(99999999).min(1),
+  hashtagProblemId: joi.number().max(99999999).min(1),
+});
+
 // create hashtag schema
 const createHashtagSchema = joi.object({
   hashtagTagId: joi.number().max(99999999).min(1).required(),
@@ -276,16 +285,18 @@ module.exports = {
   updateTagSchema,
   createAssessSchema,
   getProblemSchema,
-  getAssignmentSchema,
-  getTestsetSchema,
-  createFiles,
-  creteCompileLogSchema,
+  getProblemWithTagSchema,
   createProblemSchema,
-  createPicturesScheme,
-  createHashtagSchema,
-  createTestsetsSchema,
   updateProblemConditionSchema,
   updateProblemSchema,
+  getTestsetSchema,
+  createTestsetsSchema,
+  createFiles,
+  creteCompileLogSchema,
+  createPicturesScheme,
+  getHashtagSchema,
+  createHashtagSchema,
+  getAssignmentSchema,
   getTaskAssignmentSchema,
   createAssignmentSchema,
   updateAssignmentConditionSchema,
