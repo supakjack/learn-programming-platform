@@ -1,5 +1,106 @@
 <template>
   <div>
+    <!-- year section -->
+    <v-card>
+      <v-data-table
+        :items-per-page="5"
+        :search="search"
+        :headers="headers"
+        :items="yearByCreate"
+        sort-by="text"
+        class="elevation-1"
+      >
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-toolbar-title>ปีการศึกษา</v-toolbar-title>
+            <v-divider class="mx-4" inset vertical></v-divider>
+            <v-spacer></v-spacer>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="ค้นหา"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="success"
+              dark
+              class="mb-2"
+              @click="insertYearDialog = true"
+            >
+              เพิ่มปีการศึกษา
+            </v-btn>
+
+            <!-- insert dialog -->
+            <v-dialog v-model="insertYearDialog" persistent max-width="600px">
+              <v-card>
+                <v-card-title>
+                  <span class="">เพิ่มปีการศึกษา</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12" sm="6" md="12">
+                        <v-text-field
+                          v-model="modalCourseYearName"
+                          label="ปีการศึกษา*"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="12">
+                        <v-text-field
+                          v-model="modalCourseYearSemester"
+                          label="ภาคเรียนที่*"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-select
+                          v-model="modalCourseYearStatus"
+                          :items="[
+                            { text: 'ใช้งาน', val: 1 },
+                            { text: 'ปิดใช้งาน', val: 2 }
+                          ]"
+                          item-text="text"
+                          item-value="val"
+                          label="สถานะ*"
+                          required
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                  <small>*โปรดระบุข้อมูลที่ต้องการ</small>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="cancelModal">
+                    ยกเลิก
+                  </v-btn>
+                  <v-btn color="blue darken-1" text @click="clickInsertYear">
+                    บันทึก
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-toolbar>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-icon small class="mr-2" @click="openEditYearModal(item)">
+            mdi-pencil
+          </v-icon>
+          <v-icon small @click="openDeleteYearModal(item)">
+            mdi-delete
+          </v-icon>
+        </template>
+        <!-- <template v-slot:no-data>
+          <v-btn color="primary" @click="initialize">
+            Reset
+          </v-btn>
+        </template> -->
+      </v-data-table>
+    </v-card>
+    <!-- year section -->
     <v-card class="d-flex mb-4 flex flex-wrap" flat tile>
       <div v-for="(item, i) in allCourses" :key="i" class="ml-2 mb-5 p-2">
         <v-card class="mx-auto" max-width="600" height="150" width="350">
@@ -345,25 +446,56 @@ export default {
       this.modalCourseName = "";
       this.modalCourseYearId = "";
       this.modalCourseStatus = "";
+      this.modalCourseYearName = "";
+      this.modalCourseYearSemester = "";
+      this.modalCourseYearStatus = "";
       this.insertCourseDialog = false;
       this.updateCourseDialog = false;
       this.deleteCourseDialog = false;
+      this.insertYearDialog = false;
+    },
+    async openEditYearModal(item) {
+      console.log("openEditYearModal");
+      console.log(item);
+    },
+    async openDeleteYearModal(item) {
+      console.log("openDeleteYearModal");
+      console.log(item);
+    },
+    async clickInsertYear() {
+      console.log("clickInsertYear");
+      this.cancelModal();
     }
   },
   async created() {
     this.initialize();
+    console.log(this.yearByCreate);
   },
   data: () => ({
+    insertYearDialog: false,
+    updateYearDialog: false,
+    deleteYearDialog: false,
     deleteCourseDialog: false,
     insertCourseDialog: false,
     updateCourseDialog: false,
+    search: "", // use for search in table all column
     allCourses: [],
     yearByCreate: [],
     modalCourseId: "",
     modalCourseCode: "",
     modalCourseName: "",
     modalCourseYearId: "",
-    modalCourseStatus: ""
+    modalCourseStatus: "",
+    modalCourseYearName: "",
+    modalCourseYearSemester: "",
+    modalCourseYearStatus: "",
+    headers: [
+      { text: "ชื่อ", value: "text" },
+      { text: "ปีการศึกษา", value: "yearName" },
+      { text: "ภาคเรียนที่", value: "yearSemester" },
+      { text: "สถานะ", value: "yearStatus" },
+      { text: "ดำเนินการ", value: "actions", sortable: false }
+    ]
   })
 };
 </script>
