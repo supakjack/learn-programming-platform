@@ -163,6 +163,8 @@ module.exports = {
         condition: [getCondition],
         groupBy: [{ name: "taskId" }],
         filter: [
+          "assignmentId",
+          "assignmentTitle",
           "taskId",
           "taskScore",
           "taskLimit",
@@ -170,16 +172,13 @@ module.exports = {
           "problemTitle",
           "problemDescription",
           "tagName",
-          "compilelogScore",
-          "compilelogSubmitNo",
-          "compilelogTestResult",
         ],
         leftJoin: [
           {
-            joinTable: "compilelogs",
+            joinTable: "assignments",
             leftTableName: "tasks",
-            leftKey: "taskId",
-            joinKey: "compilelogTaskId",
+            leftKey: "taskAssignmentId",
+            joinKey: "assignmentId",
           },
           {
             joinTable: "problems",

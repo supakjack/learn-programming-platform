@@ -1,89 +1,89 @@
 <template>
-    <v-data-table
-      :headers="headers"
-      :footer-props="{
-        'items-per-page-options': [8, 15, 20, -1],
-        'items-per-page-text': `จำนวนแถวต่อหน้า`,
-        'items-per-page-all-text': `ทั้งหมด`
-      }"
-      :items="allHomeworks"
-      :items-per-page="8"
-      item-key="assignmentId"
-      :sort-desc="[false, true]"
-      multi-sort
-      :search="search"
-      height="450"
-      class="elevation-1 kanit-font"
-    >
-      <template v-slot:top>
-        <v-toolbar flat class="kanit-font">
-          <v-toolbar-title>ตารางงาน</v-toolbar-title>
-          <v-divider class="mx-4" inset vertical></v-divider>
-          <v-spacer></v-spacer>
-          <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="ค้นหา"
-            single-line
-            hide-details
-          ></v-text-field>
-          <v-spacer></v-spacer>
-          <v-dialog v-model="dialogDetail" max-width="1100px">
-            <v-card>
-              <v-data-table
-                :headers="headersDialog"
-                :items="rowProblem"
-                :items-per-page="5"
-                class="elevation-1"
-              >
-                <template v-slot:[`item.actionsDialog`]="{ item }">
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on, attrs }">
-                      <router-link to="/student/submit">
-                        <v-icon
-                          color="green"
-                          medium
-                          v-bind="attrs"
-                          v-on="on"
-                          class="mr-2"
-                          @click="openIde(item)"
-                        >
-                          mdi-plus
-                        </v-icon>
-                      </router-link>
-                    </template>
-                    <span>ทำโจทย์</span>
-                  </v-tooltip>
-                </template>
-              </v-data-table>
-            </v-card>
-          </v-dialog>
-        </v-toolbar>
-      </template>
-
-      <template v-slot:[`item.actions`]="{ item }">
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon
-              color="primary"
-              v-bind="attrs"
-              v-on="on"
-              class="mr-2"
-              @click="openDialog(item)"
+  <v-data-table
+    :headers="headers"
+    :footer-props="{
+      'items-per-page-options': [8, 15, 20, -1],
+      'items-per-page-text': `จำนวนแถวต่อหน้า`,
+      'items-per-page-all-text': `ทั้งหมด`
+    }"
+    :items="allHomeworks"
+    :items-per-page="8"
+    item-key="assignmentId"
+    :sort-desc="[false, true]"
+    multi-sort
+    :search="search"
+    height="450"
+    class="elevation-1 kanit-font"
+  >
+    <template v-slot:top>
+      <v-toolbar flat class="kanit-font">
+        <v-toolbar-title>ตารางงาน</v-toolbar-title>
+        <v-divider class="mx-4" inset vertical></v-divider>
+        <v-spacer></v-spacer>
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="ค้นหา"
+          single-line
+          hide-details
+        ></v-text-field>
+        <v-spacer></v-spacer>
+        <v-dialog v-model="dialogDetail" max-width="1100px">
+          <v-card>
+            <v-data-table
+              :headers="headersDialog"
+              :items="rowProblem"
+              :items-per-page="5"
+              class="elevation-1"
             >
-              mdi-information
-            </v-icon>
-          </template>
-          <span>เพิ่มเติม</span>
-        </v-tooltip>
-      </template>
+              <template v-slot:[`item.actionsDialog`]="{ item }">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <router-link to="/student/submit">
+                      <v-icon
+                        color="green"
+                        medium
+                        v-bind="attrs"
+                        v-on="on"
+                        class="mr-2"
+                        @click="openIde(item)"
+                      >
+                        mdi-plus
+                      </v-icon>
+                    </router-link>
+                  </template>
+                  <span>ทำโจทย์</span>
+                </v-tooltip>
+              </template>
+            </v-data-table>
+          </v-card>
+        </v-dialog>
+      </v-toolbar>
+    </template>
 
-      <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize">
-          โหลดข้อมูลใหม่
-        </v-btn>
-      </template>
-    </v-data-table>
+    <template v-slot:[`item.actions`]="{ item }">
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon
+            color="primary"
+            v-bind="attrs"
+            v-on="on"
+            class="mr-2"
+            @click="openDialog(item)"
+          >
+            mdi-information
+          </v-icon>
+        </template>
+        <span>เพิ่มเติม</span>
+      </v-tooltip>
+    </template>
+
+    <template v-slot:no-data>
+      <v-btn color="primary" @click="initialize">
+        โหลดข้อมูลใหม่
+      </v-btn>
+    </template>
+  </v-data-table>
 </template>
 <script>
 import homeworkmixin from "@/components/homework";
@@ -357,18 +357,55 @@ export default {
       console.log(item);
       const { doesGetProblem } = await this.getProblem(item.assignmentId);
       console.log(doesGetProblem);
-      // doesGetProblem.map(doesGetProblem => {
-      //   if (doesGetProblem.compilelogTestResult == "Accepted") {
-      //     doesGetProblem.compilelogTestResult = "ผ่าน";
-      //   } else if (doesGetProblem.compilelogTestResult == null) {
-      //     doesGetProblem.compilelogTestResult = "ยังไม่ส่ง";
-      //   } else {
-      //     doesGetProblem.compilelogTestResult = "ไม่ผ่าน";
-      //   }
-      //   doesGetProblem.taskScore =
-      //     doesGetProblem.compilelogScore + "/" + doesGetProblem.taskScore;
-      // });
-      // this.rowProblem = doesGetProblem;
+      const scoreResult = await doesGetProblem.map(async res => {
+        const data = {
+          taskAssignmentId: item.assignmentId,
+          compilelogCreateBy: this.$store.state.user.id,
+          taskId: res.taskId
+        };
+        const score = await this.getAssignmentScore(data);
+        if (score.doesGetAll.length == 0) {
+          const mockData = {
+            compilelogScore: 0,
+            compilelogSubmitNo: 0,
+            compilelogTestResult: null,
+            taskAssignmentId: item.assignmentId,
+            taskId: res.taskId
+          };
+          return mockData;
+        }
+        return score.doesGetAll[0];
+      });
+      console.log(scoreResult);
+      const scoreLastResult = await Promise.all(scoreResult).then(value => {
+        return value;
+      });
+      console.log(scoreLastResult);
+      for (let i = 0; i < doesGetProblem.length; i++) {
+        for (let j = 0; j < scoreLastResult.length; j++) {
+          if (doesGetProblem[i].taskId == scoreLastResult[i].taskId) {
+            doesGetProblem[i].compilelogScore =
+              scoreLastResult[i].compilelogScore;
+            doesGetProblem[i].compilelogSubmitNo =
+              scoreLastResult[i].compilelogSubmitNo;
+            doesGetProblem[i].compilelogTestResult =
+              scoreLastResult[i].compilelogTestResult;
+          }
+        }
+      }
+      console.log(doesGetProblem);
+      doesGetProblem.map(doesGetProblem => {
+        if (doesGetProblem.compilelogTestResult == "Accepted") {
+          doesGetProblem.compilelogTestResult = "ผ่าน";
+        } else if (doesGetProblem.compilelogTestResult == null) {
+          doesGetProblem.compilelogTestResult = "ยังไม่ส่ง";
+        } else {
+          doesGetProblem.compilelogTestResult = "ไม่ผ่าน";
+        }
+        doesGetProblem.taskScore =
+          doesGetProblem.compilelogScore + "/" + doesGetProblem.taskScore;
+      });
+      this.rowProblem = doesGetProblem;
       this.dialogDetail = true;
     },
     async openIde(item) {
@@ -377,6 +414,8 @@ export default {
         homework: {
           problemId: item.problemId,
           taskId: item.taskId,
+          assignmentId: item.assignmentId,
+          assignmentTitle: item.assignmentTitle,
           problemTitle: item.problemTitle,
           problemDescription: item.problemDescription
         }

@@ -8,15 +8,16 @@ const {
   updateUserSchema,
   FileuserSchema,
   createUserSchema,
-  userIdConditionSchema,
+  getUsernameSchema,
   getUserFromCourseSchema,
 } = require("./../helpers/validation.helper");
 const nanoid = require("nanoid");
 const readXlsxFile = require("read-excel-file/node");
 
 module.exports = {
-  findById: async (req, res, next) => {
-    const getUserData = await getUserIdSchema.validateAsync(req.query);
+  findByUsername: async (req, res, next) => {
+    const getUserData = await getUsernameSchema.validateAsync(req.query);
+    console.log(getUserData);
     try {
       const doesGet = await globalModel.select({
         name: "users",
@@ -41,44 +42,69 @@ module.exports = {
   },
 
   create: async (req, res, next) => {
-    console.log(req.body);
-    // const userData = await userSchema.validateAsync(req.body);
-    // console.log(userData);
+    // console.log(req.body);
     try {
-      const doesCreateUser = await problemsModel.insertReturnId({
+      // console.log(req.body.userUsername);
+      // const userUsername = req.body.userUsername;
+      // console.log(userUsername);
+      const doesGet = await globalModel.select({
         name: "users",
-        insertData: [
-          {
-            userUsername: req.body.userUsername,
-            userPrefixThai: req.body.userPrefixThai,
-            userFirstnameThai: req.body.userFirstnameThai,
-            userLastnameThai: req.body.userLastnameThai,
-            userPrefixEnglish: req.body.userPrefixEnglish,
-            userFirstnameEnglish: req.body.userFirstnameEnglish,
-            userLastnameEnglish: req.body.userLastnameEnglish,
-            userStatus: req.body.userStatus,
-            userCreateBy: req.body.userCreateBy,
-            userUpdateBy: req.body.userUpdateBy,
-          },
-        ],
+        condition: [{ userUsername: req.body.userUsername }],
       });
-      console.log(doesCreateUser);
-
-      const doesCreateEnrollByUserId = await globalModel.insert({
-        name: "enrolls",
-        insertData: [
-          {
-            enrollUserId: doesCreateUser,
-            enrollSectionId: req.body.sectionId,
-            enrollRole: "student",
-            enrollStatus: req.body.userStatus,
-            enrollCreateBy: req.body.userCreateBy,
-            enrollUpdateBy: req.body.userUpdateBy,
-          },
-        ],
-      });
-
-      res.status(200).send({ doesCreateUser, doesCreateEnrollByUserId });
+      // console.log(typeof userUsername);
+      console.log(doesGet);
+      // console.log(userUsername, doesGet[0].userUsername);
+      if (doesGet.length) {
+        console.log("if");
+        const doesCreateEnrollByUserId = await globalModel.insert({
+          name: "enrolls",
+          insertData: [
+            {
+              enrollUserId: doesGet[0].userId,
+              enrollSectionId: req.body.sectionId,
+              enrollRole: "student",
+              enrollStatus: req.body.userStatus,
+              enrollCreateBy: req.body.userCreateBy,
+              enrollUpdateBy: req.body.userUpdateBy,
+            },
+          ],
+        });
+        res.status(200).send(doesCreateEnrollByUserId);
+      } else {
+        console.log("else");
+        const doesCreateUser = await problemsModel.insertReturnId({
+          name: "users",
+          insertData: [
+            {
+              userUsername: req.body.userUsername,
+              userPrefixThai: req.body.userPrefixThai,
+              userFirstnameThai: req.body.userFirstnameThai,
+              userLastnameThai: req.body.userLastnameThai,
+              userPrefixEnglish: req.body.userPrefixEnglish,
+              userFirstnameEnglish: req.body.userFirstnameEnglish,
+              userLastnameEnglish: req.body.userLastnameEnglish,
+              userStatus: req.body.userStatus,
+              userCreateBy: req.body.userCreateBy,
+              userUpdateBy: req.body.userUpdateBy,
+            },
+          ],
+        });
+        console.log(doesCreateUser);
+        const doesCreateEnrollByUserId = await globalModel.insert({
+          name: "enrolls",
+          insertData: [
+            {
+              enrollUserId: doesCreateUser,
+              enrollSectionId: req.body.sectionId,
+              enrollRole: "student",
+              enrollStatus: req.body.userStatus,
+              enrollCreateBy: req.body.userCreateBy,
+              enrollUpdateBy: req.body.userUpdateBy,
+            },
+          ],
+        });
+        res.status(200).send({ doesCreateUser, doesCreateEnrollByUserId });
+      }
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
@@ -126,7 +152,7 @@ module.exports = {
         };
         users.push(user);
       });
-      console.log(users);
+      // console.log(users);
       try {
         const doesCreate = await problemsModel.insertReturnId({
           name: "users",
@@ -139,7 +165,7 @@ module.exports = {
           name: "enrolls",
           insertData: [
             {
-              enrollUserId: doesCreate,
+              enrollUserId: doesCreate[1],
               enrollSectionId: req.body.sectionId,
               enrollRole: "student",
               enrollStatus: 1,
