@@ -170,17 +170,8 @@ module.exports = {
           "problemTitle",
           "problemDescription",
           "tagName",
-          "compilelogScore",
-          "compilelogSubmitNo",
-          "compilelogTestResult",
         ],
         leftJoin: [
-          {
-            joinTable: "compilelogs",
-            leftTableName: "tasks",
-            leftKey: "taskId",
-            joinKey: "compilelogTaskId",
-          },
           {
             joinTable: "problems",
             leftTableName: "tasks",
