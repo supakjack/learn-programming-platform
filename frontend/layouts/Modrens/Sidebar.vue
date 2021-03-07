@@ -1,7 +1,7 @@
 <template>
   <!-- <v-navigation-drawer v-model="drawer" :mini-variant.sync="mini" fixed> -->
-  <div id="demo">
-    <div class="demo">
+  <div>
+    <div>
       <sidebar-menu
         :menu="menu"
         :theme="selectedTheme"
@@ -34,17 +34,18 @@ export default {
       themes: [
         {
           name: "Default theme",
-          input: ""
+          input: "",
         },
         {
           name: "White theme",
-          input: "white-theme"
-        }
+          input: "white-theme",
+        },
       ],
-      selectedTheme: "white-theme"
+      selectedTheme: "white-theme",
     };
-  }
+  },
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+</style>

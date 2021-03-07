@@ -64,11 +64,12 @@ module.exports = {
         whereNot: [{ assignmentStatus: "delete" }],
         condition: [getAssignmentData],
         filter: [
+          "assignmentId",
           "assignmentTitle",
           "assignmentDescription",
           "assignmentStartDate",
           "assignmentEndDate",
-          "assignmentStatus"
+          "assignmentStatus",
         ],
 
         // leftJoin: [

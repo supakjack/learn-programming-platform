@@ -5,7 +5,8 @@ module.exports = {
     status: "",
     description: "",
     tags: [],
-    testset: []
+    testset: [],
+    files: undefined
   }),
   mutations: {
     setProblem(state, { problem }) {
@@ -17,6 +18,9 @@ module.exports = {
     },
     setTestset(state, { problem }) {
       state.testset = problem.testset ? problem.testset : state.testset;
+    },
+    setFiles(state, { problem }) {
+      state.files = problem.files ? problem.files : undefined;
     }
   }
 };

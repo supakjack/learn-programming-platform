@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app fixed>
     <div>
       <Topbar></Topbar>
       <Sidebar></Sidebar>
@@ -26,17 +26,17 @@ export default {
     Sidebar,
     Topbar,
     Footer,
-    Breadcrumb
+    Breadcrumb,
     // Tcrumb
   },
   mounted() {
     this.$store.commit("setCrumbs", [
       {
         title: "main",
-        url: "main"
-      }
+        url: "main",
+      },
     ]);
-  }
+  },
 };
 </script>
 

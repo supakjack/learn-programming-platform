@@ -27,7 +27,13 @@
         <v-col cols="12" sm="12" md="6">
           <p class="text-md-left">
             ภาพประกอบ
-            <input type="file" />
+            <input
+              id="upload"
+              ref="fileupload"
+              type="file"
+              name="singleFile"
+              @change="filePicked"
+            />
           </p>
         </v-col>
         <v-col cols="12" sm="12" md="6"> </v-col>
@@ -69,6 +75,7 @@ export default {
   components: {},
 
   data: () => ({
+    files: undefined,
     items: [],
     testset: [],
     value: null,
@@ -84,7 +91,7 @@ export default {
       { text: "ไม่ใช้งาน", value: 2 }
     ]
   }),
-  mounted() {
+  mounted: function() {
     this.watchArray.map((e, i) => {
       if (e.name == "title") {
         this.problemTitle = e.val;
@@ -100,6 +107,9 @@ export default {
       }
       if (e.name == "testset") {
         this.testset = e.val;
+      }
+      if (e.name == "files") {
+        this.files = e.val;
       }
     });
     console.log(this.watchArray);
@@ -124,6 +134,9 @@ export default {
         }
         if (e.name == "testset") {
           this.testset = e.val;
+        }
+        if (e.name == "files") {
+          this.files = e.val;
         }
       });
     },
@@ -195,22 +208,62 @@ export default {
           description: this.problemDescription
         }
       });
+
+      console.log(this.$store.state.problem);
+    },
+    files: function(newValue, oldValue) {
+      console.log(this.tags);
+      this.$store.commit("problem/setProblem", {
+        problem: {
+          title: this.problemTitle,
+          tags: this.tags,
+          status: this.problemStatus,
+          score: this.taskScore,
+          testset: this.testset,
+          description: this.problemDescription
+        }
+      });
       console.log(this.$store.state.problem);
     }
   },
 
   // when created call initialize to geting all tag data
-  async created() {
+  created: function() {
+    // `this` points to the vm instance
     this.initialize();
+    console.log(this.files);
   },
+  // updated: function() {
+  //   this.$nextTick(function() {
+  //     this.$refs.fileupload.value = null;
+  //   });
+  // },
+  // async created() {
+  //   this.initialize();
+  // },
 
   methods: {
     async initialize() {
       const { doesGetAll } = await this.getTag();
       this.items = doesGetAll;
+      this.files = undefined;
+      console.log(this.files);
+      console.log(this.items);
     },
+    filePicked(e) {
+      console.log(e.currentTarget.files);
+      console.log(this.files);
 
-    editItemInstep1(item) {}
+      this.files = e.currentTarget.files;
+      this.$store.commit("problem/setFiles", {
+        problem: {
+          files: this.files
+        }
+      });
+
+      console.log(this.files);
+      console.log(this.$store.state.problem);
+    }
   }
 };
 </script>

@@ -1,6 +1,11 @@
 const createError = require("http-errors");
 const problemsModel = require("../models/problems.model");
 const globalModel = require("../models/global.model");
+const mkdirp = require("mkdirp");
+const nanoid = require("nanoid");
+
+const rmdir = require("rmdir");
+const fs = require("fs-extra");
 const {
   createAssessSchema,
   createProblemSchema,
@@ -18,9 +23,17 @@ const {
 
 module.exports = {
   create: async (req, res, next) => {
+    console.log(req.body.createProblemData);
+    console.log(req.files);
+    const singleFile = req.files ? req.files.singleFile : null;
+    var createProblemDataObject = JSON.parse(req.body.createProblemData);
+    var createTestsetDataObject = JSON.parse(req.body.createTestsetData);
+    var createHashtagDataObject = JSON.parse(req.body.createHashtagData);
+    var createFilesDataObject = JSON.parse(req.body.createFilesData);
+    var createPicturesDataObject = JSON.parse(req.body.createPicturesData);
     // passing data from body and valid by createProblemSchema
     const createProblemData = await createProblemSchema.validateAsync(
-      req.body.createProblemData
+      createProblemDataObject
     );
 
     // try call function createTag in global model then catch if error
@@ -31,29 +44,38 @@ module.exports = {
       });
       console.log(problemId);
       //set problemId to hashtag schema
-      req.body.createHashtagData.map((rowHashtag) => {
+      createHashtagDataObject.map((rowHashtag) => {
         rowHashtag.hashtagProblemId = problemId;
       });
 
       //insert problem
       const doesCreateHashtag = await globalModel.insert({
         name: "hashtags",
-        insertData: [...req.body.createHashtagData],
+        insertData: [...createHashtagDataObject],
       });
 
       //set problemId to testset schema
-      req.body.createTestsetData.map((rowTestSet) => {
+      createTestsetDataObject.map((rowTestSet) => {
         rowTestSet.testsetProblemId = problemId;
       });
 
       //insert testset
       const doesCreateTestset = await globalModel.insert({
         name: "testsets",
-        insertData: [...req.body.createTestsetData],
+        insertData: [...createTestsetDataObject],
       });
 
+      let filePath = null;
+      if (singleFile) {
+        filePath = process.env.BASE_STORAGE_PATH + "picture" + "\\" + problemId;
+        await mkdirp(filePath);
+
+        await singleFile.mv(filePath + "\\" + singleFile.name);
+        createFilesDataObject.filePath = filePath + "\\" + singleFile.name;
+      }
+
       const createFilesData = await createFiles.validateAsync(
-        req.body.createFilesData
+        createFilesDataObject
       );
 
       //insert Files
@@ -63,10 +85,10 @@ module.exports = {
       });
 
       //set probleId,fileId to picture schema
-      req.body.createPicturesData.pictureFileId = fileId;
-      req.body.createPicturesData.pictureProblemId = problemId;
+      createPicturesDataObject.pictureFileId = fileId;
+      createPicturesDataObject.pictureProblemId = problemId;
       const createPicturesData = await createPicturesScheme.validateAsync(
-        req.body.createPicturesData
+        createPicturesDataObject
       );
 
       //insert picture
@@ -123,6 +145,28 @@ module.exports = {
             leftKey: "problemId",
             joinKey: "pictureProblemId",
           },
+          {
+            joinTable: "files",
+            leftTableName: "pictures",
+            leftKey: "pictureFileId",
+            joinKey: "fileId",
+          },
+        ],
+      });
+      res.status(201).send({ doesGetAll });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
+  editPicture: async (req, res, next) => {
+    // passing data from query string validate data from
+    // try call function getTagById in tags model then catch if error
+    try {
+      const doesGetAll = await globalModel.select({
+        name: "pictures",
+        condition: [{ pictureProblemId: req.body.problemId }],
+        leftJoin: [
           {
             joinTable: "files",
             leftTableName: "pictures",
@@ -224,30 +268,40 @@ module.exports = {
         });
       });
 
-      const doesDeletePicture = await globalModel.delete({
-        name: "pictures",
-        condition: { pictureId: req.body.pictureId },
-      });
-      const doesDeleteFile = await globalModel.delete({
-        name: "files",
-        condition: { fileId: req.body.fileId },
-      });
-      res.status(200).send({ doesDeleteFile });
+      if (req.body.pictureId != null) {
+        const doesDeletePicture = await globalModel.delete({
+          name: "pictures",
+          condition: { pictureId: req.body.pictureId },
+        });
+        const doesDeleteFile = await globalModel.delete({
+          name: "files",
+          condition: { fileId: req.body.fileId },
+        });
+      }
+      res.status(200).send(req.body);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
     }
   },
   updateProblem: async (req, res, next) => {
+    const singleFile = req.files ? req.files.singleFile : null;
     const updateCondition = await updateProblemConditionSchema.validateAsync(
       req.query
     );
+    var updateHashtagDataObject = JSON.parse(req.body.updateHashtagData);
+    var updateTestsetDataObject = JSON.parse(req.body.updateTestsetData);
+    var updateProblemDataObject = JSON.parse(req.body.updateProblemData);
+    if (req.body.updateFilesData != null) {
+      var updateFilesDataObject = JSON.parse(req.body.updateFilesData);
+      var updatePicturesDataObject = JSON.parse(req.body.updatePicturesData);
+    }
     const updateProblemData = await updateProblemSchema.validateAsync(
-      req.body.updateProblemData
+      updateProblemDataObject
     );
 
-    console.log(req.query);
-    console.log(req.body);
+    console.log(singleFile);
+
     // try call function deleteProblem in global model then catch if error
     try {
       const doesUpdate = await globalModel.update({
@@ -258,31 +312,53 @@ module.exports = {
 
       const doesCreateHashtag = await globalModel.insert({
         name: "hashtags",
-        insertData: [...req.body.updateHashtagData],
+        insertData: [...updateHashtagDataObject],
       });
 
       const doesCreateTestset = await globalModel.insert({
         name: "testsets",
-        insertData: [...req.body.updateTestsetData],
+        insertData: [...updateTestsetDataObject],
       });
 
-      const fileId = await problemsModel.insertReturnId({
-        name: "files",
-        insertData: [req.body.updateFilesData],
-      });
+      console.log(updateFilesDataObject);
+      if (updateFilesDataObject != null) {
+        filePath =
+          process.env.BASE_STORAGE_PATH +
+          "picture" +
+          "\\" +
+          req.query.problemId;
+        console.log(filePath);
+        //delete old file
+        let result = await rmdir(filePath, function (err, dirs, files) {
+          console.log(dirs);
+          console.log(files);
+          console.log("all files are removed");
+        });
 
-      req.body.updatePicturesData.pictureFileId = fileId;
-      const createPicturesData = await createPicturesScheme.validateAsync(
-        req.body.updatePicturesData
-      );
+        //insert new file
+        await mkdirp(filePath);
 
-      //insert picture
-      const doesCreatePicture = await problemsModel.insertReturnId({
-        name: "pictures",
-        insertData: [createPicturesData],
-      });
+        await singleFile.mv(filePath + "\\" + singleFile.name);
+        updateFilesDataObject.filePath = filePath + "\\" + singleFile.name;
 
-      res.status(200).send({ doesUpdate });
+        console.log(req.body.updateFilesData);
+        const fileId = await problemsModel.insertReturnId({
+          name: "files",
+          insertData: [updateFilesDataObject],
+        });
+
+        updatePicturesDataObject.pictureFileId = fileId;
+        const createPicturesData = await createPicturesScheme.validateAsync(
+          updatePicturesDataObject
+        );
+
+        //insert picture
+        const doesCreatePicture = await problemsModel.insertReturnId({
+          name: "pictures",
+          insertData: [createPicturesData],
+        });
+      }
+      res.status(200).send(req.body);
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);

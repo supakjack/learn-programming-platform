@@ -15,4 +15,5 @@ router.patch("/", userController.update);
 
 router.post("/upload", userController.upload);
 
+router.post("/course", userController.getUserByCourse);
 module.exports = router;

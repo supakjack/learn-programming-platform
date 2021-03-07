@@ -256,6 +256,21 @@ Last edit: 19/2/2021 -->
 
           <!-- Dialog for delete -->
         </v-dialog>
+        <v-dialog v-model="dialogReport" max-width="1100px">
+          <v-card>
+            <v-card-title>
+              <span class="headline">Report</span>
+            </v-card-title>
+            <v-data-table
+              :headers="reportDialog"
+              :items="rowProblem"
+              :items-per-page="5"
+              class="elevation-1"
+            >
+            </v-data-table>
+          </v-card>
+        </v-dialog>
+        <!-- Dialog for delete -->
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="headline"
@@ -305,7 +320,7 @@ Last edit: 19/2/2021 -->
             v-on="on"
             small
             class="mr-2"
-            @click="openDialog(item)"
+            @click="openReportDialog(item)"
           >
             mdi-information
           </v-icon>
@@ -364,6 +379,7 @@ export default {
   data: () => ({
     courseData: [],
     // status: ["ใช้งาน", "ไม่ใช้งาน"],
+    rowProblem: [],
     date: new Date().toISOString().substr(0, 10),
     menu: false,
     menu2: false,
@@ -371,6 +387,7 @@ export default {
     dialog: false,
     dialogDelete: false,
     dialogSuccess: false,
+    dialogReport: false,
     search: "",
     proplemHeaders: [
       {
@@ -394,6 +411,17 @@ export default {
       { text: "วันที่สิ้นสุดส่งงาน", value: "assignmentEndDate" },
       { text: "สถานะ", value: "assignmentStatus" },
       { text: "การจัดการ", value: "actions", sortable: false }
+    ],
+    reportDialog: [
+      // use to declare data and map value in header of table
+      {
+        align: "center",
+        sortable: false
+      },
+      // { text: "ข้อ", value: "problemId" }, // define column name and value
+      { text: "ชื่อ-นามสกุล", value: "" },
+      { text: "สถานะการส่ง", value: "" },
+      { text: "คะแนน", value: "" }
     ],
     problem: [],
     editedIndex: -1,
@@ -590,6 +618,22 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
+    },
+
+    // save() {
+    //   if (this.editedIndex > -1) {
+    //     //Save for edit
+    //     Object.assign(this.allAssignment[this.editedIndex], this.editedItem);
+    //   } else {
+    //     //Save for add
+    //     console.log(this.editedItem);
+    //     this.allAssignment.push(this.editedItem);
+    //   }
+    //   this.close();
+    // },
+    openReportDialog(item) {
+      console.log(item);
+      this.dialogReport = true;
     }
   }
 };

@@ -27,19 +27,18 @@ const updateUserSchema = joi.object({
 });
 // user schema
 const userSchema = joi.object({
-  userUsername: joi.string(),
+  userUsername: joi.string().max(255),
 
-  userPrefixThai: joi.string(),
-  userFirstnameThai: joi.string(),
-  userLastnameThai: joi.string(),
+  userPrefixThai: joi.string().max(255),
+  userFirstnameThai: joi.string().max(255),
+  userLastnameThai: joi.string().max(255),
 
-  userPrefixEnglish: joi.string(),
-  userFistnameEnglish: joi.string(),
-  userLastnameEnglish: joi.string(),
+  userPrefixEnglish: joi.string().max(255),
+  userFirstnameEnglish: joi.string().max(255),
+  userLastnameEnglish: joi.string().max(255),
 
   userCreateBy: joi.number().integer().max(99999999).min(1),
   userUpdateBy: joi.number().integer().max(99999999).min(1),
-
   userStatus: joi.number().integer().max(3),
 });
 
@@ -265,14 +264,21 @@ const updateCourseSchema = joi.object({
   courseStatus: joi.number().integer().max(3),
 });
 
+// get year schema
+const getYearSchema = joi.object({
+  yearId: joi.number().max(99999999).min(1),
+  yearCreateBy: joi.number().integer().max(99999999).min(1),
+  yearStatus: joi.number().integer().max(3),
+});
+
 module.exports = {
+  getYearSchema,
   authSchema,
-  userSchema,
   createUserSchema,
   FileuserSchema,
-  updateUserSchema,
-  updateUserConditionSchema,
-  UserusernameConditionSchema,
+  userSchema,
+  getUserFromCourseSchema,
+  getUserIdSchema,
   createTagSchema,
   getTagSchema,
   updateTagConditionSchema,

@@ -166,6 +166,7 @@ export default {
     editAllItem: [],
     hashtagResult: [],
     testsetResult: [],
+    pictureResult: [],
     arrayHashtag: [],
     editProblemId: -1,
     watchArray: [],
@@ -273,7 +274,14 @@ export default {
     async save() {
       const userId = this.$store.state.user.id;
       if (this.editProblemId == -1) {
-        console.log(this.$store.state.problem);
+        let formData = new FormData();
+
+        if (this.$store.state.problem.files) {
+          for (let file of this.$store.state.problem.files) {
+            formData.append("singleFile", file);
+          }
+        }
+        console.log([...formData]);
         let createHashtagData = [];
         for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
           const dataHashtag = {
@@ -298,30 +306,49 @@ export default {
             };
           }
         );
-        const request = {
-          createHashtagData,
-          createTestsetData,
-          createProblemData: {
-            problemTitle: this.$store.state.problem.title,
-            problemDescription: this.$store.state.problem.description,
-            problemStatus: this.$store.state.problem.status,
-            problemCreateBy: userId,
-            problemUpdateBy: userId
-          },
-          createFilesData: {
-            filePath: "0",
-            fileCreateBy: userId,
-            fileUpdateBy: userId
-          },
-          createPicturesData: {
-            pictureFileId: null,
-            pictureProblemId: null,
-            pictureCreateBy: userId,
-            pictureUpdateBy: userId
-          }
+
+        const createProblemData = {
+          problemTitle: this.$store.state.problem.title,
+          problemDescription: this.$store.state.problem.description,
+          problemStatus: this.$store.state.problem.status,
+          problemCreateBy: userId,
+          problemUpdateBy: userId
         };
-        const insertResult = await this.insertProblem(request);
+        const createFilesData = {
+          filePath: "0",
+          fileCreateBy: userId,
+          fileUpdateBy: userId
+        };
+        const createPicturesData = {
+          pictureFileId: null,
+          pictureProblemId: null,
+          pictureCreateBy: userId,
+          pictureUpdateBy: userId
+        };
+
+        formData.append("createHashtagData", JSON.stringify(createHashtagData));
+        formData.append("createTestsetData", JSON.stringify(createTestsetData));
+        formData.append("createProblemData", JSON.stringify(createProblemData));
+        formData.append("createFilesData", JSON.stringify(createFilesData));
+        formData.append(
+          "createPicturesData",
+          JSON.stringify(createPicturesData)
+        );
+        const insertResult = await this.insertProblem(formData);
       } else {
+        let formData = new FormData();
+        let fileOldId = null;
+        let pictureOldId = null;
+        console.log(this.$store.state.problem.files);
+        if (this.$store.state.problem.files) {
+          for (let file of this.$store.state.problem.files) {
+            formData.append("singleFile", file);
+          }
+          fileOldId = this.editAllItem.fileId;
+          pictureOldId = this.editAllItem.pictureId;
+          console.log(fileOldId);
+        }
+        console.log([...formData]);
         //process delete
         console.log(this.hashtagResult);
         console.log(this.testsetResult);
@@ -335,8 +362,8 @@ export default {
         const dataCondition = {
           hashtagId,
           testsetId,
-          fileId: this.editAllItem.fileId,
-          pictureId: this.editAllItem.pictureId
+          fileId: fileOldId,
+          pictureId: pictureOldId
         };
 
         console.log(dataCondition);
@@ -369,31 +396,45 @@ export default {
             };
           }
         );
-        const request = {
-          problemId: this.editProblemId,
-          updateHashtagData,
-          updateTestsetData,
-          updateProblemData: {
-            problemTitle: this.$store.state.problem.title,
-            problemDescription: this.$store.state.problem.description,
-            problemStatus: this.$store.state.problem.status,
-            problemUpdateBy: userId,
-            problemUpdateDate: this.$moment().format("YYYY-MM-DD HH:mm:ss")
-          },
-          updateFilesData: {
-            filePath: "0",
-            fileCreateBy: userId,
-            fileUpdateBy: userId
-          },
-          updatePicturesData: {
-            pictureFileId: null,
-            pictureProblemId: this.editProblemId,
-            pictureCreateBy: userId,
-            pictureUpdateBy: userId
-          }
+
+        const updateProblemData = {
+          problemTitle: this.$store.state.problem.title,
+          problemDescription: this.$store.state.problem.description,
+          problemStatus: this.$store.state.problem.status,
+          problemUpdateBy: userId,
+          problemUpdateDate: this.$moment().format("YYYY-MM-DD HH:mm:ss")
         };
-        console.log(request);
-        const updateResult = await this.updateProblem(request);
+        const updateFilesData = {
+          filePath: "0",
+          fileCreateBy: userId,
+          fileUpdateBy: userId
+        };
+        const updatePicturesData = {
+          pictureFileId: null,
+          pictureProblemId: this.editProblemId,
+          pictureCreateBy: userId,
+          pictureUpdateBy: userId
+        };
+
+        formData.append("updateHashtagData", JSON.stringify(updateHashtagData));
+        formData.append("updateTestsetData", JSON.stringify(updateTestsetData));
+        formData.append("updateProblemData", JSON.stringify(updateProblemData));
+        if (fileOldId != null) {
+          console.log(fileOldId);
+          formData.append("updateFilesData", JSON.stringify(updateFilesData));
+          formData.append(
+            "updatePicturesData",
+            JSON.stringify(updatePicturesData)
+          );
+        } else {
+          formData.append("updateFilesData", null);
+          formData.append("updatePicturesData", null);
+        }
+        console.log([...formData]);
+        const updateResult = await this.updateProblem(
+          formData,
+          this.editProblemId
+        );
       }
       this.close();
     },
@@ -404,11 +445,15 @@ export default {
       console.log(this.$store.state.problem);
       const hashtag = this.editHashtag(item.problemId);
       const testset = this.editTestset(item.problemId);
+      const picture = this.editPicture(item.problemId);
 
       this.hashtagResult = await hashtag.then(res => {
         return res;
       });
       this.testsetResult = await testset.then(res => {
+        return res;
+      });
+      this.pictureResult = await picture.then(res => {
         return res;
       });
 
@@ -420,6 +465,7 @@ export default {
       console.log(this.hashtagResult);
       console.log(this.testsetResult);
       console.log(this.arrayHashtag);
+      console.log(this.pictureResult);
 
       let arrayTestset = [];
       this.testsetResult.map(res => {
@@ -447,7 +493,13 @@ export default {
           testset: arrayTestset
         }
       });
+      this.$store.commit("problem/setTestset", {
+        problem: {
+          testset: arrayTestset
+        }
+      });
 
+      console.log(this.$store.state.problem);
       this.watchArray = [
         { name: "id", val: this.$store.state.problem.id },
         { name: "title", val: this.$store.state.problem.title },
@@ -503,13 +555,24 @@ export default {
             testset: []
           }
         });
+        this.$store.commit("problem/setTestset", {
+          problem: {
+            testset: []
+          }
+        });
+        this.$store.commit("problem/setFiles", {
+          problem: {
+            files: undefined
+          }
+        });
         this.watchArray = [
           { name: "id", val: this.$store.state.problem.id },
           { name: "title", val: this.$store.state.problem.title },
           { name: "description", val: this.$store.state.problem.title },
           { name: "status", val: status },
           { name: "tags", val: this.$store.state.problem.tags },
-          { name: "testset", val: this.$store.state.problem.testset }
+          { name: "testset", val: this.$store.state.problem.testset },
+          { name: "files", val: this.$store.state.problem.files }
         ];
         console.log(this.watchArray);
       });

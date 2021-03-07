@@ -1,9 +1,9 @@
 <template lang="html">
-  <v-footer app fixed>
-    <span>&copy; {{ new Date().getFullYear() }}</span>
+  <v-footer fixed>
+    <span class="flex justify-end">&copy; {{ new Date().getFullYear() }}</span>
   </v-footer>
 </template>
 
 <script>
-export default {}
+export default {};
 </script>

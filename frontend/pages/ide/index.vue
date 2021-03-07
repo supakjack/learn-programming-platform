@@ -71,7 +71,7 @@
           </v-col>
         </v-row>
 
-        <v-row>
+        <v-row style="margin-top:-30px">
           <v-col>
             <v-card
               style="max-height: 176px;
@@ -95,6 +95,7 @@
                     rows="2"
                   ></v-textarea>
                 </div>
+
                 <div>
                   <v-textarea
                     v-model="stdout"
@@ -104,6 +105,58 @@
                     readonly
                   ></v-textarea>
                 </div>
+                <v-row>
+                  <v-col cols="12" md="8"> </v-col>
+                  <v-col cols="12" md="4">
+                    <template>
+                      <div class="text-center">
+                        <v-dialog v-model="dialog" width="700" height="1000">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              dark
+                              color="success"
+                              class="float-right"
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              ผลลัพธ์
+                            </v-btn>
+                          </template>
+
+                          <v-card>
+                            <v-card-title
+                              class="headline grey lighten-2"
+                              style="margin-bottom:20px"
+                            >
+                              ผลลัพธ์
+                            </v-card-title>
+                            <v-textarea
+                              v-model="stdout"
+                              autocomplete="email"
+                              label="ข้อมูลส่งออก"
+                              value=""
+                              rows="7"
+                              readonly
+                            ></v-textarea>
+
+                            <v-divider></v-divider>
+
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-btn
+                                color="primary"
+                                text
+                                @click="dialog = false"
+                              >
+                                ปิด
+                              </v-btn>
+                            </v-card-actions>
+                          </v-card>
+                        </v-dialog>
+                      </div>
+                    </template>
+                  </v-col>
+                </v-row>
               </v-card-text>
             </v-card>
           </v-col>
@@ -131,18 +184,19 @@ export default {
   mixins: [idemixin],
   mounted() {
     console.log(this.$store.state.problem.id);
-      this.$store.commit("breadcrumb/setBreadcrumb", [
-        {
-          text: "หน้าหลัก",
-          href: "/home"
-        },
-        {
-          text: "IDE",
-          href: "/ide"
-        }
-      ]);
+    this.$store.commit("breadcrumb/setBreadcrumb", [
+      {
+        text: "หน้าหลัก",
+        href: "/home"
+      },
+      {
+        text: "IDE",
+        href: "/ide"
+      }
+    ]);
   },
   data: () => ({
+    dialog: false,
     loading: false,
     selectedItem: 1,
     snackbar: false,

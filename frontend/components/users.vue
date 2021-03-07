@@ -2,11 +2,10 @@
 export default {
   methods: {
     async getUser() {
-      const username = this.$store.state.user.username;
-      const password = this.$store.state.user.password;
-      return this.$axios.$get(
-        "user?username=" + username + "&password=" + password
-      );
+      const courseData = {};
+      courseData.userId = this.$store.state.course.userId;
+      courseData.sectionId = this.$store.state.course.sectionId;
+      return this.$axios.$post("user/course", courseData);
     },
 
     async getUserByUsername(data) {
@@ -23,8 +22,8 @@ export default {
       deleteData.userUpdateDate = data.userUpdateDate;
       return this.$axios
         .$patch(`user/?userId=${data.userId}`, deleteData)
-        .catch(err => console.log(err))
-        .then(response => response.doesUpdate);
+        .catch((err) => console.log(err))
+        .then((response) => response.doesUpdate);
     },
 
     async editUser(data) {
@@ -45,8 +44,8 @@ export default {
       console.log(editData);
       const result = this.$axios
         .$patch(`user/?userId=${data.userId}`, editData)
-        .catch(err => console.log(err))
-        .then(response => response.doesUpdate);
+        .catch((err) => console.log(err))
+        .then((response) => response.doesUpdate);
       console.log(result);
       return result;
     },
@@ -54,7 +53,6 @@ export default {
     async insertUser(data) {
       const InsertData = {};
       InsertData.userUsername = data.userUsername;
-
       InsertData.userPrefixThai = data.userPrefixThai;
       InsertData.userFirstnameThai = data.userFirstnameThai;
       InsertData.userLastnameThai = data.userLastnameThai;
@@ -64,27 +62,30 @@ export default {
       InsertData.userLastnameEnglish = data.userLastnameEnglish;
 
       InsertData.userStatus = data.userStatus;
-      InsertData.userCreateBy = data.userCreateBy;
-      InsertData.userUpdateBy = data.userUpdateBy;
+      InsertData.userCreateBy = this.$store.state.course.userId;
+      InsertData.userUpdateBy = this.$store.state.course.userId;
+      InsertData.sectionId = this.$store.state.course.sectionId;
+      console.log(InsertData);
       return this.$axios
         .$post("user", InsertData)
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         })
-        .then(response => response.doesCreate);
+        .then((response) => response.doesCreate);
     },
     async insertFile(data) {
       console.log(data);
-      const InsertFile = {};
-      InsertFile.file = data.file;
-
       return this.$axios
-        .$post("user/upload", InsertFile)
-        .catch(error => {
+        .$post("user/upload", data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .catch((error) => {
           console.error(error);
         })
-        .then(response => response.doesCreate);
-    }
-  }
+        .then((response) => response.doesCreate);
+    },
+  },
 };
 </script>
