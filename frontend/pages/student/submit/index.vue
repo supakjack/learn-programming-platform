@@ -389,7 +389,13 @@ export default {
       else return "red";
     },
     async initialize() {
+      console.log(this.$store.state.course.yearId);
+      console.log(this.$store.state.course.sectionNumber);
+      console.log(this.$store.state.course.sectionId);
+      console.log(this.$store.state.course.courseId);
+      console.log(this.$store.state.homework.assignmentId);
       console.log(this.$store.state.homework.problemId);
+      console.log(this.$store.state.user.id);
       console.log(this.$store.state.homework.taskId);
       this.testsetExample = await this.getTestsetExample(
         this.$store.state.homework.problemId
