@@ -100,11 +100,11 @@ module.exports = {
     }
   },
   upload: async (req, res, next) => {
-    console.log(req.files);
-    console.log("req.body" + req.body);
+    // console.log(req.files);
+    // console.log("req.body" + req.body);
     const singleFile = req.files ? req.files.singleFile : null;
     const randomFileName = nanoid(10);
-    console.log(singleFile);
+    // console.log(singleFile);
     const splitFileName = singleFile.name.split(".");
     singleFile.name = randomFileName + "." + splitFileName[1];
     const filePath = process.env.BASE_STORAGE_PATH + "temp";
@@ -126,7 +126,7 @@ module.exports = {
         };
         users.push(user);
       });
-      // console.log(users);
+      console.log(users);
       try {
         const doesCreate = await problemsModel.insertReturnId({
           name: "users",
@@ -184,7 +184,7 @@ module.exports = {
           },
         ],
       });
-      console.log(doesGetAll);
+      // console.log(doesGetAll);
       res.status(200).send({ doesGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());

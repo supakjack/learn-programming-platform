@@ -43,6 +43,7 @@
                       <v-text-field
                         v-model="editedItem.userUsername"
                         label="รหัสผู้ใช้"
+                        hint="กรอกรหัสนิสิต 8 หลัก"
                       ></v-text-field>
                     </v-col>
                     <v-col>
@@ -58,22 +59,44 @@
                         v-model="editedItem.userPrefixEnglish"
                         :items="userPrefixEnglish"
                         menu-props="auto"
-                        label="Prefix"
+                        label="คำนำหน้า (ภาษาอังกฤษ)"
                         hide-details
                         single-line
                       ></v-select>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        v-model="userLDAP.givenName"
-                        label="Firstname"
-                      ></v-text-field>
+                      <div v-if="editedIndex === -1">
+                        <v-text-field
+                          v-model="userLDAP.givenName"
+                          label="ชื่อจริง (ภาษาอังกฤษ)"
+                          hint="กรอกชื่อจริงภาษาอังกฤษ"
+                        ></v-text-field>
+                      </div>
+                      <div v-else>
+                        <v-text-field
+                          v-model="editedItem.userFirstnameEnglish"
+                          :items="userFirstnameEnglish"
+                          label="ชื่อจริง (ภาษาอังกฤษ)"
+                          hint="กรอกชื่อจริงภาษาอังกฤษ"
+                        ></v-text-field>
+                      </div>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        v-model="userLDAP.sn"
-                        label="Lastname"
-                      ></v-text-field>
+                      <div v-if="editedIndex === -1">
+                        <v-text-field
+                          v-model="userLDAP.sn"
+                          label="นามสกุล (ภาษาอังกฤษ)"
+                          hint="กรอกนามสกุลภาษาอังกฤษ"
+                        ></v-text-field>
+                      </div>
+                      <div v-else>
+                        <v-text-field
+                          v-model="editedItem.userLastnameEnglish"
+                          :items="userLastnameEnglish"
+                          label="นามสกุล (ภาษาอังกฤษ)"
+                          hint="กรอกนามสกุลภาษาอังกฤษ"
+                        ></v-text-field>
+                      </div>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-select
@@ -88,13 +111,15 @@
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field
                         v-model="editedItem.userFirstnameThai"
-                        label="ชื่อจริง"
+                        label="ชื่อจริง (ภาษาไทย)"
+                        hint="กรอกชื่อจริงภาษาไทย"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field
                         v-model="editedItem.userLastnameThai"
-                        label="นามสกุล"
+                        label="นามสกุล (ภาษาไทย)"
+                        hint="กรอกนามสกุลภาษาไทย"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
@@ -111,14 +136,27 @@
                   <div v-if="editedIndex === -1">
                     <div class="flex justify-center">หรือ</div>
                     <div>
-                      <label for="upload">อัพโหลด</label>
-                      <input
-                        id="upload"
-                        type="file"
-                        name="singleFile"
-                        multiple
-                        @change="saveExcel"
-                      />
+                      <v-col cols="12">
+                        <v-card color="primary" dark>
+                          <v-card-title class="headline">
+                            อัปโหลดรายชื่อผู้ใช้งาน
+                          </v-card-title>
+                          <v-card-subtitle
+                            >สำหรับเพิ่มผู้ใช้งานเข้ากลุ่มเรียน (ใช้ได้เฉพาะไฟล์
+                            Excel)</v-card-subtitle
+                          >
+                          <v-card-actions>
+                            <div class="flex justify-center text-black">
+                              <input
+                                type="file"
+                                name="singleFile"
+                                multiple
+                                @change="saveExcel"
+                              />
+                            </div>
+                          </v-card-actions>
+                        </v-card>
+                      </v-col>
                     </div>
                   </div>
                 </v-container>
@@ -136,7 +174,7 @@
           <v-dialog v-model="dialogDelete" max-width="500px">
             <v-card>
               <v-card-title class="headline"
-                >คุณต้องการลบผู้ใช้งานคนนี้หรืออไม่?</v-card-title
+                >คุณต้องการลบผู้ใช้งานคนนี้หรือไม่?</v-card-title
               >
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -271,9 +309,7 @@ export default {
     },
   },
 
-  mounted() {
-    // this.initialize();
-  },
+  mounted() {},
 
   watch: {
     dialog(val) {
@@ -310,7 +346,7 @@ export default {
         }
       });
       this.users = doesGetAll;
-      console.log(this.user);
+      // console.log(this.user);
     },
 
     async getUserLdap() {
@@ -318,9 +354,10 @@ export default {
         this.editedItem.userUsername
       );
       this.userLDAP = user;
-      console.log(this.userLDAP);
+      // console.log(this.userLDAP);
     },
     editItem(item) {
+      console.log(item);
       this.editedIndex = this.users.indexOf(item);
       this.editedItem.userId = item.userId;
       this.editedItem.userUsername = item.userUsername;
@@ -350,12 +387,12 @@ export default {
       this.editedItem.userFirstnameThai = item.userFirstnameThai;
       this.editedItem.userLastnameThai = item.userLastnameThai;
       this.editedItem.userStatus = item.userStatus;
-      this.editedItem.userCreateBy = 1;
-      this.editedItem.userUpdateBy = this.editedItem.userCreateBy;
+      this.editedItem.userCreateBy = this.$store.state.user.id;
+      this.editedItem.userUpdateBy = this.$store.state.user.id;
       this.editedItem.userUpdateDate = this.$moment().format(
         "YYYY-MM-DD HH:mm:ss"
       );
-      console.log(this.editedItem);
+      // console.log(this.editedItem);
       this.dialogDelete = true;
     },
 
@@ -386,17 +423,17 @@ export default {
       // if  this.editedIndex > -1 == it edited user else this.editedIndex == -1 insert user
       // edit user
       if (this.editedIndex > -1) {
-        console.log("userCreateBy 0");
+        // console.log("userCreateBy 0");
         const EditResult = await this.editUser(this.editedItem);
-        console.log(EditResult);
+        // console.log(EditResult);
         if (typeof EditResult === "number") {
           this.dialog = false;
         }
       }
       // insert user
       else {
-        console.log("userCreateBy -1");
-        console.log("files");
+        // console.log("userCreateBy -1");
+        // console.log("files");
         if (this.files != undefined) {
           let formData = new FormData();
           if (this.files) {
@@ -406,16 +443,17 @@ export default {
             formData.append("sectionId", this.$store.state.course.sectionId);
             formData.append("userId", this.$store.state.user.id);
           }
-          console.log(...formData);
-          // console.log(formData);
+          // console.log(...formData);
           const insertExcelResult = await this.insertFile(formData);
           this.close();
         } else {
-          console.log("data");
-          this.editedItem.userCreateBy = this.$store.state.user.id;
-          this.editedItem.userUpdateBy = this.$store.state.user.id;
+          // console.log("data");
           this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
           this.editedItem.userLastnameEnglish = this.userLDAP.sn;
+          this.editedItem.userCreateBy = this.$store.state.user.id;
+          this.editedItem.userUpdateBy = this.$store.state.user.id;
+          // this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
+          // this.editedItem.userLastnameEnglish = this.userLDAP.sn;
           // check repeat user if repert can't insert
           if (
             !this.users.filter((user) => user.userUsername == this.userLDAP.cn)
@@ -462,3 +500,5 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+</style>

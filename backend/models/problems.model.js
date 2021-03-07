@@ -28,7 +28,7 @@ module.exports = {
             resolve(id);
           });
 
-        // console.log(id);
+        console.log(id.lenght);
       } catch (error) {
         console.log(error.message);
         reject(createError.InternalServerError());

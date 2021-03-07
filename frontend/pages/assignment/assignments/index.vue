@@ -30,112 +30,231 @@ Last edit: 19/2/2021 -->
         ></v-text-field>
         <v-spacer></v-spacer>
 
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" max-width="1000px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="success" dark class="mb-2" v-bind="attrs" v-on="on">
               เพิ่มมอบหมายงาน
             </v-btn>
           </template>
-          <v-card class="kanit-font">
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
+          <v-stepper v-model="pageStep">
+            <v-stepper-header>
+              <v-stepper-step :complete="pageStep > 1" step="1">
+                เพิ่มการมอบหมายงาน
+              </v-stepper-step>
 
-            <v-card-text class="kanit-font">
-              <v-container>
-                <v-row>
-                  <!-- Title -->
-                  <v-col cols="12" sm="12" md="12">
-                    <v-text-field
-                      v-model="editedItem.assignmentTitle"
-                      label="ชื่องานที่มอบหมาย"
-                    ></v-text-field>
-                  </v-col>
+              <v-divider></v-divider>
 
-                  <!-- Discription -->
-                  <v-col cols="12" sm="12" md="12">
-                    <v-textarea
-                      v-model="editedItem.assignmentDescription"
-                      label="คำอธิบาย"
-                    ></v-textarea>
-                  </v-col>
+              <v-stepper-step :complete="pageStep > 2" step="2">
+                เพิ่มโจทย์ปัญหา
+              </v-stepper-step>
+            </v-stepper-header>
 
-                  <!-- Start date -->
-                  <v-col cols="12" sm="6" md="6">
-                    <v-menu
-                      v-model="menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
+            <v-stepper-items>
+              <v-stepper-content step="1">
+                <v-card class="kanit-font">
+                  <v-card-title>
+                    <span class="headline">{{ formTitle }}</span>
+                  </v-card-title>
+
+                  <v-card-text class="kanit-font">
+                    <v-container>
+                      <v-row>
+                        <!-- Title -->
+                        <v-col cols="12" sm="12" md="12">
+                          <v-text-field
+                            v-model="editedItem.assignmentTitle"
+                            label="ชื่องานที่มอบหมาย"
+                          ></v-text-field>
+                        </v-col>
+
+                        <!-- Discription -->
+                        <v-col cols="12" sm="12" md="12">
+                          <v-textarea
+                            v-model="editedItem.assignmentDescription"
+                            label="คำอธิบาย"
+                          ></v-textarea>
+                        </v-col>
+
+                        <!-- Start date -->
+                        <v-col cols="12" sm="6" md="6">
+                          <v-menu
+                            v-model="menu"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="editedItem.assignmentStartDate"
+                                label="วันที่เริ่มส่งงาน"
+                                prepend-icon="mdi-calendar"
+                                readonly
+                                v-bind="attrs"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              v-model="editedItem.assignmentStartDate"
+                              @input="menu = false"
+                            ></v-date-picker>
+                          </v-menu>
+                        </v-col>
+
+                        <!-- End date -->
+                        <v-col cols="12" sm="6" md="6">
+                          <v-menu
+                            v-model="menu2"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="editedItem.assignmentEndDate"
+                                label="วันที่สิ้นสุดส่งงาน"
+                                prepend-icon="mdi-calendar"
+                                readonly
+                                v-bind="attrs"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              v-model="editedItem.assignmentEndDate"
+                              @input="menu2 = false"
+                            ></v-date-picker>
+                          </v-menu>
+                        </v-col>
+
+                        <!-- Status -->
+                        <v-col cols="12" sm="6" md="4">
+                          <v-select
+                            :items="assignmentStatus"
+                            v-model="editedItem.assignmentStatus"
+                            menu-props="auto"
+                            label="สถานะ"
+                            hide-details
+                            single-line
+                          >
+                          </v-select>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text>
+                      ยกเลิก
+                    </v-btn>
+                    <v-btn color="primary" @click="pageStep = 2">
+                      ถัดไป
+                    </v-btn>
+
+                    <!-- <v-btn color="blue darken-1" text @click="close"> ยกเลิก </v-btn>
+              <v-btn color="blue darken-1" text @click="save"> บันทึก </v-btn> -->
+                  </v-card-actions>
+                </v-card>
+              </v-stepper-content>
+
+              <v-stepper-content step="2">
+                <v-card class="mb-12" width="1000px" height="500px">
+                  <v-combobox
+                    clearable
+                    hide-selected
+                    multiple
+                    persistent-hint
+                    small-chips
+                    v-model="selectTag"
+                    :items="tagItems"
+                    label="เลือกแท็กสำหรับค้นหาโจทย์ปัญหา"
+                  ></v-combobox>
+                  <v-card>
+                    <v-card-title>
                         <v-text-field
-                          v-model="editedItem.assignmentStartDate"
-                          label="วันที่เริ่มส่งงาน"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
+                          v-model="search"
+                          append-icon="mdi-magnify"
+                          label="ค้นหา"
+                          hide-details
                         ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="editedItem.assignmentStartDate"
-                        @input="menu = false"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
-
-                  <!-- End date -->
-                  <v-col cols="12" sm="6" md="6">
-                    <v-menu
-                      v-model="menu2"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
+                    </v-card-title>
+                    <v-data-table
+                      :headers="proplemHeaders"
+                      :items="allProblems"
+                      :search="selectTag.tagName"
                     >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="editedItem.assignmentEndDate"
-                          label="วันที่สิ้นสุดส่งงาน"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
+                      <v-text-field
+                        v-model="calories"
+                        type="number"
+                        label="Less than"
+                      ></v-text-field>
+                      <template v-slot:[`item.actions`]="{ item }">
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              color="primary"
+                              v-bind="attrs"
+                              v-on="on"
+                              small
+                              class="mr-2"
+                              @click="openDialog(item)"
+                            >
+                              mdi-information
+                            </v-icon>
+                          </template>
+                          <span>เพิ่มเติม</span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              color="orange"
+                              v-bind="attrs"
+                              v-on="on"
+                              small
+                              class="mr-2"
+                              @click="editItem(item)"
+                            >
+                              mdi-pencil
+                            </v-icon>
+                          </template>
+                          <span>แก้ไข</span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              color="red"
+                              v-bind="attrs"
+                              v-on="on"
+                              small
+                              @click="deleteItem(item)"
+                            >
+                              mdi-delete
+                            </v-icon>
+                          </template>
+                          <span>ลบ</span>
+                        </v-tooltip>
                       </template>
-                      <v-date-picker
-                        v-model="editedItem.assignmentEndDate"
-                        @input="menu2 = false"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
+                    </v-data-table>
+                  </v-card>
+                </v-card>
+                <!-- <insertStep1 /> -->
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1">
+                    ยกเลิก
+                  </v-btn>
+                  <v-btn color="blue darken-1" text @click="pageStep = 1">
+                    บันทึก
+                  </v-btn>
+                </v-card-actions>
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
 
-                  <!-- Status -->
-                  <v-col cols="12" sm="6" md="4">
-                    <v-select
-                      :items="assignmentStatus"
-                      v-model="editedItem.assignmentStatus"
-                      menu-props="auto"
-                      label="สถานะ"
-                      hide-details
-                      single-line
-                    >
-                    </v-select>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close"> ยกเลิก </v-btn>
-              <v-btn color="blue darken-1" text @click="save"> บันทึก </v-btn>
-            </v-card-actions>
-          </v-card>
+          <!-- Dialog for delete -->
         </v-dialog>
         <v-dialog v-model="dialogReport" max-width="1100px">
           <v-card>
@@ -246,9 +365,17 @@ Last edit: 19/2/2021 -->
 </template>
 
 <script>
-import assignmentmixin from "../../../components/assignment";
+import assignmentmixin from "@/components/assignment";
+import problemsmixin from "@/components/problems";
+import tagsmixin from "@/components/tags";
+
+// import insertStep2 from "@/pages/assignment/assignments/insert-step2";
+
 export default {
-  mixins: [assignmentmixin],
+  mixins: [assignmentmixin, tagsmixin, problemsmixin],
+  components: {
+    // insertStep2
+  },
   data: () => ({
     courseData: [],
     // status: ["ใช้งาน", "ไม่ใช้งาน"],
@@ -262,6 +389,16 @@ export default {
     dialogSuccess: false,
     dialogReport: false,
     search: "",
+    proplemHeaders: [
+      {
+        align: "start",
+        sortable: false
+      },
+      { text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
+      { text: "วันที่สร้าง", value: "problemCreateDate" },
+      { text: "สถานะ", value: "problemStatus" },
+      { text: "การจัดการ", value: "actions", sortable: false }
+    ],
     headers: [
       {
         align: "start",
@@ -318,13 +455,14 @@ export default {
       // use in select options
       { text: "ใช้งาน", value: 1 },
       { text: "ไม่ใช้งาน", value: 2 }
-    ]
+    ],
+    pageStep: 1,
+    selectTag: [],
+    tagItems: [],
+    allProblems: []
   }),
   async mounted() {
-    // const { doseGetAll } = await this.getProblem();
-    // this.allProblems = doseGetAll;
-    // console.log(this.allProblems);
-    console.log(this.$store.state.course);
+    // console.log(this.$store.state.course);
   },
 
   computed: {
@@ -347,10 +485,8 @@ export default {
 
   async created() {
     this.initialize();
-    // console.log("call getProblem from mixin");
-    // this.getProblem()
-
-    // console.log(this.response);
+    this.getTagData();
+    this.getProblemData();
   },
 
   methods: {
@@ -362,9 +498,27 @@ export default {
     // UpdateBy: Atikom Wongwan / UpdateDate: 19/2/2021
 
     async initialize() {
-      // console.log(this.$store.state.course.sectionId);
+      const corseSection =
+        this.$store.state.course.courseCode +
+        " " +
+        this.$store.state.course.courseName;
+      const sectionName =
+        "กลุ่มเรียนที่ " + this.$store.state.course.sectionNumber;
+      this.$store.commit("breadcrumb/setBreadcrumb", [
+        {
+          text: "หน้าหลัก",
+          href: "/home"
+        },
+        {
+          text: corseSection,
+          href: "/home/section"
+        },
+        {
+          text: sectionName,
+          href: "/assignment"
+        }
+      ]);
       this.courseData = this.$store.state.course;
-      // console.log("hello", this.courseData);
       const { doesGetAll } = await this.getAssignment(
         this.courseData.sectionId
       );
@@ -381,9 +535,7 @@ export default {
           doesGetAll.assignmentStatus = "ไม่ใช้งาน";
         }
       });
-      // console.log(doesGetAll);
       this.allAssignment = doesGetAll;
-      // console.log(this.assignments);
     },
 
     async save() {
@@ -409,81 +561,37 @@ export default {
       }
     },
 
-    // editItem(item) {
-    //   this.editedIndex = this.allAssignment.indexOf(item);
-    //   this.editedItem.assignmentId = item.assignmentId;
-    //   this.editedItem.assignmentTitle = item.assignmentTitle;
-    //   this.editedItem.assignmentDescription = item.assignmentDescription;
-    //   this.editedItem.assignmentStartDate = item.assignmentStartDate;
-    //   this.editedItem.assignmentEndDate = item.assignmentEndDate;
-    //   this.editedItem.assignmentStatus = item.assignmentStatus;
-    //   // this.editedItem.assignmentCreateBy = item.assignmentCreateBy;
-    //   // this.editedItem.assignmentUpdateBy = this.editedItem.assignmentCreateBy;
-    //   this.editedItem.assignmentUpdateDate = this.$moment().format(
-    //     "YYYY-MM-DD HH:mm:ss"
-    //   );
-    //   console.log(this.editedItem);
-    //   this.dialogDelete = true;
-    // },
+    async getTagData() {
+      const { doesGetAll } = await this.getTag();
+      doesGetAll.map(doesGetAll => {
+        let data = {};
+        data.text = doesGetAll.tagName;
+        data.value = doesGetAll.tagId;
+        // doesGetAll.tagId;
+        this.tagItems.push(data);
+        // this.tagItems.value = doesGetAll.tagId;
+      });
+    },
 
-    // deleteItem(item) {
-    //   this.editedIndex = this.allAssignment.indexOf(item);
-    //   this.editedItem.assignmentId = item.assignmentId;
-    //   this.editedItem.assignmentTitle = item.assignmentTitle;
-    //   this.editedItem.assignmentDescription = item.assignmentDescription;
-    //   this.editedItem.assignmentStartDate = this.$moment().format(
-    //     "YYYY-MM-DD HH:mm:ss"
-    //   );
-    //   this.editedItem.assignmentEndDate = this.$moment().format(
-    //     "YYYY-MM-DD HH:mm:ss"
-    //   );
-    //   this.editedItem.assignmentStatus = 3;
-    //   this.editedItem.assignmentCreateBy = 1;
-    //   this.editedItem.assignmentUpdateBy = this.editedItem.assignmentCreateBy;
-    //   this.editedItem.assignmentUpdateDate = this.$moment().format(
-    //     "YYYY-MM-DD HH:mm:ss"
-    //   );
-    //   console.log(this.editedItem);
-    //   this.dialogDelete = true;
-    // },
+    async getProblemData() {
+      const { doesGetAll } = await this.getProblem();
 
-    // async deleteItemConfirm() {
-    //   const EditResult = await this.editAssignment(this.editedItem);
-    //   console.log(EditResult);
-
-    //   if (typeof EditResult === "number") {
-    //     this.closeDelete();
-    //   }
-    // },
-
-    // close() {
-    //   this.dialog = false;
-    //   this.$nextTick(() => {
-    //     this.editedItem = Object.assign({}, this.defaultItem);
-    //     this.editedIndex = -1;
-    //   });
-    // },
-
-    // closeDelete() {
-    //   this.dialogDelete = false;
-    //   this.SuccessTitle = "ลบสำเร็จ";
-    //   this.dialogSuccess = true;
-    //   this.$nextTick(() => {
-    //     this.editedItem = Object.assign({}, this.defaultItem);
-    //     this.editedIndex = -1;
-    //   });
-    //   this.initialize();
-    // },
-
-    // closeSuccess() {
-    //   this.dialogSuccess = false;
-    //   this.$nextTick(() => {
-    //     this.editedItem = Object.assign({}, this.defaultItem);
-    //     this.editedIndex = -1;
-    //     this.SuccessTitle = "สร้างการมอบหมายงาน";
-    //     this.SuccessTitle = "";
-    //   });
-    // },
+      doesGetAll.map(doesGetAll => {
+        doesGetAll.problemCreateDate = this.$moment(
+          doesGetAll.problemCreateDate
+        ).format("Do MMM YY เวลา LT");
+        doesGetAll.problemUpdateDate = this.$moment(
+          doesGetAll.problemUpdateDate
+        ).format("Do MMM YY เวลา LT");
+        if (doesGetAll.problemStatus == "active") {
+          doesGetAll.problemStatus = "ใช้งาน";
+        } else {
+          doesGetAll.problemStatus = "ไม่ใช้งาน";
+        }
+      });
+      this.allProblems = doesGetAll;
+      console.log(doesGetAll);
+    },
 
     editItem(item) {
       this.editedIndex = this.allAssignment.indexOf(item);
