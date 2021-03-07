@@ -397,7 +397,11 @@ export default {
       console.log(this.testsetExample.doesGetAll);
       this.problemTitle = this.$store.state.homework.problemTitle;
       this.problemDescription = this.$store.state.homework.problemDescription;
-      const allCompile = this.getCompilelog(this.$store.state.homework.taskId);
+      const data = {
+        compilelogTaskId: this.$store.state.homework.taskId,
+        compilelogCreateBy: this.$store.state.user.id
+      };
+      const allCompile = this.getCompilelog(data);
 
       this.allCompileResult = await allCompile.then(res => {
         return res;

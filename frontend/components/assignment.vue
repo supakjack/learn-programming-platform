@@ -61,6 +61,33 @@ export default {
       console.log(result);
       return result;
     },
+    async getUserAssignment(data) {
+      const editData = {};
+      editData.assignmentId = data;
+
+      const result = this.$axios
+        .$post("problem/problem/user", editData)
+        .catch(err => console.log(err));
+      console.log(result);
+      return result;
+    },
+    async getScoreUser(data) {
+      const result = this.$axios
+        .$post("problem/score/user", data)
+        .catch(err => console.log(err));
+      console.log(result);
+      return result;
+    },
+    async getScoreMax(data) {
+      const editData = {};
+      editData.assignmentId = data;
+
+      const result = this.$axios
+        .$post("problem/score/max", editData)
+        .catch(err => console.log(err));
+      console.log(result);
+      return result;
+    },
 
     // function name: deleteAssingment
     // description: for geting data from backend using api

@@ -87,6 +87,11 @@ module.exports = {
             doesSelect.orderBy(orderBy.name, orderBy.type);
           });
         }
+        if (table.limit) {
+          table.limit.forEach((limit) => {
+            doesSelect.limit(limit.size);
+          });
+        }
         resolve(doesSelect);
       } catch (error) {
         console.log(error.message);
