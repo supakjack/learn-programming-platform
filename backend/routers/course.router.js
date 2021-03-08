@@ -4,11 +4,13 @@ const courseController = require("../controllers/course.controller");
 
 // router.patch("/", courseController.update);
 
-router.get("/", courseController.get);
-router.get("/teacher", courseController.getTeacher);
-router.get("/section/:id", courseController.getSection);
+router.get('/', courseController.get)
 
-router.post("/", courseController.create);
+router.get('/section/:id', courseController.getSection)
+
+router.get('/StudentCourse/', courseController.getStudentCourse)
+
+router.post('/', courseController.create)
 
 router.put("/", courseController.update);
 

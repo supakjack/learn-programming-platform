@@ -8,6 +8,7 @@ const authSchema = joi.object({
 const getUsernameSchema = joi.object({
   userUsername: joi.string().max(255),
 });
+
 // update user schema
 const updateUserSchema = joi.object({
   userUsername: joi.any(),
@@ -331,6 +332,5 @@ module.exports = {
   getCompilelogSchema,
   insertCourseSchema,
   updateCourseSchema,
-  getUserFromCourseSchema,
-  getUserIdSchema,
+  getUserIdSchema
 };

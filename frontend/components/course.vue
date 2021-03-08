@@ -1,20 +1,24 @@
 <script>
 export default {
   methods: {
-    // function name: getHome
+    // function name: getTeacherCourse
     // description: get from backend API
     // input: -
     // output: [doesGetAll]: {tagName, tagId, tagStatus, tagUpdateDate, tagCraeteDate ,CreateName, UpdateName}
     // CreateBy: Niphitphon Thanatkulkit / CreateDate: 24/2/2021
     // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 24/2/2021
-    async getHome(data) {
-      console.log("getHome - Work !");
+    async getTeacherCourse(data) {
       return this.$axios.$get(`course/?userId=${data}`);
     },
 
-    async getHomeTeacher(data) {
-      console.log("getHomeTeacher - Work !");
-      return this.$axios.$get(`course/teacher?userId=${data}`);
+    // function name: getStudentCourse
+    // description: get from backend API
+    // input: -
+    // output: [doesGetAll]: {tagName, tagId, tagStatus, tagUpdateDate, tagCraeteDate ,CreateName, UpdateName}
+    // CreateBy: Niphitphon Thanatkulkit / CreateDate: 24/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 24/2/2021
+    async getStudentCourse(data) {
+      return this.$axios.$get(`course/StudentCourse/?userId=${data}`);
     },
 
     async getCourseSection(data) {
