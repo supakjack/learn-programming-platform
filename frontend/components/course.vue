@@ -8,10 +8,12 @@ export default {
     // CreateBy: Niphitphon Thanatkulkit / CreateDate: 24/2/2021
     // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 24/2/2021
     async getHome(data) {
+      console.log("getHome - Work !");
       return this.$axios.$get(`course/?userId=${data}`);
     },
 
     async getHomeTeacher(data) {
+      console.log("getHomeTeacher - Work !");
       return this.$axios.$get(`course/teacher?userId=${data}`);
     },
 
