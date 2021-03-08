@@ -88,7 +88,6 @@ export default {
       // this.yearByCreate = doesGetYearByCreate;
     },
     async clickOpenStudentHomework(course) {
-      console.log(course);
       this.$store.commit("course/setCourse", {
         course
       });
