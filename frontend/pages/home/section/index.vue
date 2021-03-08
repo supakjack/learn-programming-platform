@@ -98,6 +98,14 @@
         </v-dialog>
       </v-row>
     </v-card>
+    <v-snackbar v-model="snackbar">
+      กลุ่มเรียนที่ {{ sectionNumber }} มีอยู่แล้วไม่สามารถเพิ่มได้
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 <script>
@@ -121,7 +129,7 @@ export default {
           href: "/home/section"
         }
       ]);
-       const { doesGet } = await this.getCourseSection({
+      const { doesGet } = await this.getCourseSection({
         courseId: this.$store.state.course.courseId,
         userId: this.$store.state.user.id
       });
@@ -141,7 +149,7 @@ export default {
     },
     async clickInsertSection() {
       if (this.isDuplicatedSectionNumber) {
-        alert("กลุ่มเรียนซ้ำ");
+        this.snackbar = true;
       } else {
         const insertData = {
           sectionNumber: this.sectionNumber,
@@ -152,8 +160,8 @@ export default {
         };
         console.log(insertData);
         await this.insertSection(insertData);
+        await this.initialize();
       }
-      await this.initialize();
     },
     async cancelModal() {
       this.sectionNumber = "";
@@ -179,7 +187,8 @@ export default {
     sectionNumber: "",
     isDuplicatedSectionNumber: false,
     sectionStatus: "",
-    insertSectionDialog: false
+    insertSectionDialog: false,
+    snackbar: false
   }),
   mounted() {
     this.$store.commit("setCrumbs", [
