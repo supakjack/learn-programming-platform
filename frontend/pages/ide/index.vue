@@ -61,7 +61,7 @@
         <v-row>
           <v-col>
             <v-textarea
-              style="margin-top:-20px"
+              style="font-family: 'Courier New', monospace;margin-top:-20px"
               v-model="submit.source"
               autocomplete="coding"
               label="Coding"
