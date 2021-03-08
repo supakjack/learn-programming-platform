@@ -47,7 +47,7 @@
               <v-divider color="blue"></v-divider>
 
               <v-card-text class="font-weight-bold text-center">
-                เพิ่มรายวิชา
+                เพิ่มกลุ่มเรียน
               </v-card-text>
               <v-row justify="space-around">
                 <v-icon large color="blue"> mdi-plus-circle-outline </v-icon>
