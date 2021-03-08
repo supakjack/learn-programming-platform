@@ -249,6 +249,12 @@ export default {
           doesGetAll.yearName +
           " ภาคเรียนที่ " +
           doesGetAll.yearSemester;
+
+        if (doesGetAll.yearStatus == "active") {
+          doesGetAll.yearStatus = "ใช้งาน";
+        } else {
+          doesGetAll.yearStatus = "ไม่ใช้งาน";
+        }
       });
       this.yearByCreate = doesGetAll;
       this.cancelModal();
