@@ -10,7 +10,7 @@
                 {{ item.courseCode }} {{ item.courseName }}
               </v-list-item-title>
               <v-list-item-subtitle class="kanit-font"
-                >ภาคเรียน {{ item.yearId }}/{{
+                >ภาคเรียน {{ item.yearSemester }}/{{
                   item.yearName
                 }}</v-list-item-subtitle
               >
