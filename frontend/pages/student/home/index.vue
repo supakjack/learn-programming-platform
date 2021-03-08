@@ -18,7 +18,9 @@
               </v-list-item-title>
 
               <v-list-item-subtitle class="kanit-font">
-                ภาคเรียน {{ item.yearId }}/{{ item.yearName }}</v-list-item-subtitle
+                ภาคเรียน {{ item.yearId }}/{{
+                  item.yearName
+                }}</v-list-item-subtitle
               >
 
               <v-list-item-subtitle class="kanit-font text-right">
@@ -31,7 +33,8 @@
 
           <v-card-actions class="kanit-font">
             <v-list-item-subtitle
-              >อัพเดทล่าสุดวันที่ {{ item.courseUpdateDate }}</v-list-item-subtitle
+              >อัพเดทล่าสุดวันที่
+              {{ item.courseUpdateDate }}</v-list-item-subtitle
             >
           </v-card-actions>
         </v-card>
@@ -67,9 +70,7 @@ export default {
           href: "/student/home"
         }
       ]);
-      const { doesGetSome } = await this.getHome(
-        this.$store.state.user.id
-      );
+      const { doesGetSome } = await this.getStudentCourse(this.$store.state.user.id);
       await doesGetSome.map(doesGetSome => {
         doesGetSome.courseUpdateDate = this.$moment(
           doesGetSome.courseUpdateDate
@@ -86,12 +87,13 @@ export default {
       console.log(this.subjects);
       // this.yearByCreate = doesGetYearByCreate;
     },
-     async clickOpenStudentHomework(course) {
+    async clickOpenStudentHomework(course) {
+      console.log(course);
       this.$store.commit("course/setCourse", {
         course
       });
       this.$router.push("/student/homework");
-    },
+    }
   },
 
   mounted() {},
