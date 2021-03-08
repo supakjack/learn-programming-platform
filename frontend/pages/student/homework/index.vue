@@ -15,6 +15,16 @@
     height="450"
     class="elevation-1 kanit-font"
   >
+    <template v-slot:item.assignmentStatus="{ item }">
+      <v-chip :color="getColorAssignmentStatus(item.assignmentStatus)" dark>
+        {{ item.assignmentStatus }}
+      </v-chip>
+    </template>
+    <template v-slot:item.scoreResult="{ item }">
+      <v-chip :color="getColorScoreResult(item.scoreResult)" dark>
+        {{ item.scoreResult }}
+      </v-chip>
+    </template>
     <template v-slot:top>
       <v-toolbar flat class="kanit-font">
         <v-toolbar-title>ตารางงาน</v-toolbar-title>
@@ -35,7 +45,16 @@
               :items="rowProblem"
               :items-per-page="5"
               class="elevation-1"
-            >
+              ><template v-slot:item.compilelogTestResult="{ item }">
+                <v-chip
+                  :color="
+                    getColorCompilelogTestResult(item.compilelogTestResult)
+                  "
+                  dark
+                >
+                  {{ item.compilelogTestResult }}
+                </v-chip>
+              </template>
               <template v-slot:[`item.actionsDialog`]="{ item }">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
@@ -124,35 +143,56 @@ export default {
     dialogDetail: false,
     search: "", // use for search in table all column
     headers: [
-      // use to declare data and map value in header of table
+      {
+        align: "start",
+        text: "ชื่อบท",
+        value: "assignmentTitle",
+        sortable: false
+      }, // define column name and value
       {
         align: "center",
+        text: "สถานะการใช้งาน",
+        value: "assignmentStatus",
         sortable: false
       },
-      { text: "ชื่อบท", value: "assignmentTitle" }, // define column name and value
-      { text: "สถานะการใช้งาน", value: "assignmentStatus" },
-      { text: "สถานะการส่งงาน", value: "scoreResult" },
-      { text: "คะแนน", value: "showScore" },
+      {
+        align: "center",
+        text: "สถานะการส่งงาน",
+        value: "scoreResult",
+        sortable: false
+      },
+      { align: "center", text: "คะแนน", value: "showScore", sortable: false },
       { align: "center", text: "ดำเนินการ", value: "actions", sortable: false }
     ],
 
     //datas for show on dialog when click "more"
     headersDialog: [
-      // use to declare data and map value in header of table
+      // { text: "ข้อ", value: "problemId" }, // define column name and value
+      { align: "start", text: "ชื่อ", value: "problemTitle", sortable: false },
       {
-        align: "center",
+        align: "start",
+        text: "คำอธิบาย",
+        value: "problemDescription",
         sortable: false
       },
-      // { text: "ข้อ", value: "problemId" }, // define column name and value
-      { text: "ชื่อ", value: "problemTitle" },
-      { text: "คำอธิบาย", value: "problemDescription" },
-      { text: "จำนวนที่ส่ง", value: "compilelogSubmitNo" },
-      { text: "สถานะการส่งงาน", value: "compilelogTestResult" },
-      { text: "คะแนน", value: "taskScore" },
+      {
+        align: "center",
+        text: "จำนวนที่ส่ง",
+        value: "compilelogSubmitNo",
+        sortable: false
+      },
+      {
+        align: "center",
+        text: "สถานะการส่งงาน",
+        value: "compilelogTestResult",
+        sortable: false
+      },
+      { align: "center", text: "คะแนน", value: "taskScore", sortable: false },
       {
         align: "center",
         text: "ดำเนินการ",
-        value: "actionsDialog"
+        value: "actionsDialog",
+        sortable: false
       }
     ],
     editedIndex: -1, //  editedIndex default to -1
@@ -257,7 +297,6 @@ export default {
           }
         }
       }
-      console.log(dataSuccess);
 
       let dataScore = [];
       let score2 = 0;
@@ -291,7 +330,6 @@ export default {
           }
         }
       }
-      console.log(dataScore);
 
       for (let i = 0; i < dataSuccess.length; i++) {
         for (let j = 0; j < dataScore.length; j++) {
@@ -316,43 +354,23 @@ export default {
           }
         }
       }
-
-      console.log(dataSuccess);
-      // result.doesGetAll.then(res => {
-      //   console.log(res);
-      // });
-      // const { doesGetAll } = await this.getHomework();
-      // doesGetAll.map(doesGetAll => {
-      //   doesGetAll.assignmentCreateDate = this.$moment(
-      //     doesGetAll.assignmentCreateDate
-      //   ).format("Do MMM YY เวลา LT");
-      //   doesGetAll.assignmentUpdateDate = this.$moment(
-      //     doesGetAll.assignmentUpdateDate
-      //   ).format("Do MMM YY เวลา LT");
-      //   if (doesGetAll.assignmentStatus == "active") {
-      //     doesGetAll.assignmentStatus = "ใช้งาน";
-      //   } else {
-      //     doesGetAll.assignmentStatus = "ไม่ใช้งาน";
-      //   }
-      //   if (doesGetAll.sumCompilelogScore == null) {
-      //     doesGetAll.sumCompilelogScore = 0;
-      //   }
-      //   if (doesGetAll.sumCompilelogScore == doesGetAll.sumTaskScore) {
-      //     doesGetAll.result = "ส่งแล้ว";
-      //   } else if (
-      //     doesGetAll.sumCompilelogScore > 0 &&
-      //     doesGetAll.sumCompilelogScore < doesGetAll.sumTaskScore
-      //   ) {
-      //     doesGetAll.result = "ยังไม่เสร็จ";
-      //   } else if (doesGetAll.sumCompilelogScore == 0) {
-      //     doesGetAll.result = "ยังไม่ส่ง";
-      //   }
-      //   doesGetAll.sumCompilelogScore =
-      //     doesGetAll.sumCompilelogScore + "/" + doesGetAll.sumTaskScore;
-      // });
       this.allHomeworks = dataSuccess;
     },
-
+    getColorAssignmentStatus(item) {
+      if (item == "ใช้งาน") return "green";
+      else if (item == "ไม่ใช้งาน") return "orange";
+      else return "red";
+    },
+    getColorScoreResult(item) {
+      if (item == "ส่งแล้ว") return "green";
+      else if (item == "ยังไม่เสร็จ") return "orange";
+      else return "red";
+    },
+    getColorCompilelogTestResult(item) {
+      if (item == "ผ่าน") return "green";
+      else if (item == "ไม่ผ่าน") return "orange";
+      else return "red";
+    },
     async openDialog(item) {
       console.log(item);
       const { doesGetProblem } = await this.getProblem(item.assignmentId);
@@ -422,7 +440,7 @@ export default {
       });
       console.log(this.$store.state.homework.problemId);
       console.log(this.$store.state.homework.taskId);
-    },
+    }
   }
 };
 </script>

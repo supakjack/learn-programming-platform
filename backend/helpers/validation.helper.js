@@ -9,7 +9,6 @@ const getUsernameSchema = joi.object({
   userUsername: joi.string().max(255),
 });
 
-
 // update user schema
 const updateUserSchema = joi.object({
   userUsername: joi.any(),

@@ -1,6 +1,6 @@
-const express = require('express')
-const router = express.Router()
-const courseController = require('../controllers/course.controller')
+const express = require("express");
+const router = express.Router();
+const courseController = require("../controllers/course.controller");
 
 // router.patch("/", courseController.update);
 
@@ -12,6 +12,6 @@ router.get('/StudentCourse/', courseController.getStudentCourse)
 
 router.post('/', courseController.create)
 
-router.put('/', courseController.update)
+router.put("/", courseController.update);
 
-module.exports = router
+module.exports = router;

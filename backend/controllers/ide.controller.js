@@ -393,6 +393,7 @@ module.exports = {
       name: "tasks",
       condition: [{ taskId: req.body.compilelogTaskId }],
     });
+    console.log(req.body.compilelogTaskId);
 
     // Parse to Array
     doesGetTaskAll = doesGetTaskAll[0];

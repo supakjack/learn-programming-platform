@@ -7,6 +7,11 @@
     :search="search"
     class="elevation-1 kanit-font"
   >
+    <template v-slot:item.problemStatus="{ item }">
+      <v-chip :color="getColor(item.problemStatus)" dark>
+        {{ item.problemStatus }}
+      </v-chip>
+    </template>
     <template v-slot:top>
       <v-toolbar flat class="kanit-font">
         <v-toolbar-title>ตารางโจทย์ปัญหา</v-toolbar-title>
@@ -25,7 +30,7 @@
         </v-btn> -->
         <v-dialog
           v-model="dialog"
-          fullscreen
+          width="1280px"
           hide-overlay
           transition="dialog-bottom-transition"
         >
@@ -94,6 +99,30 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <v-dialog v-model="dialogPicture" max-width="500px">
+          <v-card>
+            <div id="app" v-if="imagePicture != ''">
+              <h2>รูปภาพตัวอย่าง:</h2>
+              <v-img
+                :src="require('../../../../storages/picture/' + imagePicture)"
+                aspect-ratio="1.5"
+                max-height="500"
+                contain
+              ></v-img>
+            </div>
+            <div v-else>
+              <center>
+                <h2>ไม่พบรูปภาพตัวอย่าง</h2>
+              </center>
+            </div>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" text @click="closeDialogPicture()">
+                ปิด
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-toolbar>
     </template>
 
@@ -107,12 +136,12 @@
             v-on="on"
             small
             class="mr-2"
-            @click="openDialog(item)"
+            @click="openDialogPicture(item)"
           >
-            mdi-information
+            mdi-image
           </v-icon>
         </template>
-        <span>เพิ่มเติม</span>
+        <span>รูปภาพตัวอย่าง</span>
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
@@ -163,6 +192,8 @@ export default {
     insertStep2
   },
   data: () => ({
+    formTitle: "สร้างโจทย์",
+    imagePicture: "",
     editAllItem: [],
     hashtagResult: [],
     testsetResult: [],
@@ -174,17 +205,13 @@ export default {
     allProblems: [],
     dialog: false,
     dialogDelete: false, // if true show delete modal
+    dialogPicture: false,
     search: "",
     headers: [
-      {
-        align: "start",
-        sortable: false
-        // value: "problemId"
-      },
-      { text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
-      { text: "วันที่สร้าง", value: "problemCreateDate" },
-      { text: "สถานะ", value: "problemStatus" },
-      { text: "ดำเนินการ", value: "actions", sortable: false }
+      { align: "start", text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
+      { align: "center", text: "วันที่สร้าง", value: "problemCreateDate" },
+      { align: "center", text: "สถานะ", value: "problemStatus" },
+      { align: "center", text: "ดำเนินการ", value: "actions", sortable: false }
     ],
     editedIndex: -1, //  editedIndex default to -1
     editedItem: {
@@ -219,12 +246,12 @@ export default {
   }),
 
   computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "สร้างโจทย์ปัญหา" : "แก้ไขโจทย์ปัญหา";
-    },
-    SuccessTitle() {
-      return this.editedIndex === -1 ? "บันทึกสำเร็จ" : "แก้ไขสำเร็จ";
-    }
+    // formTitle() {
+    //   return this.editedIndex === -1 ? "สร้างโจทย์ปัญหา" : "แก้ไขโจทย์ปัญหา";
+    // },
+    // SuccessTitle() {
+    //   return this.editedIndex === -1 ? "บันทึกสำเร็จ" : "แก้ไขสำเร็จ";
+    // }
   },
 
   watch: {
@@ -255,9 +282,25 @@ export default {
       const { doesGetAll } = await this.getProblem();
 
       doesGetAll.map(doesGetAll => {
-        doesGetAll.problemCreateDate = this.$moment(
-          doesGetAll.problemCreateDate
-        ).format("Do MMM YY เวลา LT");
+        let dayCreateDate = this.$moment(doesGetAll.problemCreateDate).format(
+          "Do"
+        );
+        let monthCreateDate = this.$moment(doesGetAll.problemCreateDate).format(
+          "MMM"
+        );
+        let yearCreateDate =
+          this.$moment(doesGetAll.problemCreateDate.getFullYear).year() + 543;
+        let timeCreateDate = this.$moment(doesGetAll.problemUpdateDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.problemCreateDate =
+          dayCreateDate +
+          " " +
+          monthCreateDate +
+          " " +
+          yearCreateDate +
+          timeCreateDate;
+
         doesGetAll.problemUpdateDate = this.$moment(
           doesGetAll.problemUpdateDate
         ).format("Do MMM YY เวลา LT");
@@ -267,7 +310,14 @@ export default {
           doesGetAll.problemStatus = "ไม่ใช้งาน";
         }
       });
+
+      // console.log(doesGetAll);
       this.allProblems = doesGetAll;
+    },
+    getColor(item) {
+      if (item == "ใช้งาน") return "green";
+      else if (item == "ไม่ใช้งาน") return "orange";
+      else return "red";
     },
 
     // add and save problem-data to database
@@ -281,7 +331,6 @@ export default {
             formData.append("singleFile", file);
           }
         }
-        console.log([...formData]);
         let createHashtagData = [];
         for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
           const dataHashtag = {
@@ -339,7 +388,6 @@ export default {
         let formData = new FormData();
         let fileOldId = null;
         let pictureOldId = null;
-        console.log(this.$store.state.problem.files);
         if (this.$store.state.problem.files) {
           for (let file of this.$store.state.problem.files) {
             formData.append("singleFile", file);
@@ -348,10 +396,6 @@ export default {
           pictureOldId = this.editAllItem.pictureId;
           console.log(fileOldId);
         }
-        console.log([...formData]);
-        //process delete
-        console.log(this.hashtagResult);
-        console.log(this.testsetResult);
         const hashtagId = this.hashtagResult.map(res => {
           return res.hashtagId;
         });
@@ -366,12 +410,9 @@ export default {
           pictureId: pictureOldId
         };
 
-        console.log(dataCondition);
         const resultDelete = await this.deleteProblem(dataCondition);
-        console.log(resultDelete);
 
         //process edit and insert
-        console.log(this.$store.state.problem);
         let updateHashtagData = [];
         for (let i = 0; i < this.$store.state.problem.tags.length; i++) {
           const dataHashtag = {
@@ -430,19 +471,19 @@ export default {
           formData.append("updateFilesData", null);
           formData.append("updatePicturesData", null);
         }
-        console.log([...formData]);
         const updateResult = await this.updateProblem(
           formData,
           this.editProblemId
         );
       }
       this.close();
+      this.formTitle = "สร้างโจทย์";
     },
 
     //edit problem-data by problemId
     async editItem(item) {
+      this.formTitle = "แก้ไขโจทย์";
       this.editAllItem = item;
-      console.log(this.$store.state.problem);
       const hashtag = this.editHashtag(item.problemId);
       const testset = this.editTestset(item.problemId);
       const picture = this.editPicture(item.problemId);
@@ -460,13 +501,6 @@ export default {
       this.arrayHashtag = this.hashtagResult.map(res => {
         return res.hashtagTagId;
       });
-
-      console.log(item);
-      console.log(this.hashtagResult);
-      console.log(this.testsetResult);
-      console.log(this.arrayHashtag);
-      console.log(this.pictureResult);
-
       let arrayTestset = [];
       this.testsetResult.map(res => {
         const data = {
@@ -498,8 +532,6 @@ export default {
           testset: arrayTestset
         }
       });
-
-      console.log(this.$store.state.problem);
       this.watchArray = [
         { name: "id", val: this.$store.state.problem.id },
         { name: "title", val: this.$store.state.problem.title },
@@ -576,7 +608,7 @@ export default {
         ];
         console.log(this.watchArray);
       });
-      console.log(this.$store.state.problem);
+      this.formTitle = "สร้างโจทย์";
       await this.initialize();
     },
 
@@ -597,6 +629,22 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editProblemId = -1;
       });
+    },
+    openDialogPicture(item) {
+      console.log(item);
+      if (item.filePath != null) {
+        let text = item.filePath.replaceAll("\\", "/");
+
+        var path = text.substr(20, text.length);
+
+        this.imagePicture = path;
+      }
+      console.log(this.imagePicture);
+      this.dialogPicture = true;
+    },
+    closeDialogPicture() {
+      this.dialogPicture = false;
+      this.imagePicture = "";
     }
   }
 };
