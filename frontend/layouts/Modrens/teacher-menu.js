@@ -11,6 +11,11 @@ export default [
     icon: "fas fa-home"
   },
   {
+    title: "ปีการศึกษา",
+    href: "/year",
+    icon: "fas fa-code"
+  },
+  {
     active: true,
     child: [
       {
