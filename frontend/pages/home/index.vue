@@ -265,6 +265,12 @@ export default {
         doesGetSome.courseUpdateDate = this.$moment(
           doesGetSome.courseUpdateDate
         ).format("Do MMM YY เวลา LT");
+
+        if (doesGetSome.courseStatus == "active") {
+          doesGetSome.courseStatus = "ใช้งาน";
+        } else {
+          doesGetSome.courseStatus = "ไม่ใช้งาน";
+        }
       });
       await doesGetYearByCreate.map(doesGetYearByCreate => {
         doesGetYearByCreate.text =
