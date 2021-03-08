@@ -57,6 +57,11 @@ module.exports = {
             doesSelect.where(condition);
           });
         }
+        if (table.whereInName) {
+          table.whereInName.forEach((whereInName) => {
+          doesSelect.whereIn(whereInName, table.whereInValue);
+          });
+        }
         if (table.like) {
           table.like.forEach((like) => {
             doesSelect.where(like.name, "like", like.condition);
