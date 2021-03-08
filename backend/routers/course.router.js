@@ -5,7 +5,10 @@ const courseController = require('../controllers/course.controller')
 // router.patch("/", courseController.update);
 
 router.get('/', courseController.get)
+
 router.get('/section/:id', courseController.getSection)
+
+router.get('/StudentCourse/', courseController.getStudentCourse)
 
 router.post('/', courseController.create)
 
