@@ -258,9 +258,13 @@ export default {
           href: "/home"
         }
       ]);
-      const { doesGetSome, doesGetYearByCreate } = await this.getHome(
-        this.$store.state.user.id
-      );
+      const checkPermission = await this.$store.state.user.permission.filter(
+        p => p == "teacher"
+      ).length;
+
+      const { doesGetSome, doesGetYearByCreate } = (await checkPermission)
+        ? await this.getHomeTeacher(this.$store.state.user.id)
+        : await this.getHome(this.$store.state.user.id);
       await doesGetSome.map(doesGetSome => {
         doesGetSome.courseUpdateDate = this.$moment(
           doesGetSome.courseUpdateDate
