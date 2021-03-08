@@ -1,4 +1,5 @@
 const createError = require("http-errors");
+const knex = require("./../helpers/init_knex");
 const globalModel = require("../models/global.model");
 const {
   getAssignmentSchema,
@@ -71,20 +72,59 @@ module.exports = {
           "assignmentEndDate",
           "assignmentStatus",
         ],
+      });
+      res.status(201).send({ doesGetAll });
+    } catch (error) {
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
 
-        // leftJoin: [
-        //   {
-        //     joinTable: "sections",
-        //     leftKey: "asssignmentSectionId",
-        //     joinKey: "sectionCourseId",
-        //   },
+  // function name: get
+  // description: create Assignment by API
+  // input: query string : condition {assingmetTitle, assingmentDescription, assingmentStartDate, assingmentEndDate ,assingmentStatus}
+  // output: {assingmetTitle, assingmentDescription, assingmentStartDate, assingmentEndDate ,assingmentStatus}
+  // CreateBy: Atikom Wongwan / CreateDate: 19/2/2021
+  // UpdateBy: Niphitphon Thantkulkit / UpdateDate: 28/2/2021
 
-        //   {
-        //     joinTable: "enrolls",
-        //     leftKey: "sectionCourseId",
-        //     joinKey: "enrollSectionId",
-        //   },
+  getProblemByTag: async (req, res, next) => {
+    // passing data from query string validate data from
+    // const getAssignmentData = await getAssignmentSchema.validateAsync(
+    //   req.query
+    // );
+
+    try {
+      // const doesGetAll = await knex
+      //   .select("*")
+      //   .from("tags")
+      //   .leftJoin("hashtags", "tags.tagId", "hashtags.hashtagTagId")
+      //   .leftJoin(
+      //     "problems",
+      //     "hashtags.hashtagProblemId",
+      //     "problems.problemId"
+      //   );
+      const doesGetAll = await globalModel.select({
+        name: "tags",
+        whereInName: [req.body.tagId],
+        whereInValue: req.body.tagIdValue,
+        whereNot: [{ problemStatus: "delete" }],
+        // filter: [
+        //   "problemTitle",
         // ],
+        leftJoin: [
+          {
+            joinTable: "hashtags",
+            leftTableName: "tags",
+            leftKey: "tagId",
+            joinKey: "hashtagTagId",
+          },
+          {
+            joinTable: "problems",
+            leftTableName: "hashtags",
+            leftKey: "hashtagProblemId",
+            joinKey: "problemId",
+          },
+        ],
       });
       res.status(201).send({ doesGetAll });
     } catch (error) {
