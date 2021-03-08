@@ -41,6 +41,22 @@
                   <v-row>
                     <v-col cols="12" sm="9" md="9">
                       <v-text-field
+                        v-model="password"
+                        label="ยืนยันรหัสผ่าน"
+                        hint="กรอกรหัสผ่านของตนเอง"
+                        type="password"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-btn color="blue darken-1" text @click="clear">
+                        Clear
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col cols="12" sm="9" md="9">
+                      <v-text-field
                         v-model="editedItem.userUsername"
                         label="รหัสผู้ใช้"
                         hint="กรอกรหัสนิสิต 8 หลัก"
@@ -245,6 +261,7 @@ import usersmixin from "../../../components/users";
 export default {
   mixins: [usersmixin],
   data: () => ({
+    password: "",
     snackbar: false,
     text: `มีรหัสนิสิตนี้แล้ว กรุณากรอกใหม่!!!`,
     timeout: 2000,
@@ -350,11 +367,11 @@ export default {
     },
 
     async getUserLdap() {
-      const { user } = await this.getUserByUsername(
-        this.editedItem.userUsername
-      );
+      const { user } = await this.getUserByUsername([
+        this.password,
+        this.editedItem.userUsername,
+      ]);
       this.userLDAP = user;
-      // console.log(this.userLDAP);
     },
     editItem(item) {
       console.log(item);
@@ -496,6 +513,9 @@ export default {
     getColor(userStatus) {
       if (userStatus == "ไม่ใช้งาน") return "red";
       else return "green";
+    },
+    clear() {
+      this.userLDAP.givenName = "";
     },
   },
 };

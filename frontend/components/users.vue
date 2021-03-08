@@ -9,10 +9,11 @@ export default {
     },
 
     async getUserByUsername(data) {
+      // console.log(data);
       const username = this.$store.state.user.username;
-      const password = this.$store.state.user.password;
+      const password = data[0];
       return this.$axios.$get(
-        `auth/getUser/${data}?username=` + username + "&password=" + password
+        `auth/getUser/${data[1]}?username=` + username + "&password=" + password
       );
     },
 
