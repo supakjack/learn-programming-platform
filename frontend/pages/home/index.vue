@@ -258,7 +258,7 @@ export default {
           href: "/home"
         }
       ]);
-      const { doesGetSome, doesGetYearByCreate } = await this.getHome(
+      const { doesGetSome, doesGetYearByCreate } = await this.getTeacherCourse(
         this.$store.state.user.id
       );
       await doesGetSome.map(doesGetSome => {
