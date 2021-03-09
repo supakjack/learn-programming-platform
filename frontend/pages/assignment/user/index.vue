@@ -5,7 +5,7 @@
       :items="users"
       :search="search"
       sort-by="userUsername"
-      class="elevation-1"
+      class="elevation-1 .kanit-font"
     >
       <template v-slot:[`item.userStatus`]="{ item }">
         <v-chip :color="getColor(item.userStatus)" dark>
@@ -39,18 +39,13 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="9" md="9">
+                    <v-col cols="12" sm="12" md="12">
                       <v-text-field
                         v-model="password"
                         label="ยืนยันรหัสผ่าน"
                         hint="กรอกรหัสผ่านของตนเอง"
                         type="password"
                       ></v-text-field>
-                    </v-col>
-                    <v-col>
-                      <v-btn color="blue darken-1" text @click="clear">
-                        Clear
-                      </v-btn>
                     </v-col>
                   </v-row>
 
@@ -374,7 +369,7 @@ export default {
       this.userLDAP = user;
     },
     editItem(item) {
-      console.log(item);
+      // console.log(item);
       this.editedIndex = this.users.indexOf(item);
       this.editedItem.userId = item.userId;
       this.editedItem.userUsername = item.userUsername;
@@ -514,11 +509,14 @@ export default {
       if (userStatus == "ไม่ใช้งาน") return "red";
       else return "green";
     },
-    clear() {
-      this.userLDAP.givenName = "";
-    },
   },
 };
 </script>
 <style lang="scss">
+.roboto-font {
+  font-family: "Roboto", sans-serif;
+}
+.kanit-font {
+  font-family: "Kanit", sans-serif;
+}
 </style>

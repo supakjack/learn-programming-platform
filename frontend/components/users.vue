@@ -9,7 +9,6 @@ export default {
     },
 
     async getUserByUsername(data) {
-      // console.log(data);
       const username = this.$store.state.user.username;
       const password = data[0];
       return this.$axios.$get(
@@ -47,7 +46,6 @@ export default {
         .$patch(`user/?userId=${data.userId}`, editData)
         .catch((err) => console.log(err))
         .then((response) => response.doesUpdate);
-      console.log(result);
       return result;
     },
 
@@ -66,7 +64,6 @@ export default {
       InsertData.userCreateBy = this.$store.state.course.userId;
       InsertData.userUpdateBy = this.$store.state.course.userId;
       InsertData.sectionId = this.$store.state.course.sectionId;
-      console.log(InsertData);
       return this.$axios
         .$post("user", InsertData)
         .catch((error) => {
@@ -75,7 +72,6 @@ export default {
         .then((response) => response.doesCreate);
     },
     async insertFile(data) {
-      console.log(data);
       return this.$axios
         .$post("user/upload", data, {
           headers: {
