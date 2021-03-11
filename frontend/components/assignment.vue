@@ -11,6 +11,17 @@ export default {
       return this.$axios.$get(`assignment/?assignmentSectionId=${data}`);
     },
 
+    // function name: getProblemBytag
+    // description: get from backend API
+    // input: -
+    // output: [doesGetAll]: {assingmetTitle, assingmentDescription, assingmentStartDate, assingmentEndDate ,assingmentStatus}
+    // CreateBy: Niphitphon Thanatkulkit / UpdateDate: 28/2/2021
+    // UpdateBy: Niphitphon Thanatkulkit / UpdateDate: 28/2/2021
+    async getProblemByTag(data) {
+      console.log(data);
+      return this.$axios.$post(`assignment/problemByTag`, data);
+    },
+
     // function name: insertAssingment
     // description: sending assingment insert data from assingment component to backend and use API to create in database
     // input: [data]: {assingmentName,assingmentStatus,assingmentCreateBy,assingmentUpdateBy}
