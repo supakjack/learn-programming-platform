@@ -12,7 +12,7 @@ router.patch("/", assignmentController.update);
 // Get assignment by condition ๆ
 router.get("/", assignmentController.get);
 
-router.get("/problemByTag", assignmentController.getProblemByTag);
+router.post("/problemByTag", assignmentController.getProblemByTag);
 
 
 module.exports = router
