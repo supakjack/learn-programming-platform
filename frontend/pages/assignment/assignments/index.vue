@@ -176,7 +176,11 @@ Last edit: 19/2/2021 -->
                       ></v-combobox>
                     </v-col>
                     <v-col cols="6" md="1">
-                      <v-btn elevation="2" class="mt-3 ml-4">
+                      <v-btn
+                        elevation="2"
+                        class="mt-3 ml-4"
+                        @click="searchProblemByTag()"
+                      >
                         ค้นหา
                       </v-btn>
                     </v-col>
@@ -199,50 +203,30 @@ Last edit: 19/2/2021 -->
                         <v-tooltip bottom>
                           <template v-slot:activator="{ on, attrs }">
                             <v-icon
-                              color="primary"
+                              color="green"
                               v-bind="attrs"
                               v-on="on"
                               small
                               class="mr-2"
-                              @click="openDialog(item)"
+                              @click="addProblem(item)"
                             >
-                              mdi-information
+                              mdi-plus
                             </v-icon>
                           </template>
-                          <span>เพิ่มเติม</span>
-                        </v-tooltip>
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-icon
-                              color="orange"
-                              v-bind="attrs"
-                              v-on="on"
-                              small
-                              class="mr-2"
-                              @click="editItem(item)"
-                            >
-                              mdi-pencil
-                            </v-icon>
-                          </template>
-                          <span>แก้ไข</span>
-                        </v-tooltip>
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-icon
-                              color="red"
-                              v-bind="attrs"
-                              v-on="on"
-                              small
-                              @click="deleteItem(item)"
-                            >
-                              mdi-delete
-                            </v-icon>
-                          </template>
-                          <span>ลบ</span>
+                          <span>เพิ่ม</span>
                         </v-tooltip>
                       </template>
                     </v-data-table>
                   </v-card>
+                  <v-combobox
+                    clearable
+                    hide-selected
+                    multiple
+                    persistent-hint
+                    small-chips
+                    v-model="selectProblem"
+                    label="โจทย์ที่เลือก"
+                  ></v-combobox>
                 </v-card>
                 <!-- <insertStep1 /> -->
                 <v-card-actions>
@@ -292,25 +276,6 @@ Last edit: 19/2/2021 -->
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <!--
-        <v-dialog v-model="dialogSuccess" max-width="500px">
-          <v-card>
-            <v-card-title class="kanit-font text-center">
-              {{ SuccessTitle }}
-            </v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="blue darken-1 kanit-font"
-                text
-                @click="closeSuccess"
-              >
-                ตกลง
-              </v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog> -->
       </v-toolbar>
     </template>
 
@@ -463,6 +428,7 @@ export default {
     ],
     pageStep: 1,
     selectTag: [],
+    selectProblem: [],
     tagItems: [],
     allProblems: []
   }),
@@ -595,7 +561,7 @@ export default {
         }
       });
       this.allProblems = doesGetAll;
-      console.log(doesGetAll);
+      console.log("getProblemData", doesGetAll);
     },
 
     editItem(item) {
@@ -631,17 +597,44 @@ export default {
       });
     },
 
-    // save() {
-    //   if (this.editedIndex > -1) {
-    //     //Save for edit
-    //     Object.assign(this.allAssignment[this.editedIndex], this.editedItem);
-    //   } else {
-    //     //Save for add
-    //     console.log(this.editedItem);
-    //     this.allAssignment.push(this.editedItem);
-    //   }
-    //   this.close();
-    // },
+    async searchProblemByTag() {
+      const tagData = { tagId: "tagId" };
+      let tagIdValue = [];
+      this.selectTag.forEach(element => {
+        tagIdValue.push(element.value);
+      });
+      tagData.tagIdValue = tagIdValue;
+      console.log(tagData);
+      if (this.selectTag != "") {
+        var { doesGetAll } = await this.getProblemByTag(tagData);
+      } else {
+        var { doesGetAll } = await this.getProblem();
+      }
+      doesGetAll.map(doesGetAll => {
+        doesGetAll.problemCreateDate = this.$moment(
+          doesGetAll.problemCreateDate
+        ).format("Do MMM YY เวลา LT");
+        doesGetAll.problemUpdateDate = this.$moment(
+          doesGetAll.problemUpdateDate
+        ).format("Do MMM YY เวลา LT");
+        if (doesGetAll.problemStatus == "active") {
+          doesGetAll.problemStatus = "ใช้งาน";
+        } else {
+          doesGetAll.problemStatus = "ไม่ใช้งาน";
+        }
+      });
+      console.log("searchProblemByTag", doesGetAll);
+      this.allProblems = doesGetAll;
+    },
+
+    async addProblem(item) {
+      let data = {};
+      data.text = item.problemTitle;
+      data.value = item.problemId;
+      // doesGetAll.tagId;
+      this.selectProblem.push(data);
+    },
+
     async openReportDialog(item) {
       console.log(item);
       const result = this.getUserAssignment(item.assignmentId);
