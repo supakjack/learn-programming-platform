@@ -2,7 +2,7 @@
   <v-data-table
     :headers="headers"
     :footer-props="{
-      'items-per-page-options': [8, 15, 20, -1],
+      'items-per-page-options': [5, 10, 15, -1],
       'items-per-page-text': `จำนวนแถวต่อหน้า`,
       'items-per-page-all-text': `ทั้งหมด`
     }"
