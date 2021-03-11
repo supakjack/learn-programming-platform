@@ -5,7 +5,7 @@
       :items="users"
       :search="search"
       sort-by="userUsername"
-      class="elevation-1"
+      class="elevation-1 .kanit-font"
     >
       <template v-slot:[`item.userStatus`]="{ item }">
         <v-chip :color="getColor(item.userStatus)" dark>
@@ -38,6 +38,17 @@
 
               <v-card-text>
                 <v-container>
+                  <v-row>
+                    <v-col cols="12" sm="12" md="12">
+                      <v-text-field
+                        v-model="password"
+                        label="ยืนยันรหัสผ่าน"
+                        hint="กรอกรหัสผ่านของตนเอง"
+                        type="password"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+
                   <v-row>
                     <v-col cols="12" sm="9" md="9">
                       <v-text-field
@@ -245,6 +256,7 @@ import usersmixin from "../../../components/users";
 export default {
   mixins: [usersmixin],
   data: () => ({
+    password: "",
     snackbar: false,
     text: `มีรหัสนิสิตนี้แล้ว กรุณากรอกใหม่!!!`,
     timeout: 2000,
@@ -350,14 +362,14 @@ export default {
     },
 
     async getUserLdap() {
-      const { user } = await this.getUserByUsername(
-        this.editedItem.userUsername
-      );
+      const { user } = await this.getUserByUsername([
+        this.password,
+        this.editedItem.userUsername,
+      ]);
       this.userLDAP = user;
-      // console.log(this.userLDAP);
     },
     editItem(item) {
-      console.log(item);
+      // console.log(item);
       this.editedIndex = this.users.indexOf(item);
       this.editedItem.userId = item.userId;
       this.editedItem.userUsername = item.userUsername;
@@ -501,4 +513,10 @@ export default {
 };
 </script>
 <style lang="scss">
+.roboto-font {
+  font-family: "Roboto", sans-serif;
+}
+.kanit-font {
+  font-family: "Kanit", sans-serif;
+}
 </style>

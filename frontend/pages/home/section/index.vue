@@ -28,6 +28,12 @@
             <v-btn color="primary" @click="clickOpenUserSection(item)" text
               >จัดการกลุ่มเรียน</v-btn
             >
+            <v-btn color="warning" @click="clickOpenEditSection(item)" text
+              >แก้ไข</v-btn
+            >
+            <v-btn color="error" @click="clickOpenDeleteSection(item)" text
+              >ลบ</v-btn
+            >
           </v-card-actions>
         </v-card>
       </div>
@@ -98,8 +104,98 @@
         </v-dialog>
       </v-row>
     </v-card>
+    <!-- update dialog -->
+    <v-dialog v-model="updateSectionDialog" persistent max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="">แก้ไขกลุ่มเรียน</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" sm="12" md="8">
+                <v-text-field
+                  v-model="sectionNumber"
+                  label="กลุ่มเรียนที่*"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-select
+                  v-model="sectionStatus"
+                  :items="[
+                    { text: 'ใช้งาน', val: 1 },
+                    { text: 'ปิดใช้งาน', val: 2 }
+                  ]"
+                  item-text="text"
+                  item-value="val"
+                  label="สถานะ*"
+                  required
+                ></v-select>
+              </v-col>
+            </v-row>
+          </v-container>
+          <small>*โปรดระบุข้อมูลที่ต้องการ</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="cancelModal">
+            ยกเลิก
+          </v-btn>
+          <v-btn color="blue darken-1" text @click="clickUpdateSection">
+            บันทึก
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- delete dialog -->
+    <v-dialog v-model="deleteSectionDialog" persistent max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="">ลบกลุ่มเรียน</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" sm="12" md="8">
+                <v-text-field
+                  readonly
+                  v-model="sectionNumber"
+                  label="กลุ่มเรียนที่*"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-select
+                  readonly
+                  v-model="sectionStatus"
+                  :items="[
+                    { text: 'ใช้งาน', val: 1 },
+                    { text: 'ปิดใช้งาน', val: 2 }
+                  ]"
+                  item-text="text"
+                  item-value="val"
+                  label="สถานะ*"
+                  required
+                ></v-select>
+              </v-col>
+            </v-row>
+          </v-container>
+          <small>*โปรดระบุข้อมูลที่ต้องการ</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="cancelModal">
+            ยกเลิก
+          </v-btn>
+          <v-btn color="error darken-1" text @click="clickUpdateSection(3)">
+            ลบ
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-snackbar v-model="snackbar">
-      กลุ่มเรียนที่ {{ sectionNumber }} มีอยู่แล้วไม่สามารถเพิ่มได้
+      กลุ่มเรียนที่ {{ sectionNumber }} มีอยู่แล้ว
       <template v-slot:action="{ attrs }">
         <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
           Close
@@ -147,6 +243,40 @@ export default {
       });
       this.$router.push("/assignment");
     },
+    async clickUpdateSection(status) {
+      if (this.isDuplicatedEditSectionNumber && status != 3) {
+        this.snackbar = true;
+      } else {
+        const updateData = {
+          sectionId: this.sectionId,
+          sectionNumber: this.sectionNumber,
+          sectionStatus: this.sectionStatus,
+          sectionCreateBy: this.$store.state.user.id,
+          sectionUpdateBy: this.$store.state.user.id
+        };
+        console.log(updateData);
+        if (status == 3) {
+          updateData.sectionStatus = 3;
+        }
+        await this.updateSection(updateData);
+        await this.initialize();
+      }
+    },
+    async clickOpenEditSection(section) {
+      console.log(section);
+      this.updateSectionDialog = true;
+      this.sectionId = section.sectionId;
+      this.sectionNumber = section.sectionNumber;
+      this.editSectionNumber = section.sectionNumber;
+      this.sectionStatus = section.sectionStatus == "active" ? 1 : 2;
+    },
+    async clickOpenDeleteSection(section) {
+      this.deleteSectionDialog = true;
+      this.sectionId = section.sectionId;
+      this.sectionNumber = section.sectionNumber;
+      this.sectionStatus = section.sectionStatus == "active" ? 1 : 2;
+      console.log(section);
+    },
     async clickInsertSection() {
       if (this.isDuplicatedSectionNumber) {
         this.snackbar = true;
@@ -167,16 +297,41 @@ export default {
       this.sectionNumber = "";
       this.sectionStatus = "";
       this.insertSectionDialog = false;
+      this.updateSectionDialog = false;
+      this.deleteSectionDialog = false;
     }
   },
   watch: {
-    sectionNumber(val) {
-      if (this.allCourses.filter(a => a.sectionNumber == val).length) {
+    async sectionNumber(val) {
+      console.log(
+        "check : " +
+          (await this.allCourses.filter(a => a.sectionNumber == val).length)
+      );
+      if (await this.allCourses.filter(a => a.sectionNumber == val).length) {
         this.isDuplicatedSectionNumber = true;
       } else {
         this.isDuplicatedSectionNumber = false;
       }
-      console.log(this.isDuplicatedSectionNumber);
+      if (this.editSectionNumber == val) {
+        console.log("edit same origin number");
+        this.isDuplicatedEditSectionNumber = false;
+      } else if (
+        (await this.allCourses.filter(a => a.sectionNumber == val).length) <= 1
+      ) {
+        console.log("edit change origin number");
+        if (await this.allCourses.filter(a => a.sectionNumber == val).length) {
+          this.isDuplicatedEditSectionNumber = true;
+          console.log("edit change origin number  dupicate");
+        } else {
+          this.isDuplicatedEditSectionNumber = false;
+          console.log("edit change origin number not dupicate");
+        }
+      } else {
+        this.isDuplicatedEditSectionNumber = true;
+      }
+      console.log(
+        "isDuplicatedEditSectionNumber : " + this.isDuplicatedEditSectionNumber
+      );
     }
   },
   created() {
@@ -184,10 +339,15 @@ export default {
   },
   data: () => ({
     allCourses: [],
+    sectionId: "",
     sectionNumber: "",
+    editSectionNumber: "",
     isDuplicatedSectionNumber: false,
+    isDuplicatedEditSectionNumber: false,
     sectionStatus: "",
     insertSectionDialog: false,
+    updateSectionDialog: false,
+    deleteSectionDialog: false,
     snackbar: false
   }),
   mounted() {

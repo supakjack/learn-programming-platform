@@ -61,8 +61,8 @@ export default {
   layout: "blank",
   data() {
     return {
-      username: "60160344",
-      password: "050440705bB_",
+      username: "",
+      password: "",
       loading: false,
       hidePassword: true,
       error: false,
@@ -83,8 +83,6 @@ export default {
         const response = await this.$auth.loginWith("local", {
           data: payload
         });
-        console.log(response);
-        // this.$router.push('/home');
         if (response.data.token) {
           await this.$store.commit("user/setUser", {
             user: {
@@ -96,15 +94,14 @@ export default {
             }
           });
           if (response.data.permission.indexOf("teacher") != -1) {
-            console.log(response.data);
             this.$router.push("/home");
           } else {
             this.$router.push("/student/home");
           }
           this.$vs.notify({
             color: "danger",
-            title: "Invalid Username and password",
-            text: "Please enter your username or password again."
+            title: "รหัสผู้ใช้งาน หรือรหัสผ่านผิด",
+            text: "กรุณากรอกรหัสผู้ใช้งาน หรือรหัสผ่านใหม่อีกครั้ง!"
           });
         }
       } catch (err) {

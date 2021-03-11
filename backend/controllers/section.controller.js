@@ -34,4 +34,18 @@ module.exports = {
       next(error);
     }
   },
+  update: async (req, res, next) => {
+    try {
+      const doesUpdate = await globalModel.update({
+        name: "sections",
+        condition: [{ sectionId: req.body.sectionId }],
+        updateData: [req.body],
+      });
+      res.status(200).send({ doesUpdate });
+    } catch (error) {
+      console.log(error);
+      if (error.isJoi === true) return next(createError.InternalServerError());
+      next(error);
+    }
+  },
 };

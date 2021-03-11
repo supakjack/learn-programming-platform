@@ -10,7 +10,7 @@
                 {{ item.courseCode }} {{ item.courseName }}
               </v-list-item-title>
               <v-list-item-subtitle class="kanit-font"
-                >ภาคเรียน {{ item.yearId }}/{{
+                >ภาคเรียน {{ item.yearSemester }}/{{
                   item.yearName
                 }}</v-list-item-subtitle
               >
@@ -261,6 +261,7 @@ export default {
       const { doesGetSome, doesGetYearByCreate } = await this.getTeacherCourse(
         this.$store.state.user.id
       );
+      console.log(doesGetYearByCreate);
       await doesGetSome.map(doesGetSome => {
         doesGetSome.courseUpdateDate = this.$moment(
           doesGetSome.courseUpdateDate

@@ -128,7 +128,6 @@ module.exports = {
   },
   upload: async (req, res, next) => {
     // console.log(req.files);
-    console.log("req.body" + req.body);
     const singleFile = req.files ? req.files.singleFile : null;
     const randomFileName = nanoid(10);
     // console.log(singleFile);
@@ -142,7 +141,7 @@ module.exports = {
     readXlsxFile(path).then(async (rows) => {
       rows.shift();
       let users = [];
-      rows.forEach((row) => {
+      rows.forEach(async (row) => {
         let user = {
           userUsername: row[0],
           userPrefixThai: row[1],
@@ -151,49 +150,81 @@ module.exports = {
           userCreateBy: req.body.userId,
           userUpdateBy: req.body.userId,
         };
-        users.push(user);
+        try {
+          const doesGet = await globalModel.select({
+            name: "users",
+            condition: [{ userUsername: user.userUsername }],
+            leftJoin: [
+              {
+                joinTable: "enrolls",
+                leftTableName: "users",
+                leftKey: "userId",
+                joinKey: "enrollUserId",
+              },
+            ],
+          });
+          console.log(doesGet);
+
+          if (
+            doesGet.length &&
+            doesGet[0].enrollSectionId != req.body.sectionId
+          ) {
+            const doesCreateEnrollByUserId = await globalModel.insert({
+              name: "enrolls",
+              insertData: [
+                {
+                  enrollUserId: doesGet[0].userId,
+                  enrollSectionId: req.body.sectionId,
+                  enrollRole: "student",
+                  enrollStatus: req.body.userStatus,
+                  enrollCreateBy: req.body.userCreateBy,
+                  enrollUpdateBy: req.body.userUpdateBy,
+                },
+              ],
+            });
+            let result = await rmdir(path, function (err, dirs, files) {
+              console.log("all files are removed");
+            });
+            res.status(200).send(doesCreateEnrollByUserId);
+          } else if (
+            doesGet.length &&
+            doesGet[0].enrollSectionId == req.body.sectionId
+          ) {
+            let result = await rmdir(path, function (err, dirs, files) {
+              console.log("all files are removed");
+            });
+            res.status(200).send("User already exists");
+          } else {
+            const doesCreate = await problemsModel.insertReturnId({
+              name: "users",
+              insertData: user,
+            });
+            console.log(doesCreate);
+
+            const doesCreateEnrollByUserId = await globalModel.insert({
+              name: "enrolls",
+              insertData: [
+                {
+                  enrollUserId: doesCreate,
+                  enrollSectionId: req.body.sectionId,
+                  enrollRole: "student",
+                  enrollStatus: 1,
+                  enrollCreateBy: req.body.userId,
+                  enrollUpdateBy: req.body.userId,
+                },
+              ],
+            });
+            let result = await rmdir(path, function (err, dirs, files) {
+              console.log("all files are removed");
+            });
+            res.status(200).send({ doesCreate, doesCreateEnrollByUserId });
+          }
+        } catch (error) {
+          if (error.isJoi === true)
+            return next(createError.InternalServerError());
+          next(error);
+        }
       });
-      console.log(users);
-      // await rows.map((row) => {
-      //   (userUsername = row[0]),
-      //     (userPrefixThai = row[1]),
-      //     (userFirstnameThai = row[2]),
-      //     (userLastnameThai = row[3]),
-      //     (userCreateBy = req.body.userId),
-      //     (userUpdateBy = req.body.userId);
-      // });
-      // console.log(rows);
-      try {
-        const doesCreate = await problemsModel.insertReturnId({
-          name: "users",
-          insertData: users,
-        });
-        // console.log(doesCreate);
-
-        const doesCreateEnrollByUserId = await globalModel.insert({
-          name: "enrolls",
-          insertData: [
-            {
-              enrollUserId: doesCreate,
-              enrollSectionId: req.body.sectionId,
-              enrollRole: "student",
-              enrollStatus: 1,
-              enrollCreateBy: req.body.userId,
-              enrollUpdateBy: req.body.userId,
-            },
-          ],
-        });
-
-        let result = await rmdir(path, function (err, dirs, files) {
-          console.log("all files are removed");
-        });
-
-        res.status(200).send({ doesCreate, doesCreateEnrollByUserId });
-      } catch (error) {
-        if (error.isJoi === true)
-          return next(createError.InternalServerError());
-        next(error);
-      }
     });
   },
   getUserByCourse: async (req, res, next) => {

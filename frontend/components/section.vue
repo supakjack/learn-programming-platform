@@ -8,6 +8,14 @@ export default {
           console.error(error);
         })
         .then(response => response.doesInsert);
+    },
+    async updateSection(data) {
+      return this.$axios
+        .$put("section", data)
+        .catch(error => {
+          console.error(error);
+        })
+        .then(response => response.doesUpdate);
     }
   }
 };
