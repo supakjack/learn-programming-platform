@@ -67,7 +67,7 @@
                         class="mr-2"
                         @click="openIde(item)"
                       >
-                        mdi-plus
+                        mdi-pencil-plus-outline
                       </v-icon>
                     </router-link>
                   </template>
