@@ -284,12 +284,15 @@ export default {
       this.$router.push("/home/section");
     },
     async clickOpenEditCourse(course) {
+      console.log(course);
       this.modalCourseId = course.courseId;
       this.modalCourseCode = course.courseCode;
       this.modalCourseName = course.courseName;
       this.modalCourseYearId = course.yearId;
       this.modalCourseStatus = course.courseStatus == "active" ? 1 : 2;
       this.updateCourseDialog = true;
+      console.log(this.modalCourseYearId);
+      console.log(this.yearByCreate);
     },
     async clickOpenDeleteCourse(course) {
       this.modalCourseId = course.courseId;
@@ -325,7 +328,7 @@ export default {
         courseYearId: this.modalCourseYearId,
         courseCreateBy: this.$store.state.user.id,
         courseUpdateBy: this.$store.state.user.id,
-        courseStatus: status ? status : this.modalCourseStatus
+        courseStatus: this.modalCourseStatus
       };
       await this.updateCourse(updateData);
       this.modalCourseId = "";
@@ -333,7 +336,7 @@ export default {
       this.modalCourseName = "";
       this.modalCourseYearId = "";
       this.modalCourseStatus = "";
-      if (updateData.courseStatus == 3) {
+      if (status == 3) {
         this.deleteCourseDialog = false;
       } else {
         this.updateCourseDialog = false;
