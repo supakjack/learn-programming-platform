@@ -7,7 +7,7 @@
     :search="search"
     class="elevation-1 kanit-font"
   >
-    <template v-slot:item.problemStatus="{ item }">
+    <template v-slot:[`item.problemStatus`]="{ item }">
       <v-chip :color="getColor(item.problemStatus)" dark>
         {{ item.problemStatus }}
       </v-chip>
