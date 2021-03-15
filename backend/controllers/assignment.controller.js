@@ -103,29 +103,58 @@ module.exports = {
       //     "hashtags.hashtagProblemId",
       //     "problems.problemId"
       //   );
-      const doesGetAll = await globalModel.select({
-        name: "tags",
-        whereInName: [req.body.tagId],
-        whereInValue: req.body.tagIdValue,
-        whereNot: [{ problemStatus: "delete" }],
-        // filter: [
-        //   "problemTitle",
-        // ],
-        leftJoin: [
-          {
-            joinTable: "hashtags",
-            leftTableName: "tags",
-            leftKey: "tagId",
-            joinKey: "hashtagTagId",
-          },
-          {
-            joinTable: "problems",
-            leftTableName: "hashtags",
-            leftKey: "hashtagProblemId",
-            joinKey: "problemId",
-          },
-        ],
-      });
+      // console.log(req.body);
+      if (req.body.tagIdValue == "") {
+        console.log("in if");
+        var doesGetAll = await globalModel.select({
+          name: "tags",
+          // whereInName: [req.body.tagId],
+          // whereInValue: req.body.tagIdValue,
+          whereNot: [{ problemStatus: "delete" }],
+          // filter: [
+          //   "problemTitle",
+          // ],
+          leftJoin: [
+            {
+              joinTable: "hashtags",
+              leftTableName: "tags",
+              leftKey: "tagId",
+              joinKey: "hashtagTagId",
+            },
+            {
+              joinTable: "problems",
+              leftTableName: "hashtags",
+              leftKey: "hashtagProblemId",
+              joinKey: "problemId",
+            },
+          ],
+        });
+      } else {
+        console.log("else")
+        var doesGetAll = await globalModel.select({
+          name: "tags",
+          whereInName: [req.body.tagId],
+          whereInValue: req.body.tagIdValue,
+          whereNot: [{ problemStatus: "delete" }],
+          // filter: [
+          //   "problemTitle",
+          // ],
+          leftJoin: [
+            {
+              joinTable: "hashtags",
+              leftTableName: "tags",
+              leftKey: "tagId",
+              joinKey: "hashtagTagId",
+            },
+            {
+              joinTable: "problems",
+              leftTableName: "hashtags",
+              leftKey: "hashtagProblemId",
+              joinKey: "problemId",
+            },
+          ],
+        });
+      }
       res.status(201).send({ doesGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
