@@ -7,13 +7,12 @@
       'items-per-page-all-text': `ทั้งหมด`
     }"
     :items="allTags"
-    :items-per-page="8"
+    :items-per-page="5"
     item-key="tagId"
     :sort-by="['tagStatus', 'tagUpdateDate']"
     :sort-desc="[false, true]"
     multi-sort
     :search="search"
-    height="450"
     class="elevation-1 kanit-font"
   >
     <template v-slot:top>
