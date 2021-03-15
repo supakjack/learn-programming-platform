@@ -5,9 +5,9 @@ Last edit: 19/2/2021 -->
   <v-data-table
     :headers="headers"
     :footer-props="{
-      'items-per-page-options': [8, 15, 20, -1],
+      'items-per-page-options': [5, 10, 15, -1],
       'items-per-page-text': `จำนวนแถวต่อหน้า`,
-      'items-per-page-all-text': `ทั้งหมด`
+      'items-per-page-all-text': `ทั้งหมด`,
     }"
     :items="allAssignment"
     :items-per-page="5"
@@ -30,21 +30,21 @@ Last edit: 19/2/2021 -->
         ></v-text-field>
         <v-spacer></v-spacer>
 
-        <v-dialog v-model="dialog" max-width="1000px">
+        <v-dialog v-model="dialog" max-width="1250px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="success" dark class="mb-2" v-bind="attrs" v-on="on">
               เพิ่มมอบหมายงาน
             </v-btn>
           </template>
-          <v-stepper v-model="pageStep">
+          <v-stepper non-linear v-model="pageStep">
             <v-stepper-header>
-              <v-stepper-step :complete="pageStep > 1" step="1">
+              <v-stepper-step editable step="1">
                 เพิ่มการมอบหมายงาน
               </v-stepper-step>
 
               <v-divider></v-divider>
 
-              <v-stepper-step :complete="pageStep > 2" step="2">
+              <v-stepper-step editable step="2">
                 เพิ่มโจทย์ปัญหา
               </v-stepper-step>
             </v-stepper-header>
@@ -53,7 +53,7 @@ Last edit: 19/2/2021 -->
               <v-stepper-content step="1">
                 <v-card class="kanit-font">
                   <v-card-title>
-                    <span class="headline">{{ formTitle }}</span>
+                    <span>{{ formTitle }}</span>
                   </v-card-title>
 
                   <v-card-text class="kanit-font">
@@ -145,23 +145,23 @@ Last edit: 19/2/2021 -->
                     </v-container>
                   </v-card-text>
 
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn text>
-                      ยกเลิก
-                    </v-btn>
-                    <v-btn color="primary" @click="pageStep = 2">
-                      ถัดไป
-                    </v-btn>
-
-                    <!-- <v-btn color="blue darken-1" text @click="close"> ยกเลิก </v-btn>
+                  <!-- <v-btn color="blue darken-1" text @click="close"> ยกเลิก </v-btn>
               <v-btn color="blue darken-1" text @click="save"> บันทึก </v-btn> -->
-                  </v-card-actions>
                 </v-card>
+
+                <v-spacer></v-spacer>
+                <v-btn color="error" class="float-left mt-3"> ยกเลิก </v-btn>
+                <v-btn
+                  color="primary"
+                  @click="pageStep = 2"
+                  class="float-right mt-"
+                >
+                  ถัดไป
+                </v-btn>
               </v-stepper-content>
 
               <v-stepper-content step="2">
-                <v-card class="mb-12" width="1000px" height="500px">
+                <v-card class="mb-12" width="1200px">
                   <v-row>
                     <v-col cols="12" sm="11" md="10" class="ml-4">
                       <v-combobox
@@ -190,7 +190,7 @@ Last edit: 19/2/2021 -->
                       <v-text-field
                         v-model="searchProblem"
                         append-icon="mdi-magnify"
-                        label="ค้นหา"
+                        label="ค้นหาชื่อโจทย์ปัญหา"
                         hide-details
                       ></v-text-field>
                     </v-card-title>
@@ -198,7 +198,23 @@ Last edit: 19/2/2021 -->
                       :headers="proplemHeaders"
                       :items="allProblems"
                       :search="searchProblem"
+                      :items-per-page="5"
+                      :footer-props="{
+                        'items-per-page-options': [5, 10, 15, -1],
+                        'items-per-page-text': `จำนวนแถวต่อหน้า`,
+                        'items-per-page-all-text': `ทั้งหมด`,
+                      }"
                     >
+                      <template v-slot:[`item.tags`]="{ item }">
+                        <v-chip
+                          class="ma-1"
+                          small
+                          v-for="tag in item.tags"
+                          :key="tag.tagId"
+                        >
+                          {{ tag.tagName }}
+                        </v-chip>
+                      </template>
                       <template v-slot:[`item.actions`]="{ item }">
                         <v-tooltip bottom>
                           <template v-slot:activator="{ on, attrs }">
@@ -215,9 +231,27 @@ Last edit: 19/2/2021 -->
                           </template>
                           <span>เพิ่ม</span>
                         </v-tooltip>
+                         <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              color="error"
+                              v-bind="attrs"
+                              v-on="on"
+                              small
+                              class="mr-2"
+                              @click="addProblem(item)"
+                            >
+                              mdi-delete
+                            </v-icon>
+                          </template>
+                          <span>เพิ่ม</span>
+                        </v-tooltip>
                       </template>
+                      
                     </v-data-table>
                   </v-card>
+                  <v-spacer></v-spacer>
+
                   <v-combobox
                     clearable
                     hide-selected
@@ -226,18 +260,27 @@ Last edit: 19/2/2021 -->
                     small-chips
                     v-model="selectProblem"
                     label="โจทย์ที่เลือก"
-                  ></v-combobox>
+                  >
+                  </v-combobox>
                 </v-card>
-                <!-- <insertStep1 /> -->
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1">
-                    ยกเลิก
-                  </v-btn>
-                  <v-btn color="blue darken-1" text @click="pageStep = 1">
-                    บันทึก
-                  </v-btn>
-                </v-card-actions>
+                <!-- <v-card-actions> -->
+                <v-spacer></v-spacer>
+                <v-btn color="error" class="float-left"> ยกเลิก </v-btn>
+                <v-btn
+                  color="success"
+                  @click="pageStep = 1"
+                  class="float-right"
+                >
+                  บันทึก
+                </v-btn>
+                <v-btn
+                  color="primary"
+                  class="float-right mr-1"
+                  @click="pageStep = 1"
+                >
+                  ย้อนกลับ
+                </v-btn>
+                <!-- </v-card-actions> -->
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -328,7 +371,7 @@ Last edit: 19/2/2021 -->
     </template>
 
     <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize"> โหลดข้อมูลใหม่ </v-btn>
+      <v-btn color="primary" @click="initialize()"> โหลดข้อมูลใหม่ </v-btn>
     </template>
   </v-data-table>
 </template>
@@ -342,9 +385,6 @@ import tagsmixin from "@/components/tags";
 
 export default {
   mixins: [assignmentmixin, tagsmixin, problemsmixin],
-  components: {
-    // insertStep2
-  },
   data: () => ({
     courseData: [],
     // status: ["ใช้งาน", "ไม่ใช้งาน"],
@@ -362,17 +402,16 @@ export default {
     proplemHeaders: [
       {
         align: "start",
-        sortable: false
+        sortable: false,
       },
       { text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
-      { text: "วันที่สร้าง", value: "problemCreateDate" },
-      { text: "สถานะ", value: "problemStatus" },
-      { text: "การจัดการ", value: "actions", sortable: false }
+      { text: "แท็ก", value: "tags" },
+      { text: "การจัดการ", value: "actions", sortable: false },
     ],
     headers: [
       {
         align: "start",
-        sortable: false
+        sortable: false,
         // value: "assignmentId"
       },
       { text: "งานที่ได้รับมอบหมาย", value: "assignmentTitle" },
@@ -380,21 +419,21 @@ export default {
       { text: "วันที่เริ่มส่งงาน", value: "assignmentStartDate" },
       { text: "วันที่สิ้นสุดส่งงาน", value: "assignmentEndDate" },
       { text: "สถานะ", value: "assignmentStatus" },
-      { text: "การจัดการ", value: "actions", sortable: false }
+      { text: "การจัดการ", value: "actions", sortable: false },
     ],
     reportDialog: [
       // use to declare data and map value in header of table
       {
         align: "center",
-        sortable: false
+        sortable: false,
       },
       // { text: "ข้อ", value: "problemId" }, // define column name and value
       { text: "ชื่อ-นามสกุล", value: "name" },
       {
         text: "สถานะการส่ง",
-        value: "scoreResultText"
+        value: "scoreResultText",
       },
-      { text: "คะแนน", value: "scoreResult" }
+      { text: "คะแนน", value: "scoreResult" },
     ],
     problem: [],
     editedIndex: -1,
@@ -409,7 +448,7 @@ export default {
       assignmentEndDate: "",
       assignmentStatus: 0,
       assignmentCreateBy: 0,
-      assignmentUpdateBy: 0
+      assignmentUpdateBy: 0,
     },
     defaultItem: {
       assignmentId: 0,
@@ -419,18 +458,18 @@ export default {
       assignmentEndDate: "",
       assignmentStatus: 0,
       assignmentCreateBy: 0,
-      assignmentUpdateBy: 0
+      assignmentUpdateBy: 0,
     },
     assignmentStatus: [
       // use in select options
       { text: "ใช้งาน", value: 1 },
-      { text: "ไม่ใช้งาน", value: 2 }
+      { text: "ไม่ใช้งาน", value: 2 },
     ],
     pageStep: 1,
     selectTag: [],
     selectProblem: [],
     tagItems: [],
-    allProblems: []
+    allProblems: [],
   }),
   async mounted() {
     // console.log(this.$store.state.course);
@@ -442,7 +481,7 @@ export default {
     },
     SuccessTitle() {
       return this.editedIndex === -1 ? "บันทึกสำเร็จ" : "แก้ไขสำเร็จ";
-    }
+    },
   },
 
   watch: {
@@ -457,7 +496,7 @@ export default {
   async created() {
     this.initialize();
     this.getTagData();
-    this.getProblemData();
+    this.searchProblemByTag();
   },
 
   methods: {
@@ -478,22 +517,22 @@ export default {
       this.$store.commit("breadcrumb/setBreadcrumb", [
         {
           text: "หน้าหลัก",
-          href: "/home"
+          href: "/home",
         },
         {
           text: corseSection,
-          href: "/home/section"
+          href: "/home/section",
         },
         {
           text: sectionName,
-          href: "/assignment"
-        }
+          href: "/assignment",
+        },
       ]);
       this.courseData = this.$store.state.course;
       const { doesGetAll } = await this.getAssignment(
         this.courseData.sectionId
       );
-      doesGetAll.map(doesGetAll => {
+      doesGetAll.map((doesGetAll) => {
         doesGetAll.assignmentStartDate = this.$moment(
           doesGetAll.assignmentStartDate
         ).format("Do MMM YY เวลา LT");
@@ -534,7 +573,7 @@ export default {
 
     async getTagData() {
       const { doesGetAll } = await this.getTag();
-      doesGetAll.map(doesGetAll => {
+      doesGetAll.map((doesGetAll) => {
         let data = {};
         data.text = doesGetAll.tagName;
         data.value = doesGetAll.tagId;
@@ -544,25 +583,31 @@ export default {
       });
     },
 
-    async getProblemData() {
-      const { doesGetAll } = await this.getProblem();
+    // async getProblemData() {
+    //   const tagData = { tagId: "tagId" };
+    //   let tagIdValue = [];
+    //   this.selectTag.forEach((element) => {
+    //     tagIdValue.push(element.value);
+    //   });
+    //   tagData.tagIdValue = tagIdValue;
+    //   const { doesGetAll } = await this.getProblemByTag(tagData);
 
-      doesGetAll.map(doesGetAll => {
-        doesGetAll.problemCreateDate = this.$moment(
-          doesGetAll.problemCreateDate
-        ).format("Do MMM YY เวลา LT");
-        doesGetAll.problemUpdateDate = this.$moment(
-          doesGetAll.problemUpdateDate
-        ).format("Do MMM YY เวลา LT");
-        if (doesGetAll.problemStatus == "active") {
-          doesGetAll.problemStatus = "ใช้งาน";
-        } else {
-          doesGetAll.problemStatus = "ไม่ใช้งาน";
-        }
-      });
-      this.allProblems = doesGetAll;
-      console.log("getProblemData", doesGetAll);
-    },
+    //   doesGetAll.map((doesGetAll) => {
+    //     doesGetAll.problemCreateDate = this.$moment(
+    //       doesGetAll.problemCreateDate
+    //     ).format("Do MMM YY เวลา LT");
+    //     doesGetAll.problemUpdateDate = this.$moment(
+    //       doesGetAll.problemUpdateDate
+    //     ).format("Do MMM YY เวลา LT");
+    //     if (doesGetAll.problemStatus == "active") {
+    //       doesGetAll.problemStatus = "ใช้งาน";
+    //     } else {
+    //       doesGetAll.problemStatus = "ไม่ใช้งาน";
+    //     }
+    //   });
+    //   this.allProblems = doesGetAll;
+    //   console.log("getProblemData", doesGetAll);
+    // },
 
     editItem(item) {
       this.editedIndex = this.allAssignment.indexOf(item);
@@ -600,31 +645,69 @@ export default {
     async searchProblemByTag() {
       const tagData = { tagId: "tagId" };
       let tagIdValue = [];
-      this.selectTag.forEach(element => {
+      this.selectTag.forEach((element) => {
         tagIdValue.push(element.value);
       });
       tagData.tagIdValue = tagIdValue;
       console.log(tagData);
-      if (this.selectTag != "") {
-        var { doesGetAll } = await this.getProblemByTag(tagData);
-      } else {
-        var { doesGetAll } = await this.getProblem();
-      }
-      doesGetAll.map(doesGetAll => {
-        doesGetAll.problemCreateDate = this.$moment(
-          doesGetAll.problemCreateDate
-        ).format("Do MMM YY เวลา LT");
-        doesGetAll.problemUpdateDate = this.$moment(
-          doesGetAll.problemUpdateDate
-        ).format("Do MMM YY เวลา LT");
+      // if (this.selectTag != "") {
+      var { doesGetAll } = await this.getProblemByTag(tagData);
+      // } else {
+      //   var { doesGetAll } = await this.getProblem();
+      // }
+
+      var arrayProblemId = [];
+      doesGetAll.map((doesGetAll) => {
+        arrayProblemId.push(doesGetAll.problemId);
+        // doesGetAll.problemCreateDate = this.$moment(
+        //   doesGetAll.problemCreateDate
+        // ).format("Do MMM YY เวลา LT");
+        // doesGetAll.problemUpdateDate = this.$moment(
+        //   doesGetAll.problemUpdateDate
+        // ).format("Do MMM YY เวลา LT");
         if (doesGetAll.problemStatus == "active") {
           doesGetAll.problemStatus = "ใช้งาน";
         } else {
           doesGetAll.problemStatus = "ไม่ใช้งาน";
         }
       });
+      var uniq = [...new Set(arrayProblemId)];
+      console.log(uniq);
+      var allTagBox = new Array(uniq.length);
+      var allProblemBox = new Array(uniq.length);
+      // console.log("test", allTagBox[0], allTagBox[1]);
+      for (var i = 0; i < allTagBox.length; i++) {
+        allTagBox[i] = new Array();
+        allProblemBox[i] = new Array();
+      }
+      for (var i = 0; i < doesGetAll.length; i++) {
+        for (var j = 0; j < allTagBox.length; j++) {
+          // console.log(doesGetAll[i].problemId, uniq[j]);
+          if (doesGetAll[i].problemId == uniq[j]) {
+            var tagsItem = {};
+            tagsItem.tagId = doesGetAll[i].tagId;
+            tagsItem.tagName = doesGetAll[i].tagName;
+            allTagBox[j].push(tagsItem);
+            var problemItem = {};
+            problemItem.problemId = doesGetAll[i].problemId;
+            problemItem.problemTitle = doesGetAll[i].problemTitle;
+            // problemItem.tags = allTagBox;
+            allProblemBox[j] = problemItem;
+          }
+          problemItem.tags = allTagBox[j];
+        }
+      }
+
+      // for(var i = 0 ;i < allProblemBox.length;i++){
+
+      // }
+
+      console.log("tagBox", allTagBox);
+      console.log("problemBox", allProblemBox);
       console.log("searchProblemByTag", doesGetAll);
-      this.allProblems = doesGetAll;
+      console.log("searchProblemByTag", this.allProblems);
+
+      this.allProblems = allProblemBox;
     },
 
     async addProblem(item) {
@@ -639,19 +722,19 @@ export default {
       console.log(item);
       const result = this.getUserAssignment(item.assignmentId);
       console.log(result);
-      this.userAssignment = await result.then(res => {
+      this.userAssignment = await result.then((res) => {
         return res.doesGetAll;
       });
       console.log(this.userAssignment);
-      const dataScoreResult2 = this.userAssignment.map(async res => {
+      const dataScoreResult2 = this.userAssignment.map(async (res) => {
         const data = {
           taskAssignmentId: res.assignmentId,
           compilelogCreateBy: res.enrollUserId,
-          taskId: res.taskId
+          taskId: res.taskId,
         };
         console.log(data);
         const dataScore = this.getScoreUser(data);
-        const dataScoreResult = await dataScore.then(resScore => {
+        const dataScoreResult = await dataScore.then((resScore) => {
           return resScore.doesGetAll;
         });
         console.log(dataScoreResult);
@@ -660,24 +743,24 @@ export default {
       });
       console.log(dataScoreResult2);
 
-      this.scoreResult = await Promise.all(dataScoreResult2).then(value => {
+      this.scoreResult = await Promise.all(dataScoreResult2).then((value) => {
         return value;
       });
 
       console.log(this.scoreResult);
       console.log(this.userAssignment);
       let k = 0;
-      this.userAssignment.map(res => {
+      this.userAssignment.map((res) => {
         res.score = this.scoreResult[k];
         k++;
       });
       console.log(this.userAssignment);
 
-      this.userAssignment.map(res => {
+      this.userAssignment.map((res) => {
         if (res.score.length == 0) {
           res.score[0] = {
             compilelogTestResult: "fail",
-            compilelogScore: 0
+            compilelogScore: 0,
           };
         }
       });
@@ -701,7 +784,7 @@ export default {
                 this.userAssignment[i].userFirstNameThai +
                 " " +
                 this.userAssignment[i].userLastnameThai,
-              scoreResult: score
+              scoreResult: score,
             };
             j++;
             score = 0;
@@ -719,7 +802,7 @@ export default {
                 this.userAssignment[i].userFirstNameThai +
                 " " +
                 this.userAssignment[i].userLastnameThai,
-              scoreResult: score
+              scoreResult: score,
             };
           }
         }
@@ -727,12 +810,12 @@ export default {
 
       const maxScore = this.getScoreMax(item.assignmentId);
       console.log(maxScore);
-      const maxScoreResult = await maxScore.then(res => {
+      const maxScoreResult = await maxScore.then((res) => {
         return res.doesGetAll;
       });
       console.log(maxScoreResult);
       console.log(dataSuccess);
-      dataSuccess.map(res => {
+      dataSuccess.map((res) => {
         if (res.scoreResult == maxScoreResult[0].sumTaskScore) {
           res.scoreResultText = "Completed";
         } else {
@@ -748,8 +831,8 @@ export default {
       // });
       // console.log(this.resultLast);
       this.dialogReport = true;
-    }
-  }
+    },
+  },
 };
 </script>
 
