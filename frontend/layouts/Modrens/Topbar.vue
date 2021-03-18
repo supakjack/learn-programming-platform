@@ -1,5 +1,8 @@
 <template lang="html">
   <v-app-bar fixed app color="primary">
+      <div class="text-center ml-20 text-white text-3xl">
+        {{systemName}}
+      </div>
     <v-spacer></v-spacer>
       <div class="text-center">
           <v-btn
@@ -21,6 +24,7 @@ export default {
   data() {
     return {
       username: "",
+      systemName: "Learn Programing Platform",
     };
   },
   mounted() {

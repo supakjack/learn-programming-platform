@@ -242,7 +242,7 @@
           {{ text }}
           <template v-slot:action="{ attrs }">
             <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
-              Close
+              ปิด
             </v-btn>
           </template>
         </v-snackbar>
@@ -495,6 +495,8 @@ export default {
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
+        this.userLDAP.givenName = "";
+        this.userLDAP.sn = "";
       });
     },
 
