@@ -7,7 +7,7 @@ Last edit: 19/2/2021 -->
     :footer-props="{
       'items-per-page-options': [5, 10, 15, -1],
       'items-per-page-text': `จำนวนแถวต่อหน้า`,
-      'items-per-page-all-text': `ทั้งหมด`
+      'items-per-page-all-text': `ทั้งหมด`,
     }"
     :items="allAssignment"
     :items-per-page="5"
@@ -154,7 +154,7 @@ Last edit: 19/2/2021 -->
                 <v-btn
                   color="primary"
                   @click="pageStep = 2"
-                  class="float-right mt-"
+                  class="float-right mt-3"
                 >
                   ถัดไป
                 </v-btn>
@@ -177,6 +177,7 @@ Last edit: 19/2/2021 -->
                     </v-col>
                     <v-col cols="6" md="1">
                       <v-btn
+                        color="primary"
                         elevation="2"
                         class="mt-3 ml-4"
                         @click="searchProblemByTag()"
@@ -202,7 +203,7 @@ Last edit: 19/2/2021 -->
                       :footer-props="{
                         'items-per-page-options': [5, 10, 15, -1],
                         'items-per-page-text': `จำนวนแถวต่อหน้า`,
-                        'items-per-page-all-text': `ทั้งหมด`
+                        'items-per-page-all-text': `ทั้งหมด`,
                       }"
                     >
                       <template v-slot:[`item.tags`]="{ item }">
@@ -231,7 +232,7 @@ Last edit: 19/2/2021 -->
                           </template>
                           <span>เพิ่ม</span>
                         </v-tooltip>
-                        <v-tooltip bottom>
+                        <!-- <v-tooltip bottom>
                           <template v-slot:activator="{ on, attrs }">
                             <v-icon
                               color="error"
@@ -245,7 +246,7 @@ Last edit: 19/2/2021 -->
                             </v-icon>
                           </template>
                           <span>เพิ่ม</span>
-                        </v-tooltip>
+                        </v-tooltip> -->
                       </template>
                     </v-data-table>
                   </v-card>
@@ -408,16 +409,16 @@ export default {
     proplemHeaders: [
       {
         align: "start",
-        sortable: false
+        sortable: false,
       },
       { text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
       { text: "แท็ก", value: "tags" },
-      { text: "การจัดการ", value: "actions", sortable: false }
+      { text: "การจัดการ", value: "actions", sortable: false },
     ],
     headers: [
       {
         align: "start",
-        sortable: false
+        sortable: false,
         // value: "assignmentId"
       },
       { text: "งานที่ได้รับมอบหมาย", value: "assignmentTitle" },
@@ -425,21 +426,21 @@ export default {
       { text: "วันที่เริ่มส่งงาน", value: "assignmentStartDate" },
       { text: "วันที่สิ้นสุดส่งงาน", value: "assignmentEndDate" },
       { text: "สถานะ", value: "assignmentStatus" },
-      { text: "การจัดการ", value: "actions", sortable: false }
+      { text: "การจัดการ", value: "actions", sortable: false },
     ],
     reportDialog: [
       // use to declare data and map value in header of table
       {
         align: "center",
-        sortable: false
+        sortable: false,
       },
       // { text: "ข้อ", value: "problemId" }, // define column name and value
       { text: "ชื่อ-นามสกุล", value: "name" },
       {
         text: "สถานะการส่ง",
-        value: "scoreResultText"
+        value: "scoreResultText",
       },
-      { text: "คะแนน", value: "scoreResult" }
+      { text: "คะแนน", value: "scoreResult" },
     ],
     problem: [],
     editedIndex: -1,
@@ -454,7 +455,7 @@ export default {
       assignmentEndDate: "",
       assignmentStatus: 0,
       assignmentCreateBy: 0,
-      assignmentUpdateBy: 0
+      assignmentUpdateBy: 0,
     },
     defaultItem: {
       assignmentId: 0,
@@ -464,19 +465,19 @@ export default {
       assignmentEndDate: "",
       assignmentStatus: 0,
       assignmentCreateBy: 0,
-      assignmentUpdateBy: 0
+      assignmentUpdateBy: 0,
     },
     assignmentStatus: [
       // use in select options
       { text: "ใช้งาน", value: 1 },
-      { text: "ไม่ใช้งาน", value: 2 }
+      { text: "ไม่ใช้งาน", value: 2 },
     ],
     pageStep: 1,
     selectTag: [],
     selectProblem: [],
     tagItems: [],
     allProblems: [],
-    assignmentTitleDialog: ""
+    assignmentTitleDialog: "",
   }),
   async mounted() {
     // console.log(this.$store.state.course);
@@ -488,16 +489,31 @@ export default {
     },
     SuccessTitle() {
       return this.editedIndex === -1 ? "บันทึกสำเร็จ" : "แก้ไขสำเร็จ";
-    }
+    },
   },
 
   watch: {
+    selectProblem(old, val) {
+      console.log("old, val", old, val);
+      if (old < val) {
+        console.log("delete in selectProblem");
+        this.allProblems
+      } else {
+        this.allProblems = this.selectProblem.length
+          ? this.allProblems.filter(
+              (element) =>
+                element.problemId !=
+                this.selectProblem[this.selectProblem.length - 1].value
+            )
+          : this.allProblems;
+      }
+    },
     dialog(val) {
       val || this.close();
     },
     dialogDelete(val) {
       val || this.closeDelete();
-    }
+    },
   },
 
   async created() {
@@ -524,22 +540,22 @@ export default {
       this.$store.commit("breadcrumb/setBreadcrumb", [
         {
           text: "หน้าหลัก",
-          href: "/home"
+          href: "/home",
         },
         {
           text: corseSection,
-          href: "/home/section"
+          href: "/home/section",
         },
         {
           text: sectionName,
-          href: "/assignment"
-        }
+          href: "/assignment",
+        },
       ]);
       this.courseData = this.$store.state.course;
       const { doesGetAll } = await this.getAssignment(
         this.courseData.sectionId
       );
-      doesGetAll.map(doesGetAll => {
+      doesGetAll.map((doesGetAll) => {
         // doesGetAll.assignmentStartDate = this.$moment(
         //   doesGetAll.assignmentStartDate
         // ).format("Do MMM YY เวลา LT");
@@ -619,7 +635,7 @@ export default {
 
     async getTagData() {
       const { doesGetAll } = await this.getTag();
-      doesGetAll.map(doesGetAll => {
+      doesGetAll.map((doesGetAll) => {
         let data = {};
         data.text = doesGetAll.tagName;
         data.value = doesGetAll.tagId;
@@ -691,7 +707,7 @@ export default {
     async searchProblemByTag() {
       const tagData = { tagId: "tagId" };
       let tagIdValue = [];
-      this.selectTag.forEach(element => {
+      this.selectTag.forEach((element) => {
         tagIdValue.push(element.value);
       });
       tagData.tagIdValue = tagIdValue;
@@ -703,7 +719,7 @@ export default {
       // }
 
       var arrayProblemId = [];
-      doesGetAll.map(doesGetAll => {
+      doesGetAll.map((doesGetAll) => {
         arrayProblemId.push(doesGetAll.problemId);
         // doesGetAll.problemCreateDate = this.$moment(
         //   doesGetAll.problemCreateDate
@@ -771,26 +787,26 @@ export default {
       console.log(item);
       const result = this.getUserAssignment(item.assignmentId);
       console.log(result);
-      this.userAssignment = await result.then(res => {
+      this.userAssignment = await result.then((res) => {
         return res.doesGetAll;
       });
       console.log(this.userAssignment);
-      this.userAssignment.forEach(element => {
+      this.userAssignment.forEach((element) => {
         if (element.taskId == null) {
           console.log(element);
           check = false;
         }
       });
       if (check == true) {
-        const dataScoreResult2 = this.userAssignment.map(async res => {
+        const dataScoreResult2 = this.userAssignment.map(async (res) => {
           const data = {
             taskAssignmentId: res.assignmentId,
             compilelogCreateBy: res.enrollUserId,
-            taskId: res.taskId
+            taskId: res.taskId,
           };
           console.log(data);
           const dataScore = this.getScoreUser(data);
-          const dataScoreResult = await dataScore.then(resScore => {
+          const dataScoreResult = await dataScore.then((resScore) => {
             return resScore.doesGetAll;
           });
           console.log(dataScoreResult);
@@ -800,24 +816,24 @@ export default {
         console.log(dataScoreResult2);
 
         console.log("1");
-        this.scoreResult = await Promise.all(dataScoreResult2).then(value => {
+        this.scoreResult = await Promise.all(dataScoreResult2).then((value) => {
           return value;
         });
         console.log(this.scoreResult);
         console.log(this.userAssignment);
         // if(this.scoreResult)
         let k = 0;
-        this.userAssignment.map(res => {
+        this.userAssignment.map((res) => {
           res.score = this.scoreResult[k];
           k++;
         });
         console.log(this.userAssignment);
 
-        this.userAssignment.map(res => {
+        this.userAssignment.map((res) => {
           if (res.score.length == 0) {
             res.score[0] = {
               compilelogTestResult: "fail",
-              compilelogScore: 0
+              compilelogScore: 0,
             };
           }
         });
@@ -841,7 +857,7 @@ export default {
                   this.userAssignment[i].userFirstNameThai +
                   " " +
                   this.userAssignment[i].userLastnameThai,
-                scoreResult: score
+                scoreResult: score,
               };
               j++;
               score = 0;
@@ -859,7 +875,7 @@ export default {
                   this.userAssignment[i].userFirstNameThai +
                   " " +
                   this.userAssignment[i].userLastnameThai,
-                scoreResult: score
+                scoreResult: score,
               };
             }
           }
@@ -867,10 +883,10 @@ export default {
 
         const maxScore = this.getScoreMax(item.assignmentId);
         console.log(maxScore);
-        const maxScoreResult = await maxScore.then(res => {
+        const maxScoreResult = await maxScore.then((res) => {
           return res.doesGetAll;
         });
-        dataSuccess.map(res => {
+        dataSuccess.map((res) => {
           if (res.scoreResult == maxScoreResult[0].sumTaskScore) {
             res.scoreResultText = "ส่งแล้ว";
           } else {
@@ -888,8 +904,8 @@ export default {
       // });
       // console.log(this.resultLast);
       this.dialogReport = true;
-    }
-  }
+    },
+  },
 };
 </script>
 
