@@ -7,7 +7,7 @@ Last edit: 19/2/2021 -->
     :footer-props="{
       'items-per-page-options': [5, 10, 15, -1],
       'items-per-page-text': `จำนวนแถวต่อหน้า`,
-      'items-per-page-all-text': `ทั้งหมด`,
+      'items-per-page-all-text': `ทั้งหมด`
     }"
     :items="allAssignment"
     :items-per-page="5"
@@ -202,7 +202,7 @@ Last edit: 19/2/2021 -->
                       :footer-props="{
                         'items-per-page-options': [5, 10, 15, -1],
                         'items-per-page-text': `จำนวนแถวต่อหน้า`,
-                        'items-per-page-all-text': `ทั้งหมด`,
+                        'items-per-page-all-text': `ทั้งหมด`
                       }"
                     >
                       <template v-slot:[`item.tags`]="{ item }">
@@ -231,7 +231,7 @@ Last edit: 19/2/2021 -->
                           </template>
                           <span>เพิ่ม</span>
                         </v-tooltip>
-                         <v-tooltip bottom>
+                        <v-tooltip bottom>
                           <template v-slot:activator="{ on, attrs }">
                             <v-icon
                               color="error"
@@ -247,7 +247,6 @@ Last edit: 19/2/2021 -->
                           <span>เพิ่ม</span>
                         </v-tooltip>
                       </template>
-                      
                     </v-data-table>
                   </v-card>
                   <v-spacer></v-spacer>
@@ -290,7 +289,9 @@ Last edit: 19/2/2021 -->
         <v-dialog v-model="dialogReport" max-width="1100px">
           <v-card>
             <v-card-title>
-              <span class="headline">Report</span>
+              <span class="headline"
+                >รายงานคะแนน "{{ assignmentTitleDialog }}"</span
+              >
             </v-card-title>
             <v-data-table
               :headers="reportDialog"
@@ -337,7 +338,7 @@ Last edit: 19/2/2021 -->
             mdi-file-chart
           </v-icon>
         </template>
-        <span>Report</span>
+        <span>รายงาน</span>
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
@@ -402,16 +403,16 @@ export default {
     proplemHeaders: [
       {
         align: "start",
-        sortable: false,
+        sortable: false
       },
       { text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
       { text: "แท็ก", value: "tags" },
-      { text: "การจัดการ", value: "actions", sortable: false },
+      { text: "การจัดการ", value: "actions", sortable: false }
     ],
     headers: [
       {
         align: "start",
-        sortable: false,
+        sortable: false
         // value: "assignmentId"
       },
       { text: "งานที่ได้รับมอบหมาย", value: "assignmentTitle" },
@@ -419,21 +420,21 @@ export default {
       { text: "วันที่เริ่มส่งงาน", value: "assignmentStartDate" },
       { text: "วันที่สิ้นสุดส่งงาน", value: "assignmentEndDate" },
       { text: "สถานะ", value: "assignmentStatus" },
-      { text: "การจัดการ", value: "actions", sortable: false },
+      { text: "การจัดการ", value: "actions", sortable: false }
     ],
     reportDialog: [
       // use to declare data and map value in header of table
       {
         align: "center",
-        sortable: false,
+        sortable: false
       },
       // { text: "ข้อ", value: "problemId" }, // define column name and value
       { text: "ชื่อ-นามสกุล", value: "name" },
       {
         text: "สถานะการส่ง",
-        value: "scoreResultText",
+        value: "scoreResultText"
       },
-      { text: "คะแนน", value: "scoreResult" },
+      { text: "คะแนน", value: "scoreResult" }
     ],
     problem: [],
     editedIndex: -1,
@@ -448,7 +449,7 @@ export default {
       assignmentEndDate: "",
       assignmentStatus: 0,
       assignmentCreateBy: 0,
-      assignmentUpdateBy: 0,
+      assignmentUpdateBy: 0
     },
     defaultItem: {
       assignmentId: 0,
@@ -458,18 +459,19 @@ export default {
       assignmentEndDate: "",
       assignmentStatus: 0,
       assignmentCreateBy: 0,
-      assignmentUpdateBy: 0,
+      assignmentUpdateBy: 0
     },
     assignmentStatus: [
       // use in select options
       { text: "ใช้งาน", value: 1 },
-      { text: "ไม่ใช้งาน", value: 2 },
+      { text: "ไม่ใช้งาน", value: 2 }
     ],
     pageStep: 1,
     selectTag: [],
     selectProblem: [],
     tagItems: [],
     allProblems: [],
+    assignmentTitleDialog: ""
   }),
   async mounted() {
     // console.log(this.$store.state.course);
@@ -481,7 +483,7 @@ export default {
     },
     SuccessTitle() {
       return this.editedIndex === -1 ? "บันทึกสำเร็จ" : "แก้ไขสำเร็จ";
-    },
+    }
   },
 
   watch: {
@@ -490,7 +492,7 @@ export default {
     },
     dialogDelete(val) {
       val || this.closeDelete();
-    },
+    }
   },
 
   async created() {
@@ -517,22 +519,22 @@ export default {
       this.$store.commit("breadcrumb/setBreadcrumb", [
         {
           text: "หน้าหลัก",
-          href: "/home",
+          href: "/home"
         },
         {
           text: corseSection,
-          href: "/home/section",
+          href: "/home/section"
         },
         {
           text: sectionName,
-          href: "/assignment",
-        },
+          href: "/assignment"
+        }
       ]);
       this.courseData = this.$store.state.course;
       const { doesGetAll } = await this.getAssignment(
         this.courseData.sectionId
       );
-      doesGetAll.map((doesGetAll) => {
+      doesGetAll.map(doesGetAll => {
         doesGetAll.assignmentStartDate = this.$moment(
           doesGetAll.assignmentStartDate
         ).format("Do MMM YY เวลา LT");
@@ -573,7 +575,7 @@ export default {
 
     async getTagData() {
       const { doesGetAll } = await this.getTag();
-      doesGetAll.map((doesGetAll) => {
+      doesGetAll.map(doesGetAll => {
         let data = {};
         data.text = doesGetAll.tagName;
         data.value = doesGetAll.tagId;
@@ -645,7 +647,7 @@ export default {
     async searchProblemByTag() {
       const tagData = { tagId: "tagId" };
       let tagIdValue = [];
-      this.selectTag.forEach((element) => {
+      this.selectTag.forEach(element => {
         tagIdValue.push(element.value);
       });
       tagData.tagIdValue = tagIdValue;
@@ -657,7 +659,7 @@ export default {
       // }
 
       var arrayProblemId = [];
-      doesGetAll.map((doesGetAll) => {
+      doesGetAll.map(doesGetAll => {
         arrayProblemId.push(doesGetAll.problemId);
         // doesGetAll.problemCreateDate = this.$moment(
         //   doesGetAll.problemCreateDate
@@ -719,120 +721,133 @@ export default {
     },
 
     async openReportDialog(item) {
+      this.resultLast = [];
+      let check = true;
+      this.assignmentTitleDialog = item.assignmentTitle;
       console.log(item);
       const result = this.getUserAssignment(item.assignmentId);
       console.log(result);
-      this.userAssignment = await result.then((res) => {
+      this.userAssignment = await result.then(res => {
         return res.doesGetAll;
       });
       console.log(this.userAssignment);
-      const dataScoreResult2 = this.userAssignment.map(async (res) => {
-        const data = {
-          taskAssignmentId: res.assignmentId,
-          compilelogCreateBy: res.enrollUserId,
-          taskId: res.taskId,
-        };
-        console.log(data);
-        const dataScore = this.getScoreUser(data);
-        const dataScoreResult = await dataScore.then((resScore) => {
-          return resScore.doesGetAll;
-        });
-        console.log(dataScoreResult);
-
-        return dataScoreResult;
+      this.userAssignment.forEach(element => {
+        if (element.taskId == null) {
+          console.log(element);
+          check = false;
+        }
       });
-      console.log(dataScoreResult2);
-
-      this.scoreResult = await Promise.all(dataScoreResult2).then((value) => {
-        return value;
-      });
-
-      console.log(this.scoreResult);
-      console.log(this.userAssignment);
-      let k = 0;
-      this.userAssignment.map((res) => {
-        res.score = this.scoreResult[k];
-        k++;
-      });
-      console.log(this.userAssignment);
-
-      this.userAssignment.map((res) => {
-        if (res.score.length == 0) {
-          res.score[0] = {
-            compilelogTestResult: "fail",
-            compilelogScore: 0,
+      if (check == true) {
+        const dataScoreResult2 = this.userAssignment.map(async res => {
+          const data = {
+            taskAssignmentId: res.assignmentId,
+            compilelogCreateBy: res.enrollUserId,
+            taskId: res.taskId
           };
-        }
-      });
-      console.log(this.userAssignment);
-      let dataSuccess = [];
-      let score = 0;
-      let j = 0;
-      for (let i = 0; i < this.userAssignment.length; i++) {
-        if (i != this.userAssignment.length - 1) {
-          if (
-            this.userAssignment[i].enrollUserId ==
-            this.userAssignment[i + 1].enrollUserId
-          ) {
-            score += this.userAssignment[i].score[0].compilelogScore;
+          console.log(data);
+          const dataScore = this.getScoreUser(data);
+          const dataScoreResult = await dataScore.then(resScore => {
+            return resScore.doesGetAll;
+          });
+          console.log(dataScoreResult);
+
+          return dataScoreResult;
+        });
+        console.log(dataScoreResult2);
+
+        console.log("1");
+        this.scoreResult = await Promise.all(dataScoreResult2).then(value => {
+          return value;
+        });
+        console.log(this.scoreResult);
+        console.log(this.userAssignment);
+        // if(this.scoreResult)
+        let k = 0;
+        this.userAssignment.map(res => {
+          res.score = this.scoreResult[k];
+          k++;
+        });
+        console.log(this.userAssignment);
+
+        this.userAssignment.map(res => {
+          if (res.score.length == 0) {
+            res.score[0] = {
+              compilelogTestResult: "fail",
+              compilelogScore: 0
+            };
+          }
+        });
+        console.log(this.userAssignment);
+        let dataSuccess = [];
+        let score = 0;
+        let j = 0;
+        for (let i = 0; i < this.userAssignment.length; i++) {
+          if (i != this.userAssignment.length - 1) {
+            if (
+              this.userAssignment[i].enrollUserId ==
+              this.userAssignment[i + 1].enrollUserId
+            ) {
+              score += this.userAssignment[i].score[0].compilelogScore;
+            } else {
+              score += this.userAssignment[i].score[0].compilelogScore;
+              dataSuccess[j] = {
+                name:
+                  this.userAssignment[i].userPrefixThai +
+                  " " +
+                  this.userAssignment[i].userFirstNameThai +
+                  " " +
+                  this.userAssignment[i].userLastnameThai,
+                scoreResult: score
+              };
+              j++;
+              score = 0;
+            }
           } else {
-            score += this.userAssignment[i].score[0].compilelogScore;
-            dataSuccess[j] = {
-              name:
-                this.userAssignment[i].userPrefixThai +
-                " " +
-                this.userAssignment[i].userFirstNameThai +
-                " " +
-                this.userAssignment[i].userLastnameThai,
-              scoreResult: score,
-            };
-            j++;
-            score = 0;
-          }
-        } else {
-          if (
-            this.userAssignment[i].enrollUserId ==
-            this.userAssignment[i - 1].enrollUserId
-          ) {
-            score += this.userAssignment[i].score[0].compilelogScore;
-            dataSuccess[j] = {
-              name:
-                this.userAssignment[i].userPrefixThai +
-                " " +
-                this.userAssignment[i].userFirstNameThai +
-                " " +
-                this.userAssignment[i].userLastnameThai,
-              scoreResult: score,
-            };
+            if (
+              this.userAssignment[i].enrollUserId ==
+              this.userAssignment[i - 1].enrollUserId
+            ) {
+              score += this.userAssignment[i].score[0].compilelogScore;
+              dataSuccess[j] = {
+                name:
+                  this.userAssignment[i].userPrefixThai +
+                  " " +
+                  this.userAssignment[i].userFirstNameThai +
+                  " " +
+                  this.userAssignment[i].userLastnameThai,
+                scoreResult: score
+              };
+            }
           }
         }
+
+        const maxScore = this.getScoreMax(item.assignmentId);
+        console.log(maxScore);
+        const maxScoreResult = await maxScore.then(res => {
+          return res.doesGetAll;
+        });
+        console.log(maxScoreResult);
+        console.log(dataSuccess);
+        dataSuccess.map(res => {
+          if (res.scoreResult == maxScoreResult[0].sumTaskScore) {
+            res.scoreResultText = "Completed";
+          } else {
+            res.scoreResultText = "Not completed";
+          }
+          res.scoreResult =
+            res.scoreResult + "/" + maxScoreResult[0].sumTaskScore;
+        });
+        console.log(dataSuccess);
+        this.resultLast = dataSuccess;
       }
 
-      const maxScore = this.getScoreMax(item.assignmentId);
-      console.log(maxScore);
-      const maxScoreResult = await maxScore.then((res) => {
-        return res.doesGetAll;
-      });
-      console.log(maxScoreResult);
-      console.log(dataSuccess);
-      dataSuccess.map((res) => {
-        if (res.scoreResult == maxScoreResult[0].sumTaskScore) {
-          res.scoreResultText = "Completed";
-        } else {
-          res.scoreResultText = "Not completed";
-        }
-        res.scoreResult =
-          res.scoreResult + "/" + maxScoreResult[0].sumTaskScore;
-      });
-      console.log(dataSuccess);
-      this.resultLast = dataSuccess;
       // this.resultLast.dataScoreResult.then(res => {
       //   console.log(res);
       // });
       // console.log(this.resultLast);
       this.dialogReport = true;
-    },
-  },
+    }
+  }
 };
 </script>
 
