@@ -118,7 +118,6 @@ export default {
 
   watch: {
     watchArray: function(newValue, oldValue) {
-      console.log(this.problemTitle);
       this.watchArray.map((e, i) => {
         if (e.name == "title") {
           this.problemTitle = e.val;
@@ -141,7 +140,6 @@ export default {
       });
     },
     problemTitle: function(newValue, oldValue) {
-      console.log(this.problemTitle);
       this.$store.commit("problem/setProblem", {
         problem: {
           title: this.problemTitle,
@@ -152,10 +150,8 @@ export default {
           description: this.problemDescription
         }
       });
-      console.log(this.$store.state.problem);
     },
     problemStatus: function(newValue, oldValue) {
-      console.log(this.problemStatus);
       this.$store.commit("problem/setProblem", {
         problem: {
           title: this.problemTitle,
@@ -166,10 +162,8 @@ export default {
           description: this.problemDescription
         }
       });
-      console.log(this.$store.state.problem);
     },
     taskScore: function(newValue, oldValue) {
-      console.log(this.taskScore);
       this.$store.commit("problem/setProblem", {
         problem: {
           title: this.problemTitle,
@@ -180,10 +174,8 @@ export default {
           description: this.problemDescription
         }
       });
-      console.log(this.$store.state.problem);
     },
     problemDescription: function(newValue, oldValue) {
-      console.log(this.problemDescription);
       this.$store.commit("problem/setProblem", {
         problem: {
           title: this.problemTitle,
@@ -194,10 +186,8 @@ export default {
           description: this.problemDescription
         }
       });
-      console.log(this.$store.state.problem);
     },
     tags: function(newValue, oldValue) {
-      console.log(this.tags);
       this.$store.commit("problem/setProblem", {
         problem: {
           title: this.problemTitle,
@@ -208,11 +198,8 @@ export default {
           description: this.problemDescription
         }
       });
-
-      console.log(this.$store.state.problem);
     },
     files: function(newValue, oldValue) {
-      console.log(this.tags);
       this.$store.commit("problem/setProblem", {
         problem: {
           title: this.problemTitle,
@@ -223,7 +210,6 @@ export default {
           description: this.problemDescription
         }
       });
-      console.log(this.$store.state.problem);
     }
   },
 
@@ -231,7 +217,6 @@ export default {
   created: function() {
     // `this` points to the vm instance
     this.initialize();
-    console.log(this.files);
   },
   // updated: function() {
   //   this.$nextTick(function() {
@@ -247,22 +232,14 @@ export default {
       const { doesGetAll } = await this.getTag();
       this.items = doesGetAll;
       this.files = undefined;
-      console.log(this.files);
-      console.log(this.items);
     },
     filePicked(e) {
-      console.log(e.currentTarget.files);
-      console.log(this.files);
-
       this.files = e.currentTarget.files;
       this.$store.commit("problem/setFiles", {
         problem: {
           files: this.files
         }
       });
-
-      console.log(this.files);
-      console.log(this.$store.state.problem);
     }
   }
 };

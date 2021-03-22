@@ -31,7 +31,6 @@ export default {
       return result;
     },
     async createCompile(data) {
-      console.log(data);
       const result = this.$axios
         .$post(`ide/create/?taskId=${data.compilelogTaskId}`, data)
         .catch(err => console.log(err));

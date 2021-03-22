@@ -448,14 +448,6 @@ export default {
         userId: this.$store.state.user.id,
         taskId: this.$store.state.homework.taskId
       };
-      console.log(this.breakcump);
-      // console.log(this.$store.state.course.yearId);
-      // console.log(this.$store.state.course.sectionId);
-      // console.log(this.$store.state.course.courseId);
-      // console.log(this.$store.state.homework.assignmentId);
-      // console.log(this.$store.state.homework.problemId);
-      // console.log(this.$store.state.user.id);
-      // console.log(this.$store.state.homework.taskId);
 
       this.testsetExample = await this.getTestsetExample(
         this.$store.state.homework.problemId
@@ -471,8 +463,6 @@ export default {
 
         this.image = path;
       }
-      console.log(this.image);
-      console.log(this.testsetExample.doesGetAll);
       this.problemTitle = this.$store.state.homework.problemTitle;
       this.problemDescription = this.$store.state.homework.problemDescription;
       const data = {
@@ -509,14 +499,12 @@ export default {
         //   doesGetAll.compilelogCreateDate
         // ).format("Do MMM YY เวลา LT");
       });
-      console.log(this.allCompileResult);
     },
     deleteFile(file) {
       this.files = null;
     },
     async submitCode() {
       this.loading = true;
-      console.log(this.submit.source);
       const userId = this.$store.state.user.id;
 
       let formData = new FormData();
@@ -532,25 +520,16 @@ export default {
       formData.append("sourceCode", this.submit.source);
       formData.append("memeFile", this.submit.language);
 
-      console.log(this.files);
       if (this.files) {
         for (let file of this.files) {
           formData.append("singleFile", file);
         }
       }
-
-      // console.log([...formData]);
       const submitResult = await this.submitData(formData);
-      console.log(submitResult);
-
-      // console.log(this.$store.state.homework.problemId);
-      // console.log(this.$store.state.homework.taskId);
       const testsetProblem = {
         testsetProblemId: this.$store.state.homework.problemId
       };
       const testsetResult = await this.getTestset(testsetProblem);
-      console.log(testsetResult);
-
       this.dataTestset = await testsetResult.doesGetAll.map(async res => {
         const data = {
           filePath: submitResult.dataReturn.path,
@@ -558,7 +537,6 @@ export default {
           testsetId: res.testsetId
         };
         const dataTestsetApi = await this.testsetSubmit(data);
-        // console.log(dataTestsetApi);
         return dataTestsetApi;
       });
 
@@ -575,9 +553,6 @@ export default {
       this.testsetResult = await Promise.all(this.dataTestset).then(value => {
         return value;
       });
-      console.log(this.testsetResult);
-      // this.testsetResult = dataTestset;
-      console.log(this.testsetResult);
       compileData.testsetResult = this.testsetResult;
 
       const createCompileLogData = this.createCompile(compileData);
@@ -596,19 +571,35 @@ export default {
       });
 
       this.allCompileResult.doesGetAll.map(doesGetAll => {
-        doesGetAll.compilelogCreateDate = this.$moment(
+        // doesGetAll.compilelogCreateDate = this.$moment(
+        //   doesGetAll.compilelogCreateDate
+        // ).format("Do MMM YY เวลา LT");
+        let dayCreateDate = this.$moment(
           doesGetAll.compilelogCreateDate
-        ).format("Do MMM YY เวลา LT");
+        ).format("Do");
+        let monthCreateDate = this.$moment(
+          doesGetAll.compilelogCreateDate
+        ).format("MMM");
+        let yearCreateDate =
+          this.$moment(doesGetAll.compilelogCreateDate.getFullYear).year() +
+          543;
+        let timeCreateDate = this.$moment(
+          doesGetAll.compilelogCreateDate
+        ).format(" เวลา LT");
+        doesGetAll.compilelogCreateDate =
+          dayCreateDate +
+          " " +
+          monthCreateDate +
+          " " +
+          yearCreateDate +
+          timeCreateDate;
       });
 
-      console.log(this.allCompileResult);
-      console.log(this.compileResult);
       this.resultTabs = 1;
       this.loading = false;
     },
     async run() {
       this.loading = true;
-      console.log(this.submit.stdin);
       let formData = new FormData();
 
       if (this.files) {
@@ -620,29 +611,18 @@ export default {
       formData.append("source", this.submit.source);
       formData.append("stdin", this.submit.stdin);
 
-      console.log([...formData]);
       const result = await this.seperate(formData);
-      console.log(result);
-
-      console.log(result);
       if (result.stderr != "") {
-        console.log("err");
         this.snackbar = true;
         this.textErr = result.stderr;
       } else {
-        console.log("no err");
         this.stdout = result.stdout;
       }
 
       this.loading = false;
     },
     filePicked(e) {
-      console.log(e.currentTarget.files);
-      console.log(this.files);
-
       this.files = e.currentTarget.files;
-
-      console.log(this.files);
     },
     handleFilesUpload() {
       let uploadedFiles = this.$refs.files.files;

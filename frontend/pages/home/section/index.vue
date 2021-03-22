@@ -230,9 +230,25 @@ export default {
         userId: this.$store.state.user.id
       });
       await doesGet.map(doesGet => {
-        doesGet.courseUpdateDate = this.$moment(
-          doesGet.courseUpdateDate
-        ).format("Do MMM YY เวลา LT");
+        // doesGet.courseUpdateDate = this.$moment(
+        //   doesGet.courseUpdateDate
+        // ).format("Do MMM YY เวลา LT");
+        let dayUpdateDate = this.$moment(doesGet.courseUpdateDate).format("Do");
+        let monthUpdateDate = this.$moment(doesGet.courseUpdateDate).format(
+          "MMM"
+        );
+        let yearUpdateDate =
+          this.$moment(doesGet.courseUpdateDate.getFullYear).year() + 543;
+        let timeUpdateDate = this.$moment(doesGet.courseUpdateDate).format(
+          " เวลา LT"
+        );
+        doesGet.courseUpdateDate =
+          dayUpdateDate +
+          " " +
+          monthUpdateDate +
+          " " +
+          yearUpdateDate +
+          timeUpdateDate;
       });
       this.allCourses = doesGet;
       this.cancelModal();

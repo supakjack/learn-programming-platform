@@ -70,11 +70,31 @@ export default {
           href: "/student/home"
         }
       ]);
-      const { doesGetSome } = await this.getStudentCourse(this.$store.state.user.id);
+      const { doesGetSome } = await this.getStudentCourse(
+        this.$store.state.user.id
+      );
       await doesGetSome.map(doesGetSome => {
-        doesGetSome.courseUpdateDate = this.$moment(
-          doesGetSome.courseUpdateDate
-        ).format("Do MMM YY เวลา LT");
+        // doesGetSome.courseUpdateDate = this.$moment(
+        //   doesGetSome.courseUpdateDate
+        // ).format("Do MMM YY เวลา LT");
+        let dayUpdateDate = this.$moment(doesGetSome.courseUpdateDate).format(
+          "Do"
+        );
+        let monthUpdateDate = this.$moment(doesGetSome.courseUpdateDate).format(
+          "MMM"
+        );
+        let yearUpdateDate =
+          this.$moment(doesGetSome.courseUpdateDate.getFullYear).year() + 543;
+        let timeUpdateDate = this.$moment(doesGetSome.courseUpdateDate).format(
+          " เวลา LT"
+        );
+        doesGetSome.courseUpdateDate =
+          dayUpdateDate +
+          " " +
+          monthUpdateDate +
+          " " +
+          yearUpdateDate +
+          timeUpdateDate;
       });
       // await doesGetYearByCreate.map(doesGetYearByCreate => {
       //   doesGetYearByCreate.text =

@@ -269,14 +269,14 @@ export default {
         text: "รหัสนิสิต",
         align: "start",
         sortable: true,
-        value: "userUsername",
+        value: "userUsername"
       },
       { text: "คำนำหน้า", value: "userPrefixThai" },
       { text: "ชื่อ", value: "userFirstnameThai" },
       { text: "นามสกุล", value: "userLastnameThai" },
       { text: "สิทธิ์", value: "enrollRole" },
       { text: "สถานะ", value: "userStatus" },
-      { text: "การจัดการ", value: "actions", sortable: false },
+      { text: "การจัดการ", value: "actions", sortable: false }
     ],
     userLDAP: [],
     users: [],
@@ -292,7 +292,7 @@ export default {
       userLastnameEnglish: "",
       userStatus: 1,
       userCreateBy: 0,
-      userUpdateBy: 0,
+      userUpdateBy: 0
     },
     defaultItem: {
       userId: 0,
@@ -305,20 +305,20 @@ export default {
       userLastnameEnglish: "",
       userStatus: 1,
       userCreateBy: 0,
-      userUpdateBy: 0,
+      userUpdateBy: 0
     },
     userStatus: [
       { text: "ใช้งาน", value: 1 },
-      { text: "ไม่ใช้งาน", value: 2 },
+      { text: "ไม่ใช้งาน", value: 2 }
     ],
     userPrefixEnglish: [{ text: "Mr." }, { text: "Mrs." }, { text: "Ms." }],
-    userPrefixThai: [{ text: "นาง" }, { text: "นางสาว" }, { text: "นาย" }],
+    userPrefixThai: [{ text: "นาง" }, { text: "นางสาว" }, { text: "นาย" }]
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "เพิ่มผู้ใช้งาน" : "แก้ไขผู้ใช้งาน";
-    },
+    }
   },
 
   mounted() {},
@@ -329,7 +329,7 @@ export default {
     },
     dialogDelete(val) {
       val || this.closeDelete();
-    },
+    }
   },
 
   created() {
@@ -339,13 +339,52 @@ export default {
   methods: {
     async initialize() {
       const { doesGetAll } = await this.getUser();
-      doesGetAll.map((doesGetAll) => {
-        doesGetAll.userCreateDate = this.$moment(
-          doesGetAll.userCreateDate
-        ).format("Do MMM YY เวลา LT");
-        doesGetAll.userUpdateDate = this.$moment(
-          doesGetAll.userUpdateDate
-        ).format("Do MMM YY เวลา LT");
+      doesGetAll.map(doesGetAll => {
+        // doesGetAll.userCreateDate = this.$moment(
+        //   doesGetAll.userCreateDate
+        // ).format("Do MMM YY เวลา LT");
+        // doesGetAll.userUpdateDate = this.$moment(
+        //   doesGetAll.userUpdateDate
+        // ).format("Do MMM YY เวลา LT");
+
+        let dayCreateDate = this.$moment(doesGetAll.userCreateDate).format(
+          "Do"
+        );
+        let monthCreateDate = this.$moment(doesGetAll.userCreateDate).format(
+          "MMM"
+        );
+        let yearCreateDate =
+          this.$moment(doesGetAll.userCreateDate.getFullYear).year() + 543;
+        let timeCreateDate = this.$moment(doesGetAll.userCreateDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.userCreateDate =
+          dayCreateDate +
+          " " +
+          monthCreateDate +
+          " " +
+          yearCreateDate +
+          timeCreateDate;
+
+        let dayUpdateDate = this.$moment(doesGetAll.userUpdateDate).format(
+          "Do"
+        );
+        let monthUpdateDate = this.$moment(doesGetAll.userUpdateDate).format(
+          "MMM"
+        );
+        let yearUpdateDate =
+          this.$moment(doesGetAll.userUpdateDate.getFullYear).year() + 543;
+        let timeUpdateDate = this.$moment(doesGetAll.userUpdateDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.userUpdateDate =
+          dayUpdateDate +
+          " " +
+          monthUpdateDate +
+          " " +
+          yearUpdateDate +
+          timeUpdateDate;
+
         if (doesGetAll.enrollRole == "student") {
           doesGetAll.enrollRole = "นักเรียน";
         } else {
@@ -363,7 +402,7 @@ export default {
     async getUserLdap() {
       const { user } = await this.getUserByUsername([
         this.password,
-        this.editedItem.userUsername,
+        this.editedItem.userUsername
       ]);
       this.userLDAP = user;
     },
@@ -455,7 +494,7 @@ export default {
           this.editedItem.userCreateBy = this.$store.state.user.id;
           this.editedItem.userUpdateBy = this.$store.state.user.id;
           if (
-            !this.users.filter((user) => user.userUsername == this.userLDAP.cn)
+            !this.users.filter(user => user.userUsername == this.userLDAP.cn)
               .length
           ) {
             const insertResult = await this.insertUser(this.editedItem);
@@ -492,8 +531,8 @@ export default {
     getColor(userStatus) {
       if (userStatus == "ไม่ใช้งาน") return "red";
       else return "green";
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss">

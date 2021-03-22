@@ -13,7 +13,7 @@ export default [
   {
     title: "ปีการศึกษา",
     href: "/year",
-    icon: "fas fa-code"
+    icon: "fas fa-calendar"
   },
   {
     active: true,
@@ -39,7 +39,7 @@ export default [
   },
   {
     title: "Dashboard ",
-    icon: "fa fa-download",
+    icon: "fa fa-chart-line",
     href: "/teacher-dashboard"
   },
   {
@@ -48,20 +48,13 @@ export default [
     hiddenOnCollapse: true
   },
   {
-    child: [
-      { title: "88824125", href: "/assignment", icon: "fa fa-download" },
-      {
-        title: "88824154",
-        href: "/student/homework",
-        icon: "fa fa-download"
-      }
-    ],
-    title: "การบ้าน",
-    icon: "fa fa-download"
+    title: "หน้าหลัก",
+    icon: "fas fa-home",
+    href: "/student/home"
   },
   {
     title: "Dashboard",
-    icon: "fa fa-download",
+    icon: "fa fa-chart-line",
     href: "/student-dashboard"
   }
 ];

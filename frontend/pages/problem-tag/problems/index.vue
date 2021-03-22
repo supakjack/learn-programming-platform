@@ -301,17 +301,33 @@ export default {
           yearCreateDate +
           timeCreateDate;
 
-        doesGetAll.problemUpdateDate = this.$moment(
-          doesGetAll.problemUpdateDate
-        ).format("Do MMM YY เวลา LT");
+        // doesGetAll.problemUpdateDate = this.$moment(
+        //   doesGetAll.problemUpdateDate
+        // ).format("Do MMM YY เวลา LT");
+        let dayUpdateDate = this.$moment(doesGetAll.problemUpdateDate).format(
+          "Do"
+        );
+        let monthUpdateDate = this.$moment(doesGetAll.problemUpdateDate).format(
+          "MMM"
+        );
+        let yearUpdateDate =
+          this.$moment(doesGetAll.problemUpdateDate.getFullYear).year() + 543;
+        let timeUpdateDate = this.$moment(doesGetAll.problemUpdateDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.problemUpdateDate =
+          dayUpdateDate +
+          " " +
+          monthUpdateDate +
+          " " +
+          yearUpdateDate +
+          timeUpdateDate;
         if (doesGetAll.problemStatus == "active") {
           doesGetAll.problemStatus = "ใช้งาน";
         } else {
           doesGetAll.problemStatus = "ไม่ใช้งาน";
         }
       });
-
-      // console.log(doesGetAll);
       this.allProblems = doesGetAll;
     },
     getColor(item) {
@@ -606,7 +622,6 @@ export default {
           { name: "testset", val: this.$store.state.problem.testset },
           { name: "files", val: this.$store.state.problem.files }
         ];
-        console.log(this.watchArray);
       });
       this.formTitle = "สร้างโจทย์";
       await this.initialize();
@@ -631,7 +646,6 @@ export default {
       });
     },
     openDialogPicture(item) {
-      console.log(item);
       if (item.filePath != null) {
         let text = item.filePath.replaceAll("\\", "/");
 
@@ -639,7 +653,6 @@ export default {
 
         this.imagePicture = path;
       }
-      console.log(this.imagePicture);
       this.dialogPicture = true;
     },
     closeDialogPicture() {

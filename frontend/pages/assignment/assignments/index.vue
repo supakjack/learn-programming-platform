@@ -299,6 +299,11 @@ Last edit: 19/2/2021 -->
               :items-per-page="5"
               class="elevation-1"
             >
+              <template v-slot:[`item.scoreResultText`]="{ item }">
+                <v-chip :color="getColor(item.scoreResultText)" dark>
+                  {{ item.scoreResultText }}
+                </v-chip>
+              </template>
             </v-data-table>
           </v-card>
         </v-dialog>
@@ -535,12 +540,46 @@ export default {
         this.courseData.sectionId
       );
       doesGetAll.map(doesGetAll => {
-        doesGetAll.assignmentStartDate = this.$moment(
+        // doesGetAll.assignmentStartDate = this.$moment(
+        //   doesGetAll.assignmentStartDate
+        // ).format("Do MMM YY เวลา LT");
+        // doesGetAll.assignmentEndDate = this.$moment(
+        //   doesGetAll.assignmentEndDate
+        // ).format("Do MMM YY เวลา LT");
+
+        let dayStartDate = this.$moment(doesGetAll.assignmentStartDate).format(
+          "Do"
+        );
+        let monthStartDate = this.$moment(
           doesGetAll.assignmentStartDate
-        ).format("Do MMM YY เวลา LT");
-        doesGetAll.assignmentEndDate = this.$moment(
-          doesGetAll.assignmentEndDate
-        ).format("Do MMM YY เวลา LT");
+        ).format("MMM");
+        let yearStartDate =
+          this.$moment(doesGetAll.assignmentStartDate.getFullYear).year() + 543;
+        let timeStartDate = this.$moment(doesGetAll.assignmentStartDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.assignmentStartDate =
+          dayStartDate +
+          " " +
+          monthStartDate +
+          " " +
+          yearStartDate +
+          timeStartDate;
+
+        let dayEndDate = this.$moment(doesGetAll.assignmentEndDate).format(
+          "Do"
+        );
+        let monthEndDate = this.$moment(doesGetAll.assignmentEndDate).format(
+          "MMM"
+        );
+        let yearEndDate =
+          this.$moment(doesGetAll.assignmentEndDate.getFullYear).year() + 543;
+        let timeEndDate = this.$moment(doesGetAll.assignmentEndDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.assignmentEndDate =
+          dayEndDate + " " + monthEndDate + " " + yearEndDate + timeEndDate;
+
         if (doesGetAll.assignmentStatus == "active") {
           doesGetAll.assignmentStatus = "ใช้งาน";
         } else {
@@ -571,6 +610,11 @@ export default {
           this.dialogSuccess = true;
         }
       }
+    },
+    getColor(item) {
+      if (item == "ส่งแล้ว") return "green";
+      else if (item == "ยังไม่ส่ง") return "red";
+      else return "red";
     },
 
     async getTagData() {
@@ -826,13 +870,11 @@ export default {
         const maxScoreResult = await maxScore.then(res => {
           return res.doesGetAll;
         });
-        console.log(maxScoreResult);
-        console.log(dataSuccess);
         dataSuccess.map(res => {
-          if (res.scoreResult == maxScoreResult[0].sumTaskScore) {
-            res.scoreResultText = "Completed";
+          if (res.scoreResult > 0) {
+            res.scoreResultText = "ส่งแล้ว";
           } else {
-            res.scoreResultText = "Not completed";
+            res.scoreResultText = "ยังไม่ส่ง";
           }
           res.scoreResult =
             res.scoreResult + "/" + maxScoreResult[0].sumTaskScore;
