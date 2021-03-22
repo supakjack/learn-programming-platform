@@ -14,7 +14,7 @@
       </v-btn>
       </div>
     <v-btn depressed color="error" @click="$auth.logout()">
-      Logout
+      ออกจากระบบ
     </v-btn>
   </v-app-bar>
 </template>
