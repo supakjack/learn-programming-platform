@@ -233,7 +233,12 @@ export default {
     // UpdateBy:
 
     async initialize() {
-      const result = await this.getAssignmentUser(this.$store.state.user.id);
+      console.log(this.$store.state.course);
+      console.log(this.$store.state.homework);
+      const result = await this.getAssignmentUser(
+        this.$store.state.user.id,
+        this.$store.state.course.sectionId
+      );
 
       const scoreResult = await result.doesGetAll.map(async res => {
         const data = {

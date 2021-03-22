@@ -163,6 +163,7 @@ const getTaskAssignmentSchema = joi.object({
 // get assignment schema
 const getAssignmentByUserIdSchema = joi.object({
   enrollUserId: joi.number().max(99999999).min(1),
+  sectionId: joi.number().max(99999999).min(1),
 });
 
 // get assignment schema
@@ -332,5 +333,5 @@ module.exports = {
   getCompilelogSchema,
   insertCourseSchema,
   updateCourseSchema,
-  getUserIdSchema
+  getUserIdSchema,
 };
