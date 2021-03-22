@@ -299,6 +299,11 @@ Last edit: 19/2/2021 -->
               :items-per-page="5"
               class="elevation-1"
             >
+              <template v-slot:[`item.scoreResultText`]="{ item }">
+                <v-chip :color="getColor(item.scoreResultText)" dark>
+                  {{ item.scoreResultText }}
+                </v-chip>
+              </template>
             </v-data-table>
           </v-card>
         </v-dialog>
