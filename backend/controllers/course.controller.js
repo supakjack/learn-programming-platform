@@ -180,7 +180,6 @@ module.exports = {
       sectionCourseId: req.params.id,
       sectionCreateBy: req.query.userId,
     };
-    console.log(getCondition);
     try {
       const doesGet = await globalModel.select({
         name: "sections",

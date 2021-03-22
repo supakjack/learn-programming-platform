@@ -4,11 +4,8 @@ const problemsModel = require("../models/problems.model");
 const rmdir = require("rmdir");
 
 const {
-  userSchema,
   getUserIdSchema,
-  updateUserSchema,
-  FileuserSchema,
-  createUserSchema,
+
   getUsernameSchema,
   getUserFromCourseSchema,
 } = require("./../helpers/validation.helper");
@@ -18,7 +15,6 @@ const readXlsxFile = require("read-excel-file/node");
 module.exports = {
   findByUsername: async (req, res, next) => {
     const getUserData = await getUsernameSchema.validateAsync(req.query);
-    console.log(getUserData);
     try {
       const doesGet = await globalModel.select({
         name: "users",
@@ -43,20 +39,13 @@ module.exports = {
   },
 
   create: async (req, res, next) => {
-    // console.log(req.body);
     try {
-      // console.log(req.body.userUsername);
-      // const userUsername = req.body.userUsername;
-      // console.log(userUsername);
+
       const doesGet = await globalModel.select({
         name: "users",
         condition: [{ userUsername: req.body.userUsername }],
       });
-      // console.log(typeof userUsername);
-      console.log(doesGet);
-      // console.log(userUsername, doesGet[0].userUsername);
       if (doesGet.length) {
-        console.log("if");
         const doesCreateEnrollByUserId = await globalModel.insert({
           name: "enrolls",
           insertData: [
@@ -72,7 +61,6 @@ module.exports = {
         });
         res.status(200).send(doesCreateEnrollByUserId);
       } else {
-        console.log("else");
         const doesCreateUser = await problemsModel.insertReturnId({
           name: "users",
           insertData: [
@@ -90,7 +78,6 @@ module.exports = {
             },
           ],
         });
-        console.log(doesCreateUser);
         const doesCreateEnrollByUserId = await globalModel.insert({
           name: "enrolls",
           insertData: [
@@ -127,10 +114,8 @@ module.exports = {
     }
   },
   upload: async (req, res, next) => {
-    // console.log(req.files);
     const singleFile = req.files ? req.files.singleFile : null;
     const randomFileName = nanoid(10);
-    // console.log(singleFile);
     const splitFileName = singleFile.name.split(".");
     singleFile.name = randomFileName + "." + splitFileName[1];
     const filePath = process.env.BASE_STORAGE_PATH + "temp";
@@ -163,7 +148,6 @@ module.exports = {
               },
             ],
           });
-          console.log(doesGet);
 
           if (
             doesGet.length &&
@@ -199,7 +183,6 @@ module.exports = {
               name: "users",
               insertData: user,
             });
-            console.log(doesCreate);
 
             const doesCreateEnrollByUserId = await globalModel.insert({
               name: "enrolls",
@@ -228,10 +211,7 @@ module.exports = {
     });
   },
   getUserByCourse: async (req, res, next) => {
-    console.log("getUserByCourse");
-    // console.log(req.body);
     const getUserData = await getUserFromCourseSchema.validateAsync(req.body);
-    console.log(getUserData);
     try {
       const doesGetAll = await globalModel.select({
         name: "users",
@@ -254,7 +234,6 @@ module.exports = {
           },
         ],
       });
-      // console.log(doesGetAll);
       res.status(200).send({ doesGetAll });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());

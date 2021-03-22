@@ -25,7 +25,7 @@
             hide-details
           ></v-text-field>
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="500px">
+          <v-dialog v-model="dialog" max-width="700px">
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="success" dark class="mb-2" v-bind="attrs" v-on="on">
                 เพิ่มผู้ใช้งาน
@@ -397,7 +397,6 @@ export default {
         }
       });
       this.users = doesGetAll;
-      // console.log(this.user);
     },
 
     async getUserLdap() {
@@ -408,7 +407,6 @@ export default {
       this.userLDAP = user;
     },
     editItem(item) {
-      // console.log(item);
       this.editedIndex = this.users.indexOf(item);
       this.editedItem.userId = item.userId;
       this.editedItem.userUsername = item.userUsername;
@@ -443,13 +441,11 @@ export default {
       this.editedItem.userUpdateDate = this.$moment().format(
         "YYYY-MM-DD HH:mm:ss"
       );
-      // console.log(this.editedItem);
       this.dialogDelete = true;
     },
 
     async deleteItemConfirm() {
       const EditResult = await this.editUser(this.editedItem);
-      console.log(EditResult);
       this.closeDelete();
       await this.initialize();
     },
@@ -474,17 +470,13 @@ export default {
       // if  this.editedIndex > -1 == it edited user else this.editedIndex == -1 insert user
       // edit user
       if (this.editedIndex > -1) {
-        // console.log("userCreateBy 0");
         const EditResult = await this.editUser(this.editedItem);
-        // console.log(EditResult);
         if (typeof EditResult === "number") {
           this.dialog = false;
         }
       }
       // insert user
       else {
-        // console.log("userCreateBy -1");
-        // console.log("files");
         if (this.files != undefined) {
           let formData = new FormData();
           if (this.files) {
@@ -494,18 +486,13 @@ export default {
             formData.append("sectionId", this.$store.state.course.sectionId);
             formData.append("userId", this.$store.state.user.id);
           }
-          // console.log(...formData);
           const insertExcelResult = await this.insertFile(formData);
           this.close();
         } else {
-          // console.log("data");
           this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
           this.editedItem.userLastnameEnglish = this.userLDAP.sn;
           this.editedItem.userCreateBy = this.$store.state.user.id;
           this.editedItem.userUpdateBy = this.$store.state.user.id;
-          // this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
-          // this.editedItem.userLastnameEnglish = this.userLDAP.sn;
-          // check repeat user if repert can't insert
           if (
             !this.users.filter(user => user.userUsername == this.userLDAP.cn)
               .length
@@ -521,12 +508,7 @@ export default {
     },
 
     async saveExcel(excel) {
-      console.log(excel.currentTarget.files);
-      console.log(this.files);
-
       this.files = excel.currentTarget.files;
-
-      console.log(this.files);
     },
 
     close() {
