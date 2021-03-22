@@ -274,30 +274,7 @@ export default {
           doesGetAll.tagStatus = "ไม่ใช้งาน";
         }
       });
-      this.allCompileResult.doesGetAll.map(doesGetAll => {
-        let dayCreateDate = this.$moment(
-          doesGetAll.compilelogCreateDate
-        ).format("Do");
-        let monthCreateDate = this.$moment(
-          doesGetAll.compilelogCreateDate
-        ).format("MMM");
-        let yearCreateDate =
-          this.$moment(doesGetAll.compilelogCreateDate.getFullYear).year() +
-          543;
-        let timeCreateDate = this.$moment(
-          doesGetAll.compilelogCreateDate
-        ).format(" เวลา LT");
-        doesGetAll.compilelogCreateDate =
-          dayCreateDate +
-          " " +
-          monthCreateDate +
-          " " +
-          yearCreateDate +
-          timeCreateDate;
-        // doesGetAll.compilelogCreateDate = this.$moment(
-        //   doesGetAll.compilelogCreateDate
-        // ).format("Do MMM YY เวลา LT");
-      });
+
       this.allTags = doesGetAll;
     },
 

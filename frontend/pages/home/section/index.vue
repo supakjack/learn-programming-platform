@@ -233,18 +233,16 @@ export default {
         // doesGet.courseUpdateDate = this.$moment(
         //   doesGet.courseUpdateDate
         // ).format("Do MMM YY เวลา LT");
-        let dayUpdateDate = this.$moment(doesGetAll.courseUpdateDate).format(
-          "Do"
-        );
-        let monthUpdateDate = this.$moment(doesGetAll.courseUpdateDate).format(
+        let dayUpdateDate = this.$moment(doesGet.courseUpdateDate).format("Do");
+        let monthUpdateDate = this.$moment(doesGet.courseUpdateDate).format(
           "MMM"
         );
         let yearUpdateDate =
-          this.$moment(doesGetAll.courseUpdateDate.getFullYear).year() + 543;
-        let timeUpdateDate = this.$moment(doesGetAll.courseUpdateDate).format(
+          this.$moment(doesGet.courseUpdateDate.getFullYear).year() + 543;
+        let timeUpdateDate = this.$moment(doesGet.courseUpdateDate).format(
           " เวลา LT"
         );
-        doesGetAll.courseUpdateDate =
+        doesGet.courseUpdateDate =
           dayUpdateDate +
           " " +
           monthUpdateDate +
