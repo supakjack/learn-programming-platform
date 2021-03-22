@@ -175,27 +175,23 @@ module.exports = {
         filePath
       );
 
-      console.log(doesCompile.stdout);
-      console.log("--------");
-      console.log(doesGetTestset[0].testsetOutput);
       if (
         doesCompile.stdout == doesGetTestset[0].testsetOutput &&
         doesCompile.stderr == ""
       ) {
         createCompileLogData.compilelogCompileStatus = "Passed";
         createCompileLogData.compilelogErrorMessage = doesCompile.stderr;
-        // createCompileLogData.compilelogCompileStatus ;
       } else if (
         doesCompile.stdout != doesGetTestset[0].testsetOutput &&
         doesCompile.stderr == ""
       ) {
         createCompileLogData.compilelogCompileStatus = "Failed";
         createCompileLogData.compilelogErrorMessage = doesCompile.stderr;
-        // res.status(200).send("fail");
+      
       } else {
         createCompileLogData.compilelogCompileStatus = "Error";
         createCompileLogData.compilelogErrorMessage = doesCompile.stderr;
-        // res.status(200).send(doesCompile.strderr);
+       
       }
       res.status(200).send(createCompileLogData);
     } catch (error) {
