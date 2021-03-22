@@ -11,9 +11,14 @@ export default {
     async getUserByUsername(data) {
       const username = this.$store.state.user.username;
       const password = data[0];
-      return this.$axios.$get(
-        `auth/getUser/${data[1]}?username=` + username + "&password=" + password
-      );
+      return this.$axios
+        .$get(
+          `auth/getUser/${data[1]}?username=` +
+            username +
+            "&password=" +
+            password
+        )
+        .catch((err) => console.log(err));
     },
 
     async deleteUser() {
