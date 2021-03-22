@@ -381,7 +381,7 @@ export default {
     files: undefined,
     submit: {
       // use for run code
-      language: "",
+      language: "C++",
       source: "",
       stdin: ""
     },

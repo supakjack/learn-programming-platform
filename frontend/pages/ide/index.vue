@@ -206,7 +206,7 @@ export default {
     items: ["C++", "C"],
     submit: {
       // use for run code
-      language: "",
+      language: "C++",
       source: "",
       stdin: ""
     },
