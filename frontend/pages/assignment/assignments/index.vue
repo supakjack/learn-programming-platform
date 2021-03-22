@@ -606,6 +606,11 @@ export default {
         }
       }
     },
+    getColor(item) {
+      if (item == "ส่งแล้ว") return "green";
+      else if (item == "ยังไม่ส่ง") return "red";
+      else return "red";
+    },
 
     async getTagData() {
       const { doesGetAll } = await this.getTag();
@@ -860,13 +865,11 @@ export default {
         const maxScoreResult = await maxScore.then(res => {
           return res.doesGetAll;
         });
-        console.log(maxScoreResult);
-        console.log(dataSuccess);
         dataSuccess.map(res => {
           if (res.scoreResult == maxScoreResult[0].sumTaskScore) {
-            res.scoreResultText = "Completed";
+            res.scoreResultText = "ส่งแล้ว";
           } else {
-            res.scoreResultText = "Not completed";
+            res.scoreResultText = "ยังไม่ส่ง";
           }
           res.scoreResult =
             res.scoreResult + "/" + maxScoreResult[0].sumTaskScore;
