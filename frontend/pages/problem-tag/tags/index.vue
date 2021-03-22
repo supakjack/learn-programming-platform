@@ -227,12 +227,25 @@ export default {
     async initialize() {
       const { doesGetAll } = await this.getTag();
       doesGetAll.map(doesGetAll => {
-        doesGetAll.tagCreateDate = this.$moment(
-          doesGetAll.tagCreateDate
-        ).format("Do MMM YYYY เวลา LT");
-        doesGetAll.tagUpdateDate = this.$moment(
-          doesGetAll.tagUpdateDate
-        ).format("Do MMM YYYY เวลา LT");
+        let dayCreateDate = this.$moment(
+          doesGetAll.compilelogCreateDate
+        ).format("Do");
+        let monthCreateDate = this.$moment(
+          doesGetAll.compilelogCreateDate
+        ).format("MMM");
+        let yearCreateDate =
+          this.$moment(doesGetAll.compilelogCreateDate.getFullYear).year() +
+          543;
+        let timeCreateDate = this.$moment(
+          doesGetAll.compilelogCreateDate
+        ).format(" เวลา LT");
+        doesGetAll.compilelogCreateDate =
+          dayCreateDate +
+          " " +
+          monthCreateDate +
+          " " +
+          yearCreateDate +
+          timeCreateDate;
         if (doesGetAll.tagStatus == "active") {
           doesGetAll.tagStatus = "ใช้งาน";
         } else {
@@ -262,7 +275,7 @@ export default {
       } else {
         this.editedItem.tagCreateBy = 1;
         this.editedItem.tagUpdateBy = this.editedItem.tagCreateBy;
-        
+
         const [insertResult] = await this.insertTag(this.editedItem);
 
         if (typeof insertResult === "number") {

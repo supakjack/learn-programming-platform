@@ -310,8 +310,6 @@ export default {
           doesGetAll.problemStatus = "ไม่ใช้งาน";
         }
       });
-
-      // console.log(doesGetAll);
       this.allProblems = doesGetAll;
     },
     getColor(item) {
@@ -606,7 +604,6 @@ export default {
           { name: "testset", val: this.$store.state.problem.testset },
           { name: "files", val: this.$store.state.problem.files }
         ];
-        console.log(this.watchArray);
       });
       this.formTitle = "สร้างโจทย์";
       await this.initialize();
@@ -631,7 +628,6 @@ export default {
       });
     },
     openDialogPicture(item) {
-      console.log(item);
       if (item.filePath != null) {
         let text = item.filePath.replaceAll("\\", "/");
 
@@ -639,7 +635,6 @@ export default {
 
         this.imagePicture = path;
       }
-      console.log(this.imagePicture);
       this.dialogPicture = true;
     },
     closeDialogPicture() {

@@ -233,10 +233,7 @@ export default {
     // UpdateBy:
 
     async initialize() {
-      console.log(this.$store.state.user.id);
-      console.log(this.$store.state.user.username);
       const result = await this.getAssignmentUser(this.$store.state.user.id);
-      console.log(result);
 
       const scoreResult = await result.doesGetAll.map(async res => {
         const data = {
@@ -252,14 +249,12 @@ export default {
           };
           return mockData;
         }
-        console.log(score);
         return score.doesGetAll[0];
       });
 
       this.scoreLastResult = await Promise.all(scoreResult).then(value => {
         return value;
       });
-      console.log(this.scoreLastResult);
 
       let dataSuccess = [];
       let score = 0;
@@ -372,9 +367,7 @@ export default {
       else return "red";
     },
     async openDialog(item) {
-      console.log(item);
       const { doesGetProblem } = await this.getProblem(item.assignmentId);
-      console.log(doesGetProblem);
       const scoreResult = await doesGetProblem.map(async res => {
         const data = {
           taskAssignmentId: item.assignmentId,
@@ -394,11 +387,9 @@ export default {
         }
         return score.doesGetAll[0];
       });
-      console.log(scoreResult);
       const scoreLastResult = await Promise.all(scoreResult).then(value => {
         return value;
       });
-      console.log(scoreLastResult);
       for (let i = 0; i < doesGetProblem.length; i++) {
         for (let j = 0; j < scoreLastResult.length; j++) {
           if (doesGetProblem[i].taskId == scoreLastResult[i].taskId) {
@@ -411,7 +402,6 @@ export default {
           }
         }
       }
-      console.log(doesGetProblem);
       doesGetProblem.map(doesGetProblem => {
         if (doesGetProblem.compilelogTestResult == "Accepted") {
           doesGetProblem.compilelogTestResult = "ผ่าน";
@@ -427,7 +417,6 @@ export default {
       this.dialogDetail = true;
     },
     async openIde(item) {
-      console.log(item);
       await this.$store.commit("homework/setHomework", {
         homework: {
           problemId: item.problemId,
@@ -438,8 +427,6 @@ export default {
           problemDescription: item.problemDescription
         }
       });
-      console.log(this.$store.state.homework.problemId);
-      console.log(this.$store.state.homework.taskId);
     }
   }
 };

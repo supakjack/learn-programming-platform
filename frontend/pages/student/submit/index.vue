@@ -448,14 +448,6 @@ export default {
         userId: this.$store.state.user.id,
         taskId: this.$store.state.homework.taskId
       };
-      console.log(this.breakcump);
-      // console.log(this.$store.state.course.yearId);
-      // console.log(this.$store.state.course.sectionId);
-      // console.log(this.$store.state.course.courseId);
-      // console.log(this.$store.state.homework.assignmentId);
-      // console.log(this.$store.state.homework.problemId);
-      // console.log(this.$store.state.user.id);
-      // console.log(this.$store.state.homework.taskId);
 
       this.testsetExample = await this.getTestsetExample(
         this.$store.state.homework.problemId
@@ -471,8 +463,6 @@ export default {
 
         this.image = path;
       }
-      console.log(this.image);
-      console.log(this.testsetExample.doesGetAll);
       this.problemTitle = this.$store.state.homework.problemTitle;
       this.problemDescription = this.$store.state.homework.problemDescription;
       const data = {
@@ -509,14 +499,12 @@ export default {
         //   doesGetAll.compilelogCreateDate
         // ).format("Do MMM YY เวลา LT");
       });
-      console.log(this.allCompileResult);
     },
     deleteFile(file) {
       this.files = null;
     },
     async submitCode() {
       this.loading = true;
-      console.log(this.submit.source);
       const userId = this.$store.state.user.id;
 
       let formData = new FormData();
@@ -538,19 +526,11 @@ export default {
           formData.append("singleFile", file);
         }
       }
-
-      // console.log([...formData]);
       const submitResult = await this.submitData(formData);
-      console.log(submitResult);
-
-      // console.log(this.$store.state.homework.problemId);
-      // console.log(this.$store.state.homework.taskId);
       const testsetProblem = {
         testsetProblemId: this.$store.state.homework.problemId
       };
       const testsetResult = await this.getTestset(testsetProblem);
-      console.log(testsetResult);
-
       this.dataTestset = await testsetResult.doesGetAll.map(async res => {
         const data = {
           filePath: submitResult.dataReturn.path,
@@ -575,9 +555,6 @@ export default {
       this.testsetResult = await Promise.all(this.dataTestset).then(value => {
         return value;
       });
-      console.log(this.testsetResult);
-      // this.testsetResult = dataTestset;
-      console.log(this.testsetResult);
       compileData.testsetResult = this.testsetResult;
 
       const createCompileLogData = this.createCompile(compileData);
@@ -601,8 +578,6 @@ export default {
         ).format("Do MMM YY เวลา LT");
       });
 
-      console.log(this.allCompileResult);
-      console.log(this.compileResult);
       this.resultTabs = 1;
       this.loading = false;
     },
@@ -620,11 +595,7 @@ export default {
       formData.append("source", this.submit.source);
       formData.append("stdin", this.submit.stdin);
 
-      console.log([...formData]);
       const result = await this.seperate(formData);
-      console.log(result);
-
-      console.log(result);
       if (result.stderr != "") {
         console.log("err");
         this.snackbar = true;
@@ -637,9 +608,6 @@ export default {
       this.loading = false;
     },
     filePicked(e) {
-      console.log(e.currentTarget.files);
-      console.log(this.files);
-
       this.files = e.currentTarget.files;
 
       console.log(this.files);
