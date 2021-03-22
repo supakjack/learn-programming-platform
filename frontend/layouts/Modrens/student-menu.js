@@ -7,24 +7,12 @@ export default [
   },
   {
     title: "หน้าหลัก",
-    icon: "fa fa-download",
+    icon: "fas fa-home",
     href: "/student/home"
   },
   {
-    child: [
-      { title: "88824125", href: "/assignment", icon: "fa fa-download" },
-      {
-        title: "88824154",
-        href: "/student/homework",
-        icon: "fa fa-download"
-      }
-    ],
-    title: "การบ้าน",
-    icon: "fa fa-download"
-  },
-  {
     title: "Dashboard",
-    icon: "fa fa-download",
+    icon: "fa fa-chart-line",
     href: "/error"
   }
 ];
