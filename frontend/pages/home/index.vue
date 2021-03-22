@@ -263,9 +263,27 @@ export default {
       );
       console.log(doesGetYearByCreate);
       await doesGetSome.map(doesGetSome => {
-        doesGetSome.courseUpdateDate = this.$moment(
-          doesGetSome.courseUpdateDate
-        ).format("Do MMM YY เวลา LT");
+        // doesGetSome.courseUpdateDate = this.$moment(
+        //   doesGetSome.courseUpdateDate
+        // ).format("Do MMM YY เวลา LT");
+        let dayUpdateDate = this.$moment(doesGetAll.courseUpdateDate).format(
+          "Do"
+        );
+        let monthUpdateDate = this.$moment(doesGetAll.courseUpdateDate).format(
+          "MMM"
+        );
+        let yearUpdateDate =
+          this.$moment(doesGetAll.courseUpdateDate.getFullYear).year() + 543;
+        let timeUpdateDate = this.$moment(doesGetAll.courseUpdateDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.courseUpdateDate =
+          dayUpdateDate +
+          " " +
+          monthUpdateDate +
+          " " +
+          yearUpdateDate +
+          timeUpdateDate;
       });
       await doesGetYearByCreate.map(doesGetYearByCreate => {
         doesGetYearByCreate.text =

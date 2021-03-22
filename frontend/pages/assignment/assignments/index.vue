@@ -535,12 +535,46 @@ export default {
         this.courseData.sectionId
       );
       doesGetAll.map(doesGetAll => {
-        doesGetAll.assignmentStartDate = this.$moment(
+        // doesGetAll.assignmentStartDate = this.$moment(
+        //   doesGetAll.assignmentStartDate
+        // ).format("Do MMM YY เวลา LT");
+        // doesGetAll.assignmentEndDate = this.$moment(
+        //   doesGetAll.assignmentEndDate
+        // ).format("Do MMM YY เวลา LT");
+
+        let dayStartDate = this.$moment(doesGetAll.assignmentStartDate).format(
+          "Do"
+        );
+        let monthStartDate = this.$moment(
           doesGetAll.assignmentStartDate
-        ).format("Do MMM YY เวลา LT");
-        doesGetAll.assignmentEndDate = this.$moment(
-          doesGetAll.assignmentEndDate
-        ).format("Do MMM YY เวลา LT");
+        ).format("MMM");
+        let yearStartDate =
+          this.$moment(doesGetAll.assignmentStartDate.getFullYear).year() + 543;
+        let timeStartDate = this.$moment(doesGetAll.assignmentStartDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.assignmentStartDate =
+          dayStartDate +
+          " " +
+          monthStartDate +
+          " " +
+          yearStartDate +
+          timeStartDate;
+
+        let dayEndDate = this.$moment(doesGetAll.assignmentEndDate).format(
+          "Do"
+        );
+        let monthEndDate = this.$moment(doesGetAll.assignmentEndDate).format(
+          "MMM"
+        );
+        let yearEndDate =
+          this.$moment(doesGetAll.assignmentEndDate.getFullYear).year() + 543;
+        let timeEndDate = this.$moment(doesGetAll.assignmentEndDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.assignmentEndDate =
+          dayEndDate + " " + monthEndDate + " " + yearEndDate + timeEndDate;
+
         if (doesGetAll.assignmentStatus == "active") {
           doesGetAll.assignmentStatus = "ใช้งาน";
         } else {

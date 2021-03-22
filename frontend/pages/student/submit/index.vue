@@ -573,9 +573,28 @@ export default {
       });
 
       this.allCompileResult.doesGetAll.map(doesGetAll => {
-        doesGetAll.compilelogCreateDate = this.$moment(
+        // doesGetAll.compilelogCreateDate = this.$moment(
+        //   doesGetAll.compilelogCreateDate
+        // ).format("Do MMM YY เวลา LT");
+        let dayCreateDate = this.$moment(
           doesGetAll.compilelogCreateDate
-        ).format("Do MMM YY เวลา LT");
+        ).format("Do");
+        let monthCreateDate = this.$moment(
+          doesGetAll.compilelogCreateDate
+        ).format("MMM");
+        let yearCreateDate =
+          this.$moment(doesGetAll.compilelogCreateDate.getFullYear).year() +
+          543;
+        let timeCreateDate = this.$moment(
+          doesGetAll.compilelogCreateDate
+        ).format(" เวลา LT");
+        doesGetAll.compilelogCreateDate =
+          dayCreateDate +
+          " " +
+          monthCreateDate +
+          " " +
+          yearCreateDate +
+          timeCreateDate;
       });
 
       this.resultTabs = 1;

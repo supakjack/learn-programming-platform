@@ -301,9 +301,27 @@ export default {
           yearCreateDate +
           timeCreateDate;
 
-        doesGetAll.problemUpdateDate = this.$moment(
-          doesGetAll.problemUpdateDate
-        ).format("Do MMM YY เวลา LT");
+        // doesGetAll.problemUpdateDate = this.$moment(
+        //   doesGetAll.problemUpdateDate
+        // ).format("Do MMM YY เวลา LT");
+        let dayUpdateDate = this.$moment(doesGetAll.problemUpdateDate).format(
+          "Do"
+        );
+        let monthUpdateDate = this.$moment(doesGetAll.problemUpdateDate).format(
+          "MMM"
+        );
+        let yearUpdateDate =
+          this.$moment(doesGetAll.problemUpdateDate.getFullYear).year() + 543;
+        let timeUpdateDate = this.$moment(doesGetAll.problemUpdateDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.problemUpdateDate =
+          dayUpdateDate +
+          " " +
+          monthUpdateDate +
+          " " +
+          yearUpdateDate +
+          timeUpdateDate;
         if (doesGetAll.problemStatus == "active") {
           doesGetAll.problemStatus = "ใช้งาน";
         } else {

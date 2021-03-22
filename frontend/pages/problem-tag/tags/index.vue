@@ -227,6 +227,54 @@ export default {
     async initialize() {
       const { doesGetAll } = await this.getTag();
       doesGetAll.map(doesGetAll => {
+        // doesGetAll.tagCreateDate = this.$moment(
+        //   doesGetAll.tagCreateDate
+        // ).format("Do MMM YYYY เวลา LT");
+        // doesGetAll.tagUpdateDate = this.$moment(
+        //   doesGetAll.tagUpdateDate
+        // ).format("Do MMM YYYY เวลา LT");
+
+        let dayCreateDate = this.$moment(doesGetAll.tagCreateDate).format("Do");
+        let monthCreateDate = this.$moment(doesGetAll.tagCreateDate).format(
+          "MMM"
+        );
+        let yearCreateDate =
+          this.$moment(doesGetAll.tagCreateDate.getFullYear).year() + 543;
+        let timeCreateDate = this.$moment(doesGetAll.tagCreateDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.tagCreateDate =
+          dayCreateDate +
+          " " +
+          monthCreateDate +
+          " " +
+          yearCreateDate +
+          timeCreateDate;
+
+        let dayUpdateDate = this.$moment(doesGetAll.tagUpdateDate).format("Do");
+        let monthUpdateDate = this.$moment(doesGetAll.tagUpdateDate).format(
+          "MMM"
+        );
+        let yearUpdateDate =
+          this.$moment(doesGetAll.tagUpdateDate.getFullYear).year() + 543;
+        let timeUpdateDate = this.$moment(doesGetAll.tagUpdateDate).format(
+          " เวลา LT"
+        );
+        doesGetAll.tagUpdateDate =
+          dayUpdateDate +
+          " " +
+          monthUpdateDate +
+          " " +
+          yearUpdateDate +
+          timeUpdateDate;
+
+        if (doesGetAll.tagStatus == "active") {
+          doesGetAll.tagStatus = "ใช้งาน";
+        } else {
+          doesGetAll.tagStatus = "ไม่ใช้งาน";
+        }
+      });
+      this.allCompileResult.doesGetAll.map(doesGetAll => {
         let dayCreateDate = this.$moment(
           doesGetAll.compilelogCreateDate
         ).format("Do");
@@ -246,11 +294,9 @@ export default {
           " " +
           yearCreateDate +
           timeCreateDate;
-        if (doesGetAll.tagStatus == "active") {
-          doesGetAll.tagStatus = "ใช้งาน";
-        } else {
-          doesGetAll.tagStatus = "ไม่ใช้งาน";
-        }
+        // doesGetAll.compilelogCreateDate = this.$moment(
+        //   doesGetAll.compilelogCreateDate
+        // ).format("Do MMM YY เวลา LT");
       });
       this.allTags = doesGetAll;
     },
