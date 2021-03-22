@@ -27,7 +27,6 @@ module.exports = {
       path = req.body.path,
       stdin = req.body.stdin;
     try {
-      console.log(source);
       const doesCompile = await comileLogic(
         language,
         compile,
@@ -54,7 +53,6 @@ module.exports = {
       stdin = req.body.stdin,
       singleFiles = req.files ? req.files.singleFile : null;
 
-    console.log(language);
     try {
       let languageResult;
       if (language == "C++") {
@@ -71,12 +69,10 @@ module.exports = {
           source.toString(),
           null
         );
-        console.log(doesCompile);
         res.status(200).send(doesCompile);
         // run with file path
       } else {
         let folderNano = await nanoid(6);
-        console.log(folderNano);
         const filePath =
           process.env.BASE_STORAGE_PATH + "justRun" + "\\" + folderNano;
         await mkdirp(filePath);
@@ -87,8 +83,6 @@ module.exports = {
           await singleFiles.map(async (single) => {
             if (single.name == "main.cpp") {
               const path = filePath + "\\" + single.name;
-              console.log(path);
-              console.log(resultStdin);
               const doesCompile = await comileLogic(
                 languageResult,
                 "path",
@@ -96,12 +90,10 @@ module.exports = {
                 source,
                 path
               );
-              let result = await rmdir(filePath, function (err, dirs, files) {
-                console.log(dirs);
-                console.log(files);
-                console.log("all files are removed");
-              });
-              console.log(doesCompile);
+              let result = await rmdir(
+                filePath,
+                function (err, dirs, files) {}
+              );
               res.status(200).send(doesCompile);
             }
           });
@@ -115,14 +107,8 @@ module.exports = {
             source,
             path
           );
-          let result = await rmdir(filePath, function (err, dirs, files) {
-            console.log(dirs);
-            console.log(files);
-            console.log("all files are removed");
-          });
+          let result = await rmdir(filePath, function (err, dirs, files) {});
           // let result = fs.unlinkSync(filePath + "\\" + singleFiles.name + ".cpp");
-          console.log("delete success");
-          console.log(doesCompile);
           // expected output: "Success!"
           res.status(200).send(doesCompile);
         }
@@ -159,7 +145,6 @@ module.exports = {
       //   compilelogCreateBy: compilelogCreateBy,
       //   compilelogUpdateBy: compilelogUpdateBy,
     };
-    console.log(createCompileLogData);
 
     try {
       const doesGetTestset = await globalModel.select({
@@ -267,8 +252,6 @@ module.exports = {
         no = lastNumber + 1;
       }
 
-      console.log(no);
-
       const filePath =
         process.env.BASE_STORAGE_PATH +
         yearName +
@@ -286,7 +269,6 @@ module.exports = {
         no;
       await mkdirp(filePath);
       let dataReturn;
-      console.log(sourceCode);
       //Source Code
       if (sourceCode) {
         await fs.writeFile(
@@ -316,7 +298,6 @@ module.exports = {
         };
       } else {
         if (singleFile.length) {
-          console.log("yes");
           await singleFile.map(async (single) => {
             await single.mv(filePath + "\\" + single.name);
             const fileName = await writeFileLogic(sourceCode, single, memeFile);
@@ -389,7 +370,6 @@ module.exports = {
       name: "tasks",
       condition: [{ taskId: req.body.compilelogTaskId }],
     });
-    console.log(req.body.compilelogTaskId);
 
     // Parse to Array
     doesGetTaskAll = doesGetTaskAll[0];

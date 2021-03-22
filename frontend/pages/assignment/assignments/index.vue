@@ -886,8 +886,8 @@ export default {
         const maxScoreResult = await maxScore.then((res) => {
           return res.doesGetAll;
         });
-        dataSuccess.map((res) => {
-          if (res.scoreResult == maxScoreResult[0].sumTaskScore) {
+        dataSuccess.map(res => {
+          if (res.scoreResult > 0) {
             res.scoreResultText = "ส่งแล้ว";
           } else {
             res.scoreResultText = "ยังไม่ส่ง";

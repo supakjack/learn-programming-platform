@@ -520,7 +520,6 @@ export default {
       formData.append("sourceCode", this.submit.source);
       formData.append("memeFile", this.submit.language);
 
-      console.log(this.files);
       if (this.files) {
         for (let file of this.files) {
           formData.append("singleFile", file);
@@ -538,7 +537,6 @@ export default {
           testsetId: res.testsetId
         };
         const dataTestsetApi = await this.testsetSubmit(data);
-        // console.log(dataTestsetApi);
         return dataTestsetApi;
       });
 
@@ -602,7 +600,6 @@ export default {
     },
     async run() {
       this.loading = true;
-      console.log(this.submit.stdin);
       let formData = new FormData();
 
       if (this.files) {
@@ -616,11 +613,9 @@ export default {
 
       const result = await this.seperate(formData);
       if (result.stderr != "") {
-        console.log("err");
         this.snackbar = true;
         this.textErr = result.stderr;
       } else {
-        console.log("no err");
         this.stdout = result.stdout;
       }
 
@@ -628,8 +623,6 @@ export default {
     },
     filePicked(e) {
       this.files = e.currentTarget.files;
-
-      console.log(this.files);
     },
     handleFilesUpload() {
       let uploadedFiles = this.$refs.files.files;
