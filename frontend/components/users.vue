@@ -18,7 +18,6 @@ export default {
             "&password=" +
             password
         )
-        .catch((err) => console.log(err));
     },
 
     async deleteUser() {
