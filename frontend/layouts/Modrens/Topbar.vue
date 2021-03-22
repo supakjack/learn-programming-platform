@@ -24,7 +24,7 @@ export default {
   data() {
     return {
       username: "",
-      systemName: "Learn Programing Platform",
+      systemName: "Learn Programming Platform",
     };
   },
   mounted() {
