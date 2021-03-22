@@ -10,9 +10,11 @@ export default {
     async getHomework() {
       return this.$axios.$get("homework");
     },
-    async getAssignmentUser(data) {
+    async getAssignmentUser(data, sec) {
       const dataCreate = {};
       dataCreate.enrollUserId = data;
+      dataCreate.sectionId = sec;
+      console.log(sec);
       const result = this.$axios
         .$post("homework/assignment", dataCreate)
         .catch(err => console.log(err));
