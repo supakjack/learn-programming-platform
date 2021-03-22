@@ -182,7 +182,6 @@ import idemixin from "@/components/ide";
 export default {
   mixins: [idemixin],
   mounted() {
-    console.log(this.$store.state.problem.id);
     this.$store.commit("breadcrumb/setBreadcrumb", [
       {
         text: "หน้าหลัก",
@@ -235,7 +234,6 @@ export default {
     },
     async run() {
       this.loading = true;
-      console.log(this.files);
       let formData = new FormData();
 
       if (this.files) {
@@ -247,28 +245,19 @@ export default {
       formData.append("source", this.submit.source);
       formData.append("stdin", this.submit.stdin);
 
-      console.log([...formData]);
       const result = await this.seperate(formData);
 
-      console.log(result);
       if (result.stderr != "") {
-        console.log("err");
         this.snackbar = true;
         this.textErr = result.stderr;
       } else {
-        console.log("no err");
         this.stdout = result.stdout;
       }
 
       this.loading = false;
     },
     filePicked(e) {
-      console.log(e.currentTarget.files);
-      console.log(this.files);
-
       this.files = e.currentTarget.files;
-
-      console.log(this.files);
     },
     handleFilesUpload() {
       let uploadedFiles = this.$refs.files.files;

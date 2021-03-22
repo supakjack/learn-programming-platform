@@ -871,7 +871,7 @@ export default {
           return res.doesGetAll;
         });
         dataSuccess.map(res => {
-          if (res.scoreResult == maxScoreResult[0].sumTaskScore) {
+          if (res.scoreResult > 0) {
             res.scoreResultText = "ส่งแล้ว";
           } else {
             res.scoreResultText = "ยังไม่ส่ง";
