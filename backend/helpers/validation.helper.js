@@ -137,6 +137,10 @@ const createAssignmentSchema = joi.object({
   assignmentStatus: joi.number().integer().max(3).required(),
   assignmentCreateBy: joi.number().integer().max(99999999).min(1).required(),
   assignmentUpdateBy: joi.number().integer().max(99999999).min(1).required(),
+  // taskLimit: joi.number(),
+  // taskScore: joi.number().min(1).required(),
+  assignmentSectionId: joi.number().integer().max(99999999).min(1).required(),
+  // problemData: joi.array().required()
 });
 
 // update assignment schema
@@ -148,6 +152,10 @@ const updateAssignmentSchema = joi.object({
   assignmentUpdateBy: joi.number().max(99999999).min(1),
   assignmentUpdateDate: joi.date().raw(),
   assignmentStatus: joi.number().integer().max(3),
+  // taskLimit: joi.number().max(99).min(1),
+  // taskScore: joi.number().min(1),
+  assignmentSectionId: joi.number().integer().max(99999999).min(1),
+  // problemData: joi.array()
 });
 
 // filter update params schema
