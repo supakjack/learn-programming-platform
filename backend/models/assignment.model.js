@@ -18,4 +18,19 @@ module.exports = {
       }
     });
   },
+  insertReturnId: async (table) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const id = knex(table.name)
+          .insert(table.insertData)
+          .then(function (ret) {
+            var id = ret[0];
+            resolve(id);
+          });
+      } catch (error) {
+        console.log(error.message);
+        reject(createError.InternalServerError());
+      }
+    });
+  },
 };
