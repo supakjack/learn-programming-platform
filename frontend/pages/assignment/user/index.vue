@@ -39,17 +39,6 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="12" md="12">
-                      <v-text-field
-                        v-model="password"
-                        label="ยืนยันรหัสผ่าน*"
-                        hint="กรอกรหัสผ่านของตนเอง"
-                        type="password"
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-
-                  <v-row>
                     <v-col cols="12" sm="9" md="9">
                       <v-text-field
                         v-model="editedItem.userUsername"
@@ -59,9 +48,78 @@
                       ></v-text-field>
                     </v-col>
                     <v-col>
-                      <v-btn color="blue darken-1" text @click="getUserLdap">
+                      <!-- <v-btn color="blue darken-1" text @click="getUserLdap">
                         ค้นหา
-                      </v-btn>
+                      </v-btn> -->
+                      <template>
+                        <div>
+                          <v-dialog
+                            v-model="checkPassword"
+                            persistent
+                            max-width="600px"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                color="primary"
+                                dark
+                                v-bind="attrs"
+                                v-on="on"
+                              >
+                                ค้นหา
+                              </v-btn>
+                            </template>
+                            <v-card>
+                              <v-card-title>
+                                <span class="headline"
+                                  >ยืนยันรหัสผ่านที่ใช้เข้าสู่ระบบ</span
+                                >
+                              </v-card-title>
+                              <v-card-text>
+                                <v-container>
+                                  <v-row>
+                                    <v-col cols="12" sm="12" md="12">
+                                      <v-text-field
+                                        v-model="password"
+                                        label="ยืนยันรหัสผ่าน*"
+                                        hint="กรอกรหัสผ่านของตนเอง"
+                                        type="password"
+                                        required
+                                      ></v-text-field>
+                                    </v-col>
+                                  </v-row>
+                                </v-container>
+                                <small>*จำเป็นต้องกรอกรหัสผ่าน</small>
+                              </v-card-text>
+                              <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                  color="blue darken-1"
+                                  text
+                                  @click="checkPassword = false"
+                                >
+                                  ปิด
+                                </v-btn>
+                                <v-btn
+                                  v-if="files == undefined"
+                                  color="blue darken-1"
+                                  text
+                                  @click="getUserLdap"
+                                >
+                                  ยืนยัน1
+                                </v-btn>
+                                <v-btn
+                                  v-else
+                                  color="blue darken-1"
+                                  text
+                                  @click="checkPassword = false"
+                                >
+                                  ยืนยัน2
+                                </v-btn>
+                              </v-card-actions>
+                            </v-card>
+                          </v-dialog>
+                        </div>
+                      </template>
                     </v-col>
                   </v-row>
 
@@ -155,14 +213,14 @@
                             <v-spacer></v-spacer>
                             <v-btn
                               color="secondary"
-                              href="../../../static/example_users.xlsx"
-                              target="_blank"
+                              href="\example_users.xlsx"
                               download
                               >ตัวอย่าง</v-btn
                             >
                           </v-card-title>
                           <v-card-subtitle>
-                            สำหรับเพิ่มผู้ใช้งานเข้ากลุ่มเรียน (ใช้ได้เฉพาะไฟล์ Excel)
+                            สำหรับเพิ่มผู้ใช้งานเข้ากลุ่มเรียน (ใช้ได้เฉพาะไฟล์
+                            Excel)
                           </v-card-subtitle>
                           <v-card-actions>
                             <div class="flex justify-center text-black">
@@ -274,12 +332,13 @@ import usersmixin from "../../../components/users";
 export default {
   mixins: [usersmixin],
   data: () => ({
+    checkPassword: false,
     password: null,
     snackbar: false,
     text: `มีรหัสนิสิตนี้แล้ว กรุณากรอกใหม่!!!`,
     timeout: 2000,
     snackbar1: false,
-    text1: `กรุณากรอกรหัสผ่าน หรือรหัสนิสิตอีกครั้ง!!!`,
+    text1: `กรุณาตรวจสอบข้อมูลให้ถูกต้อง`,
     dialog: false,
     dialogDelete: false,
     search: "",
@@ -353,6 +412,9 @@ export default {
     dialogDelete(val) {
       val || this.closeDelete();
     },
+    files(val) {
+      this.checkPassword = true;
+    },
   },
 
   created() {
@@ -416,16 +478,16 @@ export default {
     },
 
     async getUserLdap() {
-      if (this.password == null || this.editedItem.userUsername == "") {
-        this.snackbar1 = true;
-      } else {
+      try {
         const { user } = await this.getUserByUsername([
           this.password,
           this.editedItem.userUsername,
         ]);
         this.userLDAP = user;
-        console.log(this.userLDAP);
+      } catch (error) {
+        this.snackbar1 = true;
       }
+      this.checkPassword = false;
     },
     editItem(item) {
       this.editedIndex = this.users.indexOf(item);
