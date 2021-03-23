@@ -1,6 +1,8 @@
 const createError = require("http-errors");
 const knex = require("./../helpers/init_knex");
 const globalModel = require("../models/global.model");
+const assignmentsModel = require("../models/assignment.model");
+
 const {
   getAssignmentSchema,
   createAssignmentSchema,
@@ -18,27 +20,29 @@ module.exports = {
 
   create: async (req, res, next) => {
     const createAssignmentData = await createAssignmentSchema.validateAsync(
-      req.body.createAssignmentData
+      req.body.assignment
     );
-
     try {
-      const doesCreate = await globalModel.insert({
-        name1: "assignments",
-        name2: "sections",
-
-        // leftJoin: [
-        //   {
-        //     joinTable: "sections",
-        //     leftTableName: "assignments",
-        //     leftKey: "assignmentId",
-        //     joinKey: "assignmentSectionId",
-        //   },
-        // ],
-
-        insertData1: [req.body],
-        insertData2: [req.body],
+      const assignmentId = await assignmentsModel.insertReturnId({
+        name: "assignments",
+        insertData: [createAssignmentData],
       });
-      res.status(201).send(req.body);
+
+      var tasks = [];
+      var task = {};
+      req.body.problemData.map(element => {
+        task.taskProblemId = element.value
+        task.taskAssignmentId = assignmentId
+        task.taskEndDate = createAssignmentData.assignmentEndDate
+        task.taskLimit = req.body.task.taskLimit
+        task.taskScore = req.body.task.taskScore
+        tasks.push(task);
+      });
+      const doesCreateTask = await globalModel.insert({
+        name: "tasks",
+        insertData: [...tasks],
+      });
+      res.status(201).send({ doesCreateTask });
     } catch (error) {
       if (error.isJoi === true) return next(createError.InternalServerError());
       next(error);
@@ -63,7 +67,6 @@ module.exports = {
         name: "assignments",
         condition: [getAssignmentData],
         whereNot: [{ assignmentStatus: "delete" }],
-        condition: [getAssignmentData],
         filter: [
           "assignmentId",
           "assignmentTitle",
@@ -71,6 +74,7 @@ module.exports = {
           "assignmentStartDate",
           "assignmentEndDate",
           "assignmentStatus",
+          "assignmentUpdateDate"
         ],
       });
       res.status(201).send({ doesGetAll });
