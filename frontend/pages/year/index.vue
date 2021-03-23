@@ -60,7 +60,7 @@
                           v-model="modalCourseYearStatus"
                           :items="[
                             { text: 'ใช้งาน', val: 1 },
-                            { text: 'ปิดใช้งาน', val: 2 }
+                            { text: 'ปิดใช้งาน', val: 2 },
                           ]"
                           item-text="text"
                           item-value="val"
@@ -146,7 +146,7 @@
                   v-model="modalCourseYearStatus"
                   :items="[
                     { text: 'ใช้งาน', val: 1 },
-                    { text: 'ปิดใช้งาน', val: 2 }
+                    { text: 'ปิดใช้งาน', val: 2 },
                   ]"
                   item-text="text"
                   item-value="val"
@@ -201,7 +201,7 @@
                   v-model="modalCourseYearStatus"
                   :items="[
                     { text: 'ใช้งาน', val: 1 },
-                    { text: 'ปิดใช้งาน', val: 2 }
+                    { text: 'ปิดใช้งาน', val: 2 },
                   ]"
                   item-text="text"
                   item-value="val"
@@ -236,14 +236,18 @@ export default {
       this.$store.commit("breadcrumb/setBreadcrumb", [
         {
           text: "หน้าหลัก",
-          href: "/home"
+          href: "/home",
+        },
+        {
+          text: "ปีการศึกษา",
+          href: "/year",
         }
       ]);
       const { doesGetAll } = await this.getYear({
-        yearCreateBy: this.$store.state.user.id
+        yearCreateBy: this.$store.state.user.id,
       });
 
-      await doesGetAll.map(doesGetAll => {
+      await doesGetAll.map((doesGetAll) => {
         doesGetAll.text =
           "ปีการศึกษา " +
           doesGetAll.yearName +
@@ -290,7 +294,7 @@ export default {
         yearSemester: this.modalCourseYearSemester,
         yearCreateBy: this.$store.state.user.id,
         yearUpdateBy: this.$store.state.user.id,
-        yearStatus: this.modalCourseYearStatus
+        yearStatus: this.modalCourseYearStatus,
       };
       if (status == 3) {
         console.log("update delete");
@@ -315,10 +319,10 @@ export default {
         yearSemester: this.modalCourseYearSemester,
         yearCreateBy: this.$store.state.user.id,
         yearUpdateBy: this.$store.state.user.id,
-        yearStatus: this.modalCourseYearStatus
+        yearStatus: this.modalCourseYearStatus,
       });
       await this.initialize();
-    }
+    },
   },
   async created() {
     this.initialize();
@@ -344,9 +348,9 @@ export default {
       { text: "ปีการศึกษา", value: "yearName" },
       { text: "ภาคเรียนที่", value: "yearSemester" },
       { text: "สถานะ", value: "yearStatus" },
-      { text: "ดำเนินการ", value: "actions", sortable: false }
-    ]
-  })
+      { text: "ดำเนินการ", value: "actions", sortable: false },
+    ],
+  }),
 };
 </script>
 
