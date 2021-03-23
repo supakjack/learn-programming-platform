@@ -11,8 +11,9 @@ Last edit: 19/2/2021 -->
     }"
     :items="allAssignment"
     :items-per-page="5"
-    :sort-by="assignmentStatus"
+    :sort-by="['assignmentStatus', 'assignmentUpdateDate']"
     :sort-desc="[false, true]"
+    multi-sort
     :search="search"
     class="elevation-1 kanit-font"
   >
@@ -130,6 +131,25 @@ Last edit: 19/2/2021 -->
                         </v-col>
 
                         <!-- Status -->
+                        <v-col cols="12" sm="6" md="6">
+                          <v-text-field
+                            v-model="editedItem.taskScore"
+                            label="คะแนนของแต่ละโจทย์"
+                            type="number"
+                            :rules="taskScoreRule"
+                          >
+                          </v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-text-field
+                            v-model="editedItem.taskLimit"
+                            label="จำนวนครั้งในการส่ง*"
+                            type="number"
+                            :rules="taskLimitRule"
+                            hint="ใส่ -1 หากเป็นการส่งไม่จำกัดจำนวน"
+                          >
+                          </v-text-field>
+                        </v-col>
                         <v-col cols="12" sm="6" md="4">
                           <v-select
                             :items="assignmentStatus"
@@ -266,11 +286,7 @@ Last edit: 19/2/2021 -->
                 <!-- <v-card-actions> -->
                 <v-spacer></v-spacer>
                 <v-btn color="error" class="float-left"> ยกเลิก </v-btn>
-                <v-btn
-                  color="success"
-                  @click="pageStep = 1"
-                  class="float-right"
-                >
+                <v-btn color="success" @click="save()" class="float-right">
                   บันทึก
                 </v-btn>
                 <v-btn
@@ -387,14 +403,20 @@ Last edit: 19/2/2021 -->
 import assignmentmixin from "@/components/assignment";
 import problemsmixin from "@/components/problems";
 import tagsmixin from "@/components/tags";
-
-// import insertStep2 from "@/pages/assignment/assignments/insert-step2";
-
 export default {
   mixins: [assignmentmixin, tagsmixin, problemsmixin],
   data: () => ({
+    taskLimitRule: [
+      (v) => !!v || "จำเป็นต้องกรอกข้อมูล",
+      // (v) => (v && v > -1) || "Loan should be above £5000",
+      // (v) => (v && v <= 50000) || "Max should not be above £50,000",
+    ],
+    taskScoreRule: [
+      (v) => !!v || "จำเป็นต้องกรอกข้อมูล",
+      (v) => (v && v > 0) || "คะแนนต้องมากกว่า 0",
+      // (v) => (v && v <= 50000) || "Max should not be above £50,000",
+    ],
     courseData: [],
-    // status: ["ใช้งาน", "ไม่ใช้งาน"],
     rowProblem: [],
     date: new Date().toISOString().substr(0, 10),
     menu: false,
@@ -456,6 +478,10 @@ export default {
       assignmentStatus: 0,
       assignmentCreateBy: 0,
       assignmentUpdateBy: 0,
+      assignmentSectionId: 0,
+      taskLimit: null,
+      taskScore: null,
+      problemData: [],
     },
     defaultItem: {
       assignmentId: 0,
@@ -466,6 +492,10 @@ export default {
       assignmentStatus: 0,
       assignmentCreateBy: 0,
       assignmentUpdateBy: 0,
+      assignmentSectionId: 0,
+      taskLimit: null,
+      taskScore: null,
+      problemData: [],
     },
     assignmentStatus: [
       // use in select options
@@ -497,7 +527,7 @@ export default {
       console.log("old, val", old, val);
       if (old < val) {
         console.log("delete in selectProblem");
-        this.allProblems
+        this.allProblems;
       } else {
         this.allProblems = this.selectProblem.length
           ? this.allProblems.filter(
@@ -617,9 +647,13 @@ export default {
       } else {
         this.editedItem.assignmentCreateBy = 1;
         this.editedItem.assignmentUpdateBy = this.editedItem.assignmentCreateBy;
-
+        this.editedItem.problemData = this.selectProblem;
+        this.editedItem.assignmentSectionId = this.$store.state.course.sectionId;
+        console.log(this.editedItem.taskLimit);
+        if (this.editedItem.taskLimit == -1) {
+          this.editedItem.taskLimit = null;
+        }
         const [insertResult] = await this.insertAssignment(this.editedItem);
-
         if (typeof insertResult === "number") {
           this.close();
           // this.SuccessTitle = "บันทึกสำเร็จ";
@@ -694,6 +728,7 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
+      this.initialize();
     },
 
     closeDelete() {
@@ -737,14 +772,12 @@ export default {
       console.log(uniq);
       var allTagBox = new Array(uniq.length);
       var allProblemBox = new Array(uniq.length);
-      // console.log("test", allTagBox[0], allTagBox[1]);
       for (var i = 0; i < allTagBox.length; i++) {
         allTagBox[i] = new Array();
         allProblemBox[i] = new Array();
       }
       for (var i = 0; i < doesGetAll.length; i++) {
         for (var j = 0; j < allTagBox.length; j++) {
-          // console.log(doesGetAll[i].problemId, uniq[j]);
           if (doesGetAll[i].problemId == uniq[j]) {
             var tagsItem = {};
             tagsItem.tagId = doesGetAll[i].tagId;
@@ -753,16 +786,11 @@ export default {
             var problemItem = {};
             problemItem.problemId = doesGetAll[i].problemId;
             problemItem.problemTitle = doesGetAll[i].problemTitle;
-            // problemItem.tags = allTagBox;
             allProblemBox[j] = problemItem;
           }
           problemItem.tags = allTagBox[j];
         }
       }
-
-      // for(var i = 0 ;i < allProblemBox.length;i++){
-
-      // }
 
       console.log("tagBox", allTagBox);
       console.log("problemBox", allProblemBox);
@@ -886,7 +914,7 @@ export default {
         const maxScoreResult = await maxScore.then((res) => {
           return res.doesGetAll;
         });
-        dataSuccess.map(res => {
+        dataSuccess.map((res) => {
           if (res.scoreResult > 0) {
             res.scoreResultText = "ส่งแล้ว";
           } else {
