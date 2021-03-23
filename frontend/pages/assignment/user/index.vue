@@ -42,7 +42,7 @@
                     <v-col cols="12" sm="12" md="12">
                       <v-text-field
                         v-model="password"
-                        label="ยืนยันรหัสผ่าน"
+                        label="ยืนยันรหัสผ่าน*"
                         hint="กรอกรหัสผ่านของตนเอง"
                         type="password"
                       ></v-text-field>
@@ -53,8 +53,9 @@
                     <v-col cols="12" sm="9" md="9">
                       <v-text-field
                         v-model="editedItem.userUsername"
-                        label="รหัสผู้ใช้"
+                        label="รหัสผู้ใช้*"
                         hint="กรอกรหัสนิสิต 8 หลัก"
+                        maxlength="8"
                       ></v-text-field>
                     </v-col>
                     <v-col>
@@ -247,6 +248,16 @@
           </template>
         </v-snackbar>
       </div>
+      <div>
+        <v-snackbar v-model="snackbar1" :timeout="timeout">
+          {{ text1 }}
+          <template v-slot:action="{ attrs }">
+            <v-btn color="pink" text1 v-bind="attrs" @click="snackbar1 = false">
+              ปิด
+            </v-btn>
+          </template>
+        </v-snackbar>
+      </div>
     </template>
   </div>
 </template>
@@ -256,10 +267,12 @@ import usersmixin from "../../../components/users";
 export default {
   mixins: [usersmixin],
   data: () => ({
-    password: "",
+    password: null,
     snackbar: false,
     text: `มีรหัสนิสิตนี้แล้ว กรุณากรอกใหม่!!!`,
     timeout: 2000,
+    snackbar1: false,
+    text1: `กรุณากรอกรหัสผ่าน หรือรหัสนิสิตอีกครั้ง!!!`,
     dialog: false,
     dialogDelete: false,
     search: "",
@@ -269,14 +282,14 @@ export default {
         text: "รหัสนิสิต",
         align: "start",
         sortable: true,
-        value: "userUsername"
+        value: "userUsername",
       },
       { text: "คำนำหน้า", value: "userPrefixThai" },
       { text: "ชื่อ", value: "userFirstnameThai" },
       { text: "นามสกุล", value: "userLastnameThai" },
       { text: "สิทธิ์", value: "enrollRole" },
       { text: "สถานะ", value: "userStatus" },
-      { text: "การจัดการ", value: "actions", sortable: false }
+      { text: "การจัดการ", value: "actions", sortable: false },
     ],
     userLDAP: [],
     users: [],
@@ -292,7 +305,7 @@ export default {
       userLastnameEnglish: "",
       userStatus: 1,
       userCreateBy: 0,
-      userUpdateBy: 0
+      userUpdateBy: 0,
     },
     defaultItem: {
       userId: 0,
@@ -305,20 +318,20 @@ export default {
       userLastnameEnglish: "",
       userStatus: 1,
       userCreateBy: 0,
-      userUpdateBy: 0
+      userUpdateBy: 0,
     },
     userStatus: [
       { text: "ใช้งาน", value: 1 },
-      { text: "ไม่ใช้งาน", value: 2 }
+      { text: "ไม่ใช้งาน", value: 2 },
     ],
     userPrefixEnglish: [{ text: "Mr." }, { text: "Mrs." }, { text: "Ms." }],
-    userPrefixThai: [{ text: "นาง" }, { text: "นางสาว" }, { text: "นาย" }]
+    userPrefixThai: [{ text: "นาง" }, { text: "นางสาว" }, { text: "นาย" }],
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "เพิ่มผู้ใช้งาน" : "แก้ไขผู้ใช้งาน";
-    }
+    },
   },
 
   mounted() {},
@@ -329,7 +342,7 @@ export default {
     },
     dialogDelete(val) {
       val || this.closeDelete();
-    }
+    },
   },
 
   created() {
@@ -339,14 +352,7 @@ export default {
   methods: {
     async initialize() {
       const { doesGetAll } = await this.getUser();
-      doesGetAll.map(doesGetAll => {
-        // doesGetAll.userCreateDate = this.$moment(
-        //   doesGetAll.userCreateDate
-        // ).format("Do MMM YY เวลา LT");
-        // doesGetAll.userUpdateDate = this.$moment(
-        //   doesGetAll.userUpdateDate
-        // ).format("Do MMM YY เวลา LT");
-
+      doesGetAll.map((doesGetAll) => {
         let dayCreateDate = this.$moment(doesGetAll.userCreateDate).format(
           "Do"
         );
@@ -400,11 +406,15 @@ export default {
     },
 
     async getUserLdap() {
-      const { user } = await this.getUserByUsername([
-        this.password,
-        this.editedItem.userUsername
-      ]);
-      this.userLDAP = user;
+      if (this.password == null || this.editedItem.userUsername == "") {
+        this.snackbar1 = true;
+      } else {
+        const { user } = await this.getUserByUsername([
+          this.password,
+          this.editedItem.userUsername,
+        ]);
+        this.userLDAP = user;
+      }
     },
     editItem(item) {
       this.editedIndex = this.users.indexOf(item);
@@ -468,41 +478,46 @@ export default {
 
     async save() {
       // if  this.editedIndex > -1 == it edited user else this.editedIndex == -1 insert user
-      // edit user
-      if (this.editedIndex > -1) {
-        const EditResult = await this.editUser(this.editedItem);
-        if (typeof EditResult === "number") {
-          this.dialog = false;
-        }
-      }
-      // insert user
-      else {
-        if (this.files != undefined) {
-          let formData = new FormData();
-          if (this.files) {
-            for (let file of this.files) {
-              formData.append("singleFile", file);
-            }
-            formData.append("sectionId", this.$store.state.course.sectionId);
-            formData.append("userId", this.$store.state.user.id);
+      if (this.password != null || this.editedItem.userUsername != "") {
+        // edit user
+        if (this.editedIndex > -1) {
+          const EditResult = await this.editUser(this.editedItem);
+          if (typeof EditResult === "number") {
+            this.dialog = false;
           }
-          const insertExcelResult = await this.insertFile(formData);
-          this.close();
-        } else {
-          this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
-          this.editedItem.userLastnameEnglish = this.userLDAP.sn;
-          this.editedItem.userCreateBy = this.$store.state.user.id;
-          this.editedItem.userUpdateBy = this.$store.state.user.id;
-          if (
-            !this.users.filter(user => user.userUsername == this.userLDAP.cn)
-              .length
-          ) {
-            const insertResult = await this.insertUser(this.editedItem);
+        }
+        // insert user
+        else {
+          if (this.files != undefined) {
+            let formData = new FormData();
+            if (this.files) {
+              for (let file of this.files) {
+                formData.append("singleFile", file);
+              }
+              formData.append("sectionId", this.$store.state.course.sectionId);
+              formData.append("userId", this.$store.state.user.id);
+            }
+            const insertExcelResult = await this.insertFile(formData);
             this.close();
           } else {
-            this.snackbar = true;
+            this.editedItem.userFirstnameEnglish = this.userLDAP.givenName;
+            this.editedItem.userLastnameEnglish = this.userLDAP.sn;
+            this.editedItem.userCreateBy = this.$store.state.user.id;
+            this.editedItem.userUpdateBy = this.$store.state.user.id;
+            if (
+              !this.users.filter(
+                (user) => user.userUsername == this.userLDAP.cn
+              ).length
+            ) {
+              const insertResult = await this.insertUser(this.editedItem);
+              this.close();
+            } else {
+              this.snackbar = true;
+            }
           }
         }
+      } else {
+        this.snackbar1 = true;
       }
       await this.initialize();
     },
@@ -531,8 +546,8 @@ export default {
     getColor(userStatus) {
       if (userStatus == "ไม่ใช้งาน") return "red";
       else return "green";
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss">

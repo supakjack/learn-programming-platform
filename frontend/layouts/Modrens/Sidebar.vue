@@ -2,6 +2,7 @@
   <div>
     <div>
       <sidebar-menu
+        class="box"
         :menu="menu"
         :theme="selectedTheme"
         :show-one-child="true"
@@ -24,7 +25,6 @@ export default {
   },
   data() {
     return {
-
       menu: [],
       themes: [
         {
@@ -43,4 +43,9 @@ export default {
 </script>
 
 <style lang="scss">
+.box {
+  -webkit-box-shadow: 0 12px 34px rgba(0, 0, 0, 0.12);
+  -moz-box-shadow: 0 12px 34px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.12);
+}
 </style>

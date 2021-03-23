@@ -19,7 +19,6 @@ import Sidebar from "./Modrens/Sidebar";
 import Topbar from "./Modrens/Topbar";
 import Footer from "./Modrens/Footer";
 import Breadcrumb from "./Modrens/Breadcrumb";
-// import Tcrumb from "./Modrens/Tcrumb";
 
 export default {
   components: {
@@ -27,7 +26,6 @@ export default {
     Topbar,
     Footer,
     Breadcrumb,
-    // Tcrumb
   },
   mounted() {
     this.$store.commit("setCrumbs", [
