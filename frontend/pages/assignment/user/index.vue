@@ -39,17 +39,6 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="12" md="12">
-                      <v-text-field
-                        v-model="password"
-                        label="ยืนยันรหัสผ่าน*"
-                        hint="กรอกรหัสผ่านของตนเอง"
-                        type="password"
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-
-                  <v-row>
                     <v-col cols="12" sm="9" md="9">
                       <v-text-field
                         v-model="editedItem.userUsername"
@@ -59,9 +48,78 @@
                       ></v-text-field>
                     </v-col>
                     <v-col>
-                      <v-btn color="blue darken-1" text @click="getUserLdap">
+                      <!-- <v-btn color="blue darken-1" text @click="getUserLdap">
                         ค้นหา
-                      </v-btn>
+                      </v-btn> -->
+                      <template>
+                        <div>
+                          <v-dialog
+                            v-model="checkPassword"
+                            persistent
+                            max-width="600px"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                color="primary"
+                                dark
+                                v-bind="attrs"
+                                v-on="on"
+                              >
+                                ค้นหา
+                              </v-btn>
+                            </template>
+                            <v-card>
+                              <v-card-title>
+                                <span class="headline"
+                                  >ยืนยันรหัสผ่านที่ใช้เข้าสู่ระบบ</span
+                                >
+                              </v-card-title>
+                              <v-card-text>
+                                <v-container>
+                                  <v-row>
+                                    <v-col cols="12" sm="12" md="12">
+                                      <v-text-field
+                                        v-model="password"
+                                        label="ยืนยันรหัสผ่าน*"
+                                        hint="กรอกรหัสผ่านของตนเอง"
+                                        type="password"
+                                        required
+                                      ></v-text-field>
+                                    </v-col>
+                                  </v-row>
+                                </v-container>
+                                <small>*จำเป็นต้องกรอกรหัสผ่าน</small>
+                              </v-card-text>
+                              <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                  color="blue darken-1"
+                                  text
+                                  @click="checkPassword = false"
+                                >
+                                  ปิด
+                                </v-btn>
+                                <v-btn
+                                  v-if="files == undefined"
+                                  color="blue darken-1"
+                                  text
+                                  @click="getUserLdap"
+                                >
+                                  ยืนยัน1
+                                </v-btn>
+                                <v-btn
+                                  v-else
+                                  color="blue darken-1"
+                                  text
+                                  @click="checkPassword = false"
+                                >
+                                  ยืนยัน2
+                                </v-btn>
+                              </v-card-actions>
+                            </v-card>
+                          </v-dialog>
+                        </div>
+                      </template>
                     </v-col>
                   </v-row>
 
@@ -115,7 +173,7 @@
                         v-model="editedItem.userPrefixThai"
                         :items="userPrefixThai"
                         menu-props="auto"
-                        label="คำนำหน้า"
+                        label="คำนำหน้า (ภาษาไทย)"
                         hide-details
                         single-line
                       ></v-select>
@@ -151,12 +209,19 @@
                       <v-col cols="12">
                         <v-card color="primary" dark>
                           <v-card-title class="headline">
-                            อัปโหลดรายชื่อผู้ใช้งาน
+                            อัปโหลดรายชื่อผู้ใช้งานแบบกลุ่ม
+                            <v-spacer></v-spacer>
+                            <v-btn
+                              color="secondary"
+                              href="\example_users.xlsx"
+                              download
+                              >ตัวอย่าง</v-btn
+                            >
                           </v-card-title>
-                          <v-card-subtitle
-                            >สำหรับเพิ่มผู้ใช้งานเข้ากลุ่มเรียน (ใช้ได้เฉพาะไฟล์
-                            Excel)</v-card-subtitle
-                          >
+                          <v-card-subtitle>
+                            สำหรับเพิ่มผู้ใช้งานเข้ากลุ่มเรียน (ใช้ได้เฉพาะไฟล์
+                            Excel)
+                          </v-card-subtitle>
                           <v-card-actions>
                             <div class="flex justify-center text-black">
                               <input
@@ -267,12 +332,13 @@ import usersmixin from "../../../components/users";
 export default {
   mixins: [usersmixin],
   data: () => ({
+    checkPassword: false,
     password: null,
     snackbar: false,
     text: `มีรหัสนิสิตนี้แล้ว กรุณากรอกใหม่!!!`,
     timeout: 2000,
     snackbar1: false,
-    text1: `กรุณากรอกรหัสผ่าน หรือรหัสนิสิตอีกครั้ง!!!`,
+    text1: `กรุณาตรวจสอบข้อมูลให้ถูกต้อง`,
     dialog: false,
     dialogDelete: false,
     search: "",
@@ -284,9 +350,12 @@ export default {
         sortable: true,
         value: "userUsername",
       },
-      { text: "คำนำหน้า", value: "userPrefixThai" },
-      { text: "ชื่อ", value: "userFirstnameThai" },
-      { text: "นามสกุล", value: "userLastnameThai" },
+      { text: "คำนำหน้า (TH)", value: "userPrefixThai" },
+      { text: "ชื่อ (TH)", value: "userFirstnameThai" },
+      { text: "นามสกุล (TH)", value: "userLastnameThai" },
+      { text: "คำนำหน้า (EN)", value: "userPrefixEnglish" },
+      { text: "ชื่อ (EN)", value: "userFirstnameEnglish" },
+      { text: "นามสกุล (EN)", value: "userLastnameEnglish" },
       { text: "สิทธิ์", value: "enrollRole" },
       { text: "สถานะ", value: "userStatus" },
       { text: "การจัดการ", value: "actions", sortable: false },
@@ -342,6 +411,9 @@ export default {
     },
     dialogDelete(val) {
       val || this.closeDelete();
+    },
+    files(val) {
+      this.checkPassword = true;
     },
   },
 
@@ -406,15 +478,16 @@ export default {
     },
 
     async getUserLdap() {
-      if (this.password == null || this.editedItem.userUsername == "") {
-        this.snackbar1 = true;
-      } else {
+      try {
         const { user } = await this.getUserByUsername([
           this.password,
           this.editedItem.userUsername,
         ]);
         this.userLDAP = user;
+      } catch (error) {
+        this.snackbar1 = true;
       }
+      this.checkPassword = false;
     },
     editItem(item) {
       this.editedIndex = this.users.indexOf(item);

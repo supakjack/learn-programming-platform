@@ -5,7 +5,6 @@ const rmdir = require("rmdir");
 
 const {
   getUserIdSchema,
-
   getUsernameSchema,
   getUserFromCourseSchema,
 } = require("./../helpers/validation.helper");
@@ -40,7 +39,6 @@ module.exports = {
 
   create: async (req, res, next) => {
     try {
-
       const doesGet = await globalModel.select({
         name: "users",
         condition: [{ userUsername: req.body.userUsername }],
@@ -132,6 +130,9 @@ module.exports = {
           userPrefixThai: row[1],
           userFirstnameThai: row[2],
           userLastnameThai: row[3],
+          userPrefixEnglish: row[4],
+          userFirstnameEnglish: row[5],
+          userLastnameEnglish: row[6],
           userCreateBy: req.body.userId,
           userUpdateBy: req.body.userId,
         };

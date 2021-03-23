@@ -6,7 +6,7 @@ const authSchema = joi.object({
 });
 
 const getUsernameSchema = joi.object({
-  userUsername: joi.string().max(255),
+  userUsername: joi.number().integer().max(255),
 });
 
 // update user schema
