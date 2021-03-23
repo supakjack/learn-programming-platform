@@ -4,7 +4,7 @@
       <v-row style="margin-top:-30px">
         <v-col cols="12" sm="12" md="5">
           <v-text-field
-            label="ชื่อชุดการทดสอบ"
+            label="ชื่อชุดข้อมูลทดสอบ"
             v-model="dataTestset.testsetTitle"
           ></v-text-field>
         </v-col>
@@ -57,10 +57,10 @@
           <thead>
             <tr cols="12">
               <th class="text-center" cols="1">
-                ลำดับ
+                ชุดที่
               </th>
               <th class="text-center" cols="3">
-                ชื่อ
+                ชื่อชุดข้อมูลทดสอบ
               </th>
               <th class="text-center" cols="2">
                 ข้อมูลนำเข้า
@@ -72,7 +72,7 @@
                 ข้อมูลตัวอย่าง
               </th>
               <th class="text-center" cols="2">
-                การจัดการ
+                ดำเนินการ
               </th>
             </tr>
           </thead>

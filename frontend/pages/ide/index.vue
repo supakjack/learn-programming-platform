@@ -5,12 +5,14 @@
         <v-card width="auto" height="535px" outlined>
           <v-row>
             <v-col>
-              <v-card-text> ไฟล์ </v-card-text>
+              <v-card-text> ชื่อไฟล์ </v-card-text>
             </v-col>
             <v-col>
               <v-card-actions class="float-right">
                 <div class="button-wrap">
-                  <label class="new-button" for="upload">อัพโหลด</label>
+                  <label class="new-button" for="upload"
+                    >อัพโหลดไฟล์ Source code</label
+                  >
                   <input
                     id="upload"
                     type="file"

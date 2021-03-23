@@ -209,7 +209,11 @@ export default {
     search: "",
     headers: [
       { align: "start", text: "ชื่อโจทย์ปัญหา", value: "problemTitle" },
-      { align: "center", text: "วันที่สร้าง", value: "problemCreateDate" },
+      {
+        align: "center",
+        text: "วันเดือนปีที่สร้าง",
+        value: "problemCreateDate"
+      },
       { align: "center", text: "สถานะ", value: "problemStatus" },
       { align: "center", text: "ดำเนินการ", value: "actions", sortable: false }
     ],

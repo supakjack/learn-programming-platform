@@ -68,7 +68,9 @@
                   <v-col>
                     <v-card-actions class="float-right">
                       <div class="button-wrap">
-                        <label class="new-button" for="upload">อัพโหลด</label>
+                        <label class="new-button" for="upload"
+                          >อัพโหลดไฟล์ Source code</label
+                        >
                         <input
                           id="upload"
                           type="file"
