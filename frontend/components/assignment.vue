@@ -29,22 +29,33 @@ export default {
     // CreateBy: Atikom Wongwan / CreateDate: 19/2/2021
     // UpdateBy: Atikom Wongwan / UpdateDate: 19/2/2021
 
-    async insertAssingment(data) {
+    async insertAssignment(data) {
+      // console.log(data);
       const insertData = {};
-      insertData.assignmentTitle = data.assignmentTitle;
-      insertData.assignmentDescription = data.assignmentDescription;
-      insertData.assignmentStartDate = data.assignmentStartDate;
-      insertData.assignmentSectionId = data.assignmentSectionId;
-      insertData.assignmentEndDate = data.assignmentEndDate;
-      insertData.assignmentStatus = data.assignmentStatus;
-      insertData.assignmentCreateBy = data.assignmentCreateBy;
-      insertData.assignmentUpdateBy = data.assignmentUpdateBy;
-      return this.$axios
+      const assignment = {};
+      const task = {};
+      assignment.assignmentTitle = data.assignmentTitle;
+      assignment.assignmentDescription = data.assignmentDescription;
+      assignment.assignmentStartDate = data.assignmentStartDate;
+      assignment.assignmentSectionId = data.assignmentSectionId;
+      assignment.assignmentEndDate = data.assignmentEndDate;
+      assignment.assignmentStatus = data.assignmentStatus;
+      assignment.assignmentCreateBy = data.assignmentCreateBy;
+      assignment.assignmentUpdateBy = data.assignmentUpdateBy;
+      assignment.assignmentSectionId = data.assignmentSectionId;
+      task.taskLimit = data.taskLimit;
+      task.taskScore = data.taskScore;
+      insertData.problemData = data.problemData;
+      insertData.assignment = assignment;
+      insertData.task = task;
+      const result = this.$axios
         .$post("assignment", insertData)
-        .catch(error => {
+         .catch(error => {
           console.error(error);
         })
-        .then(response => response.doesCreate);
+        .then(response => response.doesCreateTask);
+      console.log(result);
+      return result;
     },
 
     // function name: editAssignment
@@ -67,8 +78,8 @@ export default {
 
       const result = this.$axios
         .$patch(`assignment/?assignmentId=${data.assignmentId}`, editData)
-        .catch(err => console.log(err))
-        .then(response => response.doesUpdate);
+        .catch((err) => console.log(err))
+        .then((response) => response.doesUpdate);
       console.log(result);
       return result;
     },
@@ -78,14 +89,14 @@ export default {
 
       const result = this.$axios
         .$post("problem/problem/user", editData)
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
       console.log(result);
       return result;
     },
     async getScoreUser(data) {
       const result = this.$axios
         .$post("problem/score/user", data)
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
       console.log(result);
       return result;
     },
@@ -95,7 +106,7 @@ export default {
 
       const result = this.$axios
         .$post("problem/score/max", editData)
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
       console.log(result);
       return result;
     },
@@ -113,9 +124,9 @@ export default {
       deleteData.assignmentUpdateDate = data.assignmentUpdateDate;
       return this.$axios
         .$patch(`assingment/?assingmentId=${data.assingmentId}`, deleteData)
-        .catch(err => console.log(err))
-        .then(response => response.doesUpdate);
-    }
-  }
+        .catch((err) => console.log(err))
+        .then((response) => response.doesUpdate);
+    },
+  },
 };
 </script>
