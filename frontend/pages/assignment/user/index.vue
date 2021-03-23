@@ -115,7 +115,7 @@
                         v-model="editedItem.userPrefixThai"
                         :items="userPrefixThai"
                         menu-props="auto"
-                        label="คำนำหน้า"
+                        label="คำนำหน้า (ภาษาไทย)"
                         hide-details
                         single-line
                       ></v-select>
@@ -151,12 +151,19 @@
                       <v-col cols="12">
                         <v-card color="primary" dark>
                           <v-card-title class="headline">
-                            อัปโหลดรายชื่อผู้ใช้งาน
+                            อัปโหลดรายชื่อผู้ใช้งานแบบกลุ่ม
+                            <v-spacer></v-spacer>
+                            <v-btn
+                              color="secondary"
+                              href="../../../static/example_users.xlsx"
+                              target="_blank"
+                              download
+                              >ตัวอย่าง</v-btn
+                            >
                           </v-card-title>
-                          <v-card-subtitle
-                            >สำหรับเพิ่มผู้ใช้งานเข้ากลุ่มเรียน (ใช้ได้เฉพาะไฟล์
-                            Excel)</v-card-subtitle
-                          >
+                          <v-card-subtitle>
+                            สำหรับเพิ่มผู้ใช้งานเข้ากลุ่มเรียน (ใช้ได้เฉพาะไฟล์ Excel)
+                          </v-card-subtitle>
                           <v-card-actions>
                             <div class="flex justify-center text-black">
                               <input
@@ -284,9 +291,12 @@ export default {
         sortable: true,
         value: "userUsername",
       },
-      { text: "คำนำหน้า", value: "userPrefixThai" },
-      { text: "ชื่อ", value: "userFirstnameThai" },
-      { text: "นามสกุล", value: "userLastnameThai" },
+      { text: "คำนำหน้า (TH)", value: "userPrefixThai" },
+      { text: "ชื่อ (TH)", value: "userFirstnameThai" },
+      { text: "นามสกุล (TH)", value: "userLastnameThai" },
+      { text: "คำนำหน้า (EN)", value: "userPrefixEnglish" },
+      { text: "ชื่อ (EN)", value: "userFirstnameEnglish" },
+      { text: "นามสกุล (EN)", value: "userLastnameEnglish" },
       { text: "สิทธิ์", value: "enrollRole" },
       { text: "สถานะ", value: "userStatus" },
       { text: "การจัดการ", value: "actions", sortable: false },
@@ -414,6 +424,7 @@ export default {
           this.editedItem.userUsername,
         ]);
         this.userLDAP = user;
+        console.log(this.userLDAP);
       }
     },
     editItem(item) {
