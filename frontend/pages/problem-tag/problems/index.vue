@@ -192,7 +192,7 @@ export default {
     insertStep2
   },
   data: () => ({
-    formTitle: "สร้างโจทย์",
+    formTitle: "สร้างโจทย์ปัญหา",
     imagePicture: "",
     editAllItem: [],
     hashtagResult: [],
@@ -497,12 +497,12 @@ export default {
         );
       }
       this.close();
-      this.formTitle = "สร้างโจทย์";
+      this.formTitle = "สร้างโจทย์ปัญหา";
     },
 
     //edit problem-data by problemId
     async editItem(item) {
-      this.formTitle = "แก้ไขโจทย์";
+      this.formTitle = "แก้ไขโจทย์ปัญหา";
       this.editAllItem = item;
       const hashtag = this.editHashtag(item.problemId);
       const testset = this.editTestset(item.problemId);
@@ -627,7 +627,7 @@ export default {
           { name: "files", val: this.$store.state.problem.files }
         ];
       });
-      this.formTitle = "สร้างโจทย์";
+      this.formTitle = "สร้างโจทย์ปัญหา";
       await this.initialize();
     },
 

@@ -1,329 +1,278 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="12" sm="12" md="4">
-        <v-card width="auto" height="520px" outlined>
-          <!-- <template v-slot:extension> -->
-          <v-tabs grow v-model="model">
-            <v-tab>โจทย์ </v-tab>
-            <v-tab>การส่ง</v-tab>
-            <v-tab>ไฟล์</v-tab>
-          </v-tabs>
-          <!-- </template> -->
+  <v-row>
+    <v-col cols="12" sm="12" md="12">
+      <v-card width="auto" height="520px" outlined>
+        <!-- <template v-slot:extension> -->
+        <v-tabs grow v-model="model">
+          <v-tab>โจทย์ </v-tab>
+          <v-tab>การส่ง</v-tab>
+          <v-tab>ไฟล์</v-tab>
+        </v-tabs>
+        <!-- </template> -->
 
-          <v-tabs-items v-model="model">
-            <v-tab-item>
-              <v-card flat>
-                <v-card-title>
-                  {{ problemTitle }}
-                </v-card-title>
-                <v-card-text>
-                  <p class="display-0.75 text--primary">
-                    {{ problemDescription }}
-                  </p>
-                </v-card-text>
-                <v-card-text>
-                  <v-row>
-                    <v-col>
-                      <p>ข้อมูลตัวอย่าง</p>
-                    </v-col>
-                    <v-col>
-                      <a class="float-right" @click="openDialogPicture()"
-                        >รูปภาพประกอบ</a
-                      >
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-                <v-data-table
-                  :headers="headersTestset"
-                  :items="testsetExample.doesGetAll"
-                  :items-per-page="5"
-                  class="elevation-1"
-                >
-                </v-data-table>
-              </v-card>
-            </v-tab-item>
-            <v-tab-item>
-              <template>
-                <v-data-table
-                  :headers="headers"
-                  :items="allCompileResult.doesGetAll"
-                  :items-per-page="5"
-                  class="elevation-1"
-                >
-                  <template v-slot:item.compilelogTestResult="{ item }">
-                    <v-chip :color="getColor(item.compilelogTestResult)" dark>
-                      {{ item.compilelogTestResult }}
-                    </v-chip>
-                  </template>
-                </v-data-table>
-              </template>
-            </v-tab-item>
-            <v-tab-item>
-              <v-card width="auto" height="487px" outlined>
+        <v-tabs-items v-model="model">
+          <v-tab-item>
+            <v-card flat>
+              <v-card-title>
+                {{ problemTitle }}
+              </v-card-title>
+              <v-card-text>
+                <p class="display-0.75 text--primary">
+                  {{ problemDescription }}
+                </p>
+              </v-card-text>
+              <v-card-text>
                 <v-row>
                   <v-col>
-                    <v-card-text> แนบไฟล์ </v-card-text>
+                    <p>ข้อมูลตัวอย่าง</p>
                   </v-col>
                   <v-col>
-                    <v-card-actions class="float-right">
-                      <div class="button-wrap">
-                        <label class="new-button" for="upload"
-                          >อัพโหลดไฟล์ Source code</label
-                        >
-                        <input
-                          id="upload"
-                          type="file"
-                          name="singleFile"
-                          multiple
-                          @change="filePicked"
-                        />
-                      </div>
-                    </v-card-actions>
+                    <a class="float-right" @click="openDialogPicture()"
+                      >รูปภาพประกอบ</a
+                    >
                   </v-col>
                 </v-row>
-                <div v-for="(file, index) in files" :key="index">
-                  <v-card class="card-file" elevation="4">
-                    {{ file.name }}
-                  </v-card>
-                </div>
-                <template>
-                  <v-btn
-                    @click="deleteFile"
-                    block
-                    style="position: absolute;bottom:0px; background-color:rgba(230, 131, 6, 0.5); color:white"
-                  >
-                    ล้างข้อมูล
-                  </v-btn>
-                </template>
-              </v-card>
-            </v-tab-item>
-          </v-tabs-items>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" sm="12" md="8">
-        <v-row>
-          <v-col cols="12" md="4">
-            <v-select
-              v-model="submit.language"
-              :items="items"
-              label="ภาษา"
-              dense
-              outlined
-            ></v-select>
-          </v-col>
-          <v-col cols="12" md="4"> </v-col>
-          <v-col cols="12" md="4">
-            <v-btn
-              depressed
-              color="info"
-              class="float-right"
-              @click="submitCode"
-            >
-              Submit
-            </v-btn>
-            <v-btn
-              depressed
-              color="success"
-              class="float-right"
-              style="margin-right:4px"
-              @click="run"
-            >
-              RUN
-            </v-btn>
-          </v-col>
-        </v-row>
-
-        <v-row style="margin-top:-35px">
-          <v-col>
-            <v-textarea
-              style="font-family: 'Courier New', monospace;"
-              v-model="submit.source"
-              autocomplete="coding"
-              label="Coding"
-              outlined
-              rows="10"
-            ></v-textarea>
-          </v-col>
-        </v-row>
-
-        <v-row style="margin-top:-45px">
-          <v-col>
-            <v-card
-              style="max-height: 176px;
-              overflow: auto; height : 176px"
-              outlined
-              :loading="loading"
-            >
-              <template slot="progress">
-                <v-progress-linear
-                  color="deep-purple"
-                  height="10"
-                  indeterminate
-                ></v-progress-linear>
-              </template>
-              <v-tabs grow v-model="resultTabs">
-                <v-tab v-for="tab of tabs" :key="tab.index">
-                  {{ tab.name }}
-                </v-tab>
-              </v-tabs>
-              <v-tabs-items
-                v-model="resultTabs"
-                style="font-family: 'Courier New', monospace;"
+              </v-card-text>
+              <v-data-table
+                :headers="headersTestset"
+                :items="testsetExample.doesGetAll"
+                :items-per-page="5"
+                class="elevation-1"
               >
-                <v-tab-item>
-                  <v-card flat>
-                    <v-card-text>
-                      <v-row>
-                        <v-textarea
-                          v-model="submit.stdin"
-                          label="ข้อมูลนำเข้า"
-                          rows="2"
-                        ></v-textarea>
-                      </v-row>
-                      <v-row>
-                        <v-textarea
-                          v-model="stdout"
-                          autocomplete="email"
-                          label="ข้อมูลส่งออก"
-                          value=""
-                          readonly
-                        ></v-textarea>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" md="8"> </v-col>
-                        <v-col cols="12" md="4">
-                          <template>
-                            <div class="text-center">
-                              <v-dialog
-                                v-model="dialog"
-                                width="700"
-                                height="1000"
-                              >
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-btn
-                                    dark
-                                    color="success"
-                                    class="float-right"
-                                    v-bind="attrs"
-                                    v-on="on"
-                                  >
-                                    ผลลัพธ์
-                                  </v-btn>
-                                </template>
-
-                                <v-card>
-                                  <v-card-title
-                                    class="headline grey lighten-2"
-                                    style="margin-bottom:20px"
-                                  >
-                                    ผลลัพธ์
-                                  </v-card-title>
-                                  <v-textarea
-                                    v-model="stdout"
-                                    autocomplete="email"
-                                    label="ข้อมูลส่งออก"
-                                    value=""
-                                    rows="7"
-                                    readonly
-                                  ></v-textarea>
-
-                                  <v-divider></v-divider>
-
-                                  <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn
-                                      color="primary"
-                                      text
-                                      @click="dialog = false"
-                                    >
-                                      ปิด
-                                    </v-btn>
-                                  </v-card-actions>
-                                </v-card>
-                              </v-dialog>
-                            </div>
-                          </template>
-                        </v-col>
-                      </v-row>
-                    </v-card-text>
-                  </v-card>
-                </v-tab-item>
-                <v-tab-item>
-                  <v-card flat>
-                    <v-card-text>
-                      <div
-                        v-for="(testset, index) in testsetResult"
-                        :key="index"
-                      >
-                        <p
-                          v-if="
-                            testset.compilelogCompileStatus == 'Error' &&
-                              index + 1 == testsetResult.length
-                          "
-                          style="color:red"
-                        >
-                          {{ testset.compilelogErrorMessage }}
-                        </p>
-                        <p v-if="testset.compilelogCompileStatus != 'Error'">
-                          กรณีทดสอบที่ {{ index + 1 }} .
-                          <span
-                            v-if="testset.compilelogCompileStatus == 'Passed'"
-                            style="color:green"
-                            >{{ testset.compilelogCompileStatus }}
-                          </span>
-                          <span
-                            v-if="testset.compilelogCompileStatus == 'Failed'"
-                            style="color:orange"
-                            >{{ testset.compilelogCompileStatus }}
-                          </span>
-                        </p>
-                      </div>
-                    </v-card-text>
-                  </v-card>
-                </v-tab-item>
-              </v-tabs-items>
+              </v-data-table>
             </v-card>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-snackbar v-model="snackbar">
-      {{ textErr }}
+          </v-tab-item>
+          <v-tab-item>
+            <template>
+              <v-data-table
+                :headers="headers"
+                :items="allCompileResult.doesGetAll"
+                :items-per-page="5"
+                class="elevation-1"
+              >
+                <template v-slot:item.compilelogTestResult="{ item }">
+                  <v-chip :color="getColor(item.compilelogTestResult)" dark>
+                    {{ item.compilelogTestResult }}
+                  </v-chip>
+                </template>
+              </v-data-table>
+            </template>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card width="auto" height="487px" outlined>
+              <v-row>
+                <v-col>
+                  <v-card-text> แนบไฟล์ </v-card-text>
+                </v-col>
+                <v-col>
+                  <v-card-actions class="float-right">
+                    <div class="button-wrap">
+                      <label class="new-button" for="upload"
+                        >อัพโหลดไฟล์ Source code</label
+                      >
+                      <input
+                        id="upload"
+                        type="file"
+                        name="singleFile"
+                        multiple
+                        @change="filePicked"
+                      />
+                    </div>
+                  </v-card-actions>
+                </v-col>
+              </v-row>
+              <div v-for="(file, index) in files" :key="index">
+                <v-card class="card-file" elevation="4">
+                  {{ file.name }}
+                </v-card>
+              </div>
 
-      <template v-slot:action="{ attrs }">
-        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
-    <v-dialog v-model="dialogPicture" max-width="500px">
-      <v-card>
-        <div id="app" v-if="image != ''">
-          <h2>รูปภาพตัวอย่าง:</h2>
-          <v-img
-            :src="require('../../../../storages/picture/' + image)"
-            aspect-ratio="1.5"
-            max-height="500"
-            contain
-          ></v-img>
-        </div>
-        <div v-else>
-          <center>
-            <h2>ไม่พบรูปภาพตัวอย่าง</h2>
-          </center>
-        </div>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="dialogPicture = false">
-            ปิด
-          </v-btn>
-        </v-card-actions>
+              <v-btn
+                @click="deleteFile"
+                block
+                style="position: absolute;bottom:0px; background-color:rgba(230, 131, 6, 0.5); color:white"
+              >
+                ล้างข้อมูล
+              </v-btn>
+            </v-card>
+          </v-tab-item>
+        </v-tabs-items>
       </v-card>
-    </v-dialog>
-  </v-container>
+    </v-col>
+    <v-col cols="12" sm="12" md="12">
+      <v-row>
+        <v-col cols="12" md="4">
+          <v-select
+            v-model="submit.language"
+            :items="items"
+            label="ภาษา"
+            dense
+            outlined
+          ></v-select>
+        </v-col>
+        <v-col cols="12" md="4"> </v-col>
+        <v-col cols="12" md="4">
+          <v-btn depressed color="info" class="float-right" @click="submitCode">
+            Submit
+          </v-btn>
+          <v-btn
+            depressed
+            color="success"
+            class="float-right"
+            style="margin-right: 4px"
+            @click="run"
+          >
+            RUN
+          </v-btn>
+        </v-col>
+      </v-row>
+
+      <v-row style="margin-top: -35px">
+        <v-col>
+          <v-textarea
+            style="font-family: 'Courier New', monospace"
+            v-model="submit.source"
+            autocomplete="coding"
+            label="Coding"
+            outlined
+            rows="10"
+          ></v-textarea>
+        </v-col>
+      </v-row>
+
+      <v-row style="margin-top: -45px">
+        <v-col>
+          <v-card outlined :loading="loading">
+            <template slot="progress">
+              <v-progress-linear
+                color="deep-purple"
+                height="10"
+                indeterminate
+              ></v-progress-linear>
+            </template>
+            <v-tabs grow v-model="resultTabs">
+              <v-tab v-for="tab of tabs" :key="tab.index">
+                {{ tab.name }}
+              </v-tab>
+            </v-tabs>
+            <v-tabs-items
+              v-model="resultTabs"
+              style="font-family: 'Courier New', monospace"
+            >
+              <v-tab-item>
+                <v-card flat>
+                  <v-card-text>
+                    <v-row>
+                      <v-textarea
+                        v-model="submit.stdin"
+                        label="ข้อมูลนำเข้า"
+                        rows="2"
+                      ></v-textarea>
+                    </v-row>
+                    <v-row>
+                      <v-textarea
+                        v-model="stdout"
+                        autocomplete="email"
+                        label="ข้อมูลส่งออก"
+                        value=""
+                        readonly
+                      ></v-textarea>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" md="8"> </v-col>
+                      <v-col cols="12" md="4">
+                        <template>
+                          <div class="text-center">
+                            <v-dialog
+                              v-model="dialog"
+                              width="700"
+                              height="1000"
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                  dark
+                                  color="success"
+                                  class="float-right"
+                                  v-bind="attrs"
+                                  v-on="on"
+                                >
+                                  ผลลัพธ์
+                                </v-btn>
+                              </template>
+
+                              <v-card>
+                                <v-card-title
+                                  class="headline grey lighten-2"
+                                  style="margin-bottom: 20px"
+                                >
+                                  ผลลัพธ์
+                                </v-card-title>
+                                <v-textarea
+                                  v-model="stdout"
+                                  autocomplete="email"
+                                  label="ข้อมูลส่งออก"
+                                  value=""
+                                  rows="7"
+                                  readonly
+                                ></v-textarea>
+
+                                <v-divider></v-divider>
+
+                                <v-card-actions>
+                                  <v-spacer></v-spacer>
+                                  <v-btn
+                                    color="primary"
+                                    text
+                                    @click="dialog = false"
+                                  >
+                                    ปิด
+                                  </v-btn>
+                                </v-card-actions>
+                              </v-card>
+                            </v-dialog>
+                          </div>
+                        </template>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item>
+                <v-card flat>
+                  <v-card-text>
+                    <div v-for="(testset, index) in testsetResult" :key="index">
+                      <p
+                        v-if="
+                          testset.compilelogCompileStatus == 'Error' &&
+                            index + 1 == testsetResult.length
+                        "
+                        style="color: red"
+                      >
+                        {{ testset.compilelogErrorMessage }}
+                      </p>
+                      <p v-if="testset.compilelogCompileStatus != 'Error'">
+                        กรณีทดสอบที่ {{ index + 1 }} .
+                        <span
+                          v-if="testset.compilelogCompileStatus == 'Passed'"
+                          style="color: green"
+                          >{{ testset.compilelogCompileStatus }}
+                        </span>
+                        <span
+                          v-if="testset.compilelogCompileStatus == 'Failed'"
+                          style="color: orange"
+                          >{{ testset.compilelogCompileStatus }}
+                        </span>
+                      </p>
+                    </div>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+            </v-tabs-items>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

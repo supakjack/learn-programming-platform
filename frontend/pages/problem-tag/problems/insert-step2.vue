@@ -40,16 +40,22 @@
             color="info"
             style="margin-top:-20px;"
           ></v-checkbox>
+          <v-btn v-if="isAdd" color="success" block @click="addTable">
+            เพิ่ม
+          </v-btn>
+          <v-btn v-else color="warning" block @click="editTable">
+            แก้ไข
+          </v-btn>
         </v-col>
       </v-row>
-      <v-row>
+      <!-- <v-row>
         <v-btn v-if="isAdd" color="success" block @click="addTable">
           เพิ่ม
         </v-btn>
         <v-btn v-else color="warning" block @click="editTable">
           แก้ไข
         </v-btn>
-      </v-row>
+      </v-row> -->
     </v-container>
     <v-container>
       <v-simple-table fixed-header>
